@@ -9,6 +9,8 @@
 | Layer | File | Purpose |
 |---|---|---|
 | Entrance card | `pipeline_status.md` | Current session state and active mission. |
+| Agent Guide | `LLM_AGENT_GUIDE.md` | Core instructions for any AI entering this repo. |
+| Adapters | `.cursorrules`, etc. | IDE-specific protocol enforcement files. |
 | Floor map | **this file** | Navigation index. |
 | Shelf indexes | (Optional) | Within-file indices for large docs. |
 

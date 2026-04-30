@@ -3,15 +3,15 @@
 | Category | Status / Value |
 | :--- | :--- |
 | **Integrity Score** | 🟢 [Integrity: 100%] |
-| **State** | [MISSION COMPLETE] |
-| **Active Persona** | Architect |
+| **State** | [V1.0 LIVE ON GITHUB] |
+| **Active Persona** | Archivist |
 | **Active Mission** | V1.0 Protocol Hardening & Launch Prep |
 | **Engine Status** | [BLANK CANVAS] |
 
 ---
 
 ## 🎯 Current Mission
-> *"[Describe the high-level goal of your current project session here]"*
+> *"LFE V1.0 Launch successful. Conducting final hygiene audit and project handoff."*
 
 ### 📋 Active Constraints
 1. **Docs-First**: `.docs/` is the Source of Truth.
@@ -25,4 +25,4 @@
 ## 🧭 Navigation
 - **Floor Map**: [.docs/README.md](file:///.docs/README.md)
 - **Protocol**: [.docs/protocol/](file:///.docs/protocol/)
-- **Glossary**: [CONTEXT.md](file:///CONTEXT.md)
+- **Glossary**: [.docs/domain/glossary.md](file:///.docs/domain/glossary.md)
