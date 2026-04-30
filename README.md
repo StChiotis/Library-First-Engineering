@@ -25,11 +25,11 @@ LFE orchestrates AI agents through a disciplined assembly line, ensuring every c
 
 ```mermaid
 graph LR
-Gate{Gate} --> Architect[Architect: Plan]
+Gate{Gate} -- "Major (Full Pipeline)" --> Architect[Architect: Plan]
 Architect --> Builder[Builder: Code]
 Builder --> Inspector[Inspector: Test]
 Inspector --> Archivist[Archivist: Doc]
-Gate -.-> Scout[Scout: Quick Fix]
+Gate -. "Minor (Scout Mode)" .-> Scout[Scout: Quick Fix]
 Scout --> Archivist
 ```
 
