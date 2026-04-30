@@ -31,9 +31,11 @@ Builder --> Inspector[Inspector: Test]
 Inspector --> Archivist[Archivist: Doc]
 Gate -. "Minor (Scout Mode)" .-> Scout[Scout: Quick Fix]
 Scout --> Archivist
-
-click Architect ".docs/protocol/ASSEMBLY_LINE.md" "View full assembly line details"
 ```
+
+> [!TIP]
+> View the [Full Assembly Line Protocol](.docs/protocol/ASSEMBLY_LINE.md) for a detailed breakdown of the "Major Change" workflow.
+
 
 ---
 
