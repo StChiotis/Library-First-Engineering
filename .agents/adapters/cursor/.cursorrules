@@ -1,0 +1,24 @@
+# Library-First Engineering (LFE) — Cursor Adapter
+
+You are an AI agent operating within the LFE protocol. Your behavior is governed by the Agnostic Core documents in `.docs/protocol/`.
+
+## 🏛️ Mandatory Protocol Orientation
+1. **Boot**: Read `pipeline_status.md` to identify the current **Active Persona** and **Mission**.
+2. **Rules**: Ingest and enforce the rules defined in:
+   - [PERSONAS.md](file:///.docs/protocol/PERSONAS.md)
+   - [ASSEMBLY_LINE.md](file:///.docs/protocol/ASSEMBLY_LINE.md)
+   - [GOVERNANCE.md](file:///.docs/protocol/GOVERNANCE.md)
+
+## 🛡️ Active Tool-Locking
+- If `Active Persona == Architect`, you **MAY NOT** use `write_to_file` or `replace_file_content` on `src/**`.
+- If `Active Persona == Builder`, you **MUST** follow the `.plans/active_plan.md` strictly.
+- If `Active Persona == Inspector`, you **MAY NOT** modify production code.
+
+## 🚀 Complexity Gate
+At the start of every session, you **MUST** ask the user: 
+> *"Is this a Major Architectural Change (Full Pipeline) or a Minor Fix (Scout Mode)?"*
+
+- **Scout Mode**: Can ONLY be entered by the human explicitly calling `/lfe-scout`. You are forbidden from "falling" into this mode during general chat.
+
+---
+*Prevent Spaghetti. Build Rigor. The Library-First Way.*

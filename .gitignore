@@ -1,0 +1,35 @@
+# LFE Boilerplate — Git Ignore
+
+# --- Personal Strategy & Private Files (Founder Only) ---
+STELIOS/
+STELIOS/**/*
+
+# --- OS & IDE ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.log
+
+# --- Environments & Secrets ---
+.env
+.env.local
+.env.*.local
+
+# --- Dependencies ---
+node_modules/
+dist/
+build/
+out/
+
+# --- LFE Runtime ---
+# We keep these in the repo as templates for the user.
+# .plans/active_plan.md
+# pipeline_status.md
+
+# --- Local AI History ---
+.gemini/
+brain/
+logs/
+temp/
