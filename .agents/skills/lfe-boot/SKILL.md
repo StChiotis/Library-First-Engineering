@@ -24,10 +24,7 @@ Immediately ask the user:
 > *"Is this a Major Architectural Change (Full Pipeline) or a Minor Fix (Scout Mode)?"*
 
 ### Step 4 — Report State
-Output a structured orientation report confirming:
-- Persona is active.
-- Ground rules are loaded.
-- Floor map and Glossary are understood.
+Output a single, concise line: `[LFE BOOT] Active Persona: <Persona>. Ground rules loaded.` Do not output a verbose report or pleasantries.
 
 ## Orientation invariants
 - **Docs win over code**: The documentation is the single source of truth.

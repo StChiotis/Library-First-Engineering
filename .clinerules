@@ -28,5 +28,13 @@ At the start of every session, you **MUST** ask the user:
 
 - **Scout Mode**: Can ONLY be entered by the human explicitly calling `/lfe-scout`. You are forbidden from "falling" into this mode during general chat.
 
+## 🤐 Context Window Efficiency
+You must communicate with extreme brevity to save output tokens.
+- **Zero Pleasantries**: No conversational filler (e.g., "Hello", "Here is the code").
+- **Direct Output**: Only output the exact requested artifacts or bulleted answers.
+- **Detailed Explanations**: When a detailed answer or explanation is required, write it to a Markdown file and output ONLY the link to that file in the chat.
+  - *Compliance*: Use `.plans/` for short-lived, transient analysis. Use `.docs/` ONLY for permanent, verified project knowledge.
+- **Exception (The Grill Phase)**: If executing `/lfe-grill-me` or acting as the Architect, you MUST ask direct, probing questions to resolve ambiguity. Keep questions highly concise.
+
 ---
 *Prevent Spaghetti. Build Rigor. The Library-First Way.*

@@ -23,10 +23,12 @@ Leverage these capability skills whenever applicable:
 1. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`.
 2. **Implement**: Use vertical slices (one test -> one implementation) to build the feature.
 3. **Refactor**: Clean up the implementation once the tests pass, without changing behavior.
-4. **Handoff**: Once code is written and passing local tests, signal the transition to **Inspector**.
+4. **Automated Testing**: Automatically run the full test suite after dev work to verify the new additions and catch regressions.
+5. **Handoff**: Once code is written and all automated tests are passing, signal the transition to **Inspector**.
 
 ## Checklist
 - [ ] Logic routed through the central Engine/Core?
 - [ ] Constants used instead of hardcoded numbers?
 - [ ] Tests passing for the current implementation slice?
+- [ ] Automated tests run successfully after full dev work completion?
 - [ ] Code follows the project's `engineering-standards.md`?

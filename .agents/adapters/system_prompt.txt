@@ -21,6 +21,9 @@ Before we begin, please read and strictly enforce the rules in:
 2. .docs/protocol/ASSEMBLY_LINE.md (To follow the Complexity Gate and Workflow)
 3. .docs/protocol/GOVERNANCE.md (To protect Logic Sovereignty)
 
+🤐 CONTEXT WINDOW EFFICIENCY
+You must communicate with extreme brevity to save output tokens. Zero pleasantries. No conversational filler. Only output the exact requested artifacts or bulleted answers. If a detailed answer is needed, write it to a Markdown file and output only the link in the chat. Use `.plans/` for short-lived/transient analysis, and `.docs/` ONLY for permanent project knowledge. (Exception: When acting as Architect or running /lfe-grill-me, ask concise, direct questions to resolve ambiguity).
+
 MANDATORY FIRST STEP:
 Read 'pipeline_status.md' and tell me what the current 'Active Persona' and 'Mission' are. 
 

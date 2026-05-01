@@ -25,3 +25,9 @@ When resolving conflicts, use this priority order:
 
 ## 5. Bootstrapping
 Every session must begin with the `/lfe-boot` command to ensure the agent is fully oriented to the current project state.
+
+## 6. Communication Protocol (Context Window Efficiency)
+To preserve the context window, all AI agents are instructed via their system adapters to use extreme brevity (zero pleasantries, minimal output).
+- **Detailed Answers**: When a detailed explanation or long answer is necessary, DO NOT output it into the chat. Instead, write the detailed response to a Markdown file and simply reply in the chat with a link to the file.
+  - *Compliance*: Use `.plans/` for short-lived, transient analysis (debug logs, scratchpads). Use `.docs/` ONLY for permanent, verified project knowledge.
+- **Exception (The Grill Phase)**: During the Architect's planning phase (or when using `/lfe-grill-me`), the agent MUST ask necessary probing questions. Even then, questions must be direct and strictly focused on resolving design dependencies, avoiding conversational filler.

@@ -35,12 +35,26 @@ Scout --> Archivist
 
 > [!TIP]
 > View the [Full Assembly Line Protocol](.docs/protocol/ASSEMBLY_LINE.md) for a detailed breakdown of the "Major Change" workflow.
+> For mature, scaling projects, consider adopting our [Optional Industry Standards](.docs/protocol/INDUSTRY_STANDARDS.md) to enforce LFE at the CI/CD and platform level.
 
 
 ---
 
-## 🏆 The LFE Benchmark
-Why LFE is the pioneering standard for agentic engineering.
+## 🏆 The LFE Benchmark vs. Standard AI Workflows
+
+Most solo developers and teams building with AI today rely on "execute-first" chat sessions. While fast initially, this inevitably leads to project collapse. Here is how LFE benchmarks against the standard market approach:
+
+### 1. Defeating "Spaghetti Decay"
+- **Standard AI**: Acts as both Architect and Builder simultaneously. It will silently rewrite core logic on the fly to fix a bug, turning the codebase into spaghetti.
+- **The LFE Advantage**: **Separation of Concerns**. By forcing the AI into strict Personas, the Architect *must* write the design in `.plans/` first, and the Builder is locked to that plan. Architecture becomes deliberate, not accidental.
+
+### 2. Eliminating Context Window Bloat
+- **Standard AI**: Relies on reading thousands of lines of raw code to understand the app, quickly maxing out token limits and causing severe hallucinations.
+- **The LFE Advantage**: **Documentation-as-Infrastructure**. The AI reads the `.docs/README.md` Floor Map first. Because we enforce a strict 7-milestone rolling window for history and banish verbose chat logs to `.plans/`, the AI's "working memory" stays incredibly lean and efficient.
+
+### 3. Preventing Logic Hallucination
+- **Standard AI**: Guesses business rules and math formulas based on scattered code context.
+- **The LFE Advantage**: **Logic Sovereignty**. The AI is strictly trained to treat `.docs/domain/domain-knowledge.md` as the supreme law. It will never guess a business rule; it will always look it up.
 
 | Feature | Standard AI Workflow | **LFE Protocol (V1.0)** |
 | :--- | :--- | :--- |
@@ -90,7 +104,7 @@ Knowledge has a shelf life. LFE maintains a lean "Active Working Memory" for AI 
 
 ## 🛠️ Quick Start
 1. **Clone this structure** into your new project.
-2. **Onboard the AI**: The repository includes pre-configured rule files for popular AI IDEs (`.cursorrules`, `.windsurfrules`, `.clinerules`, and `.github/copilot-instructions.md`). Alternatively, use the **[System Prompt Adapter](file:///.agents/adapters/system_prompt.txt)** for standalone agents.
+2. **Onboard the AI**: The repository includes pre-configured rule files for popular AI IDEs (`.cursorrules`, `.windsurfrules`, `.clinerules`, `.antigravityrules`, and `.github/copilot-instructions.md`). Alternatively, use the **[System Prompt Adapter](file:///.agents/adapters/system_prompt.txt)** for standalone agents.
 3. **Run the Complexity Gate**: Ask your agent: *"I have adopted the LFE protocol. Run /lfe-boot to begin."*
 
 ---

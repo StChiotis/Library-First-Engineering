@@ -20,13 +20,14 @@ Leverage these capability skills whenever applicable:
 4. **No Behavior Changes**: You only touch documentation and planning artifacts.
 
 ## Workflow
-1. **Sync Docs**: Update domain docs, ADRs, or known issues based on the implementation results.
-2. **Update History**: Prepend the new milestone to the changelog. Enforce the 7-milestone rolling window.
+1. **Sync Docs**: Update domain docs, ADRs, or known issues based on the implementation results. Record unit test coverage metrics and success percentage as the definition of done wherever applicable.
+2. **Update History**: Prepend the new milestone to the changelog. Enforce the 7-milestone rolling window. Include test coverage and success metrics in the milestone summary.
 3. **Clean Up**: Archive or clear `.plans/active_plan.md` once the task is finalized.
 4. **Finalize**: Update the entrance card (State, Last ADR, Mission) for the next session.
 
 ## Checklist
 - [ ] CHANGELOG has exactly 7 or fewer milestones?
 - [ ] ADR and Floor Map indices updated?
+- [ ] Unit test coverage and success percentage recorded in documentation/history?
 - [ ] Pipeline status reflects latest session?
 - [ ] Planning artifacts archived/cleared?
