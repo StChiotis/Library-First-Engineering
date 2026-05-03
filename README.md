@@ -136,7 +136,7 @@ LFE is an open-source movement. Join us in refining the protocol to make AI-driv
 ---
 
 ## 👤 Author & Vision
-The **Library-First Engineering (LFE) Protocol** is the original creation and intellectual product of **Stylianos Chiotis**. 
+Authored and maintained by **Stylianos Chiotis**. 
 
 > *"My mission is to give everyone a framework to bring their ideas to life in the most efficient way possible. I believe that **the pavement is the first thing you lay before you build a house.** LFE is that pavement—a solid foundation that ensures future scalability, maintainability, and reliability in the Agentic Age."* — **Stylianos Chiotis**
 
