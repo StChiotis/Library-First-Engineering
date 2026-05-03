@@ -31,5 +31,7 @@
 ## 🧭 Navigation
 - **Floor Map**: [.docs/README.md](file:///.docs/README.md)
 - **Protocol**: [.docs/protocol/](file:///.docs/protocol/)
-- **Glossary**: [.docs/domain/glossary.md](file:///.docs/domain/glossary.md)
+- **Domain Glossary**: [CONTEXT.md](file:///CONTEXT.md)
+- **Glossary Extension**: [.docs/domain/glossary.md](file:///.docs/domain/glossary.md)
 - **What's Next**: Run `/lfe-whats-next` for instant orientation
+
