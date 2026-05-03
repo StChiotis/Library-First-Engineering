@@ -3,22 +3,28 @@
 | Category | Status / Value |
 | :--- | :--- |
 | **Integrity Score** | 🟢 [Integrity: 100%] |
-| **State** | [V1.0 LIVE ON GITHUB] |
-| **Active Persona** | Archivist |
-| **Active Mission** | V1.0 Protocol Hardening & Launch Prep |
+| **State** | [READY TO DEPLOY NEW PROJECT] |
+| **Active Persona** | Architect |
+| **Active Mission** | Day 0 — Discovery and Domain Initialization |
+| **Pipeline Phase** | Ready |
+| **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  tdd ⬜  inspect ⬜ |
+| **Session Count** | 1 |
+| **Last Architecture Sweep** | Never (due in 4 sessions) |
 | **Engine Status** | [BLANK CANVAS] |
 
 ---
 
 ## 🎯 Current Mission
-> *"LFE V1.0 Launch successful. Conducting final hygiene audit and project handoff."*
+> *"Initialize a new project domain on a Blank Canvas template. Run /lfe-extract-domain to begin Day 0 discovery."*
 
 ### 📋 Active Constraints
 1. **Docs-First**: `.docs/` is the Source of Truth.
 2. **Logic Sovereignty**: Core logic is sacred.
 3. **No Cowboy Coding**: All changes require a `.plans/active_plan.md`.
 4. **Persona Discipline**: Tool-locking is active.
-5. **Human Approval**: The Handoff Gate is mandatory.
+5. **Human Approval**: Two gates — slice approval + plan approval.
+6. **File-Based Coordination**: Skills read/write `.plans/` files, not conversation.
+7. **Hygiene Scheduling**: Architecture sweep every 5 sessions.
 
 ---
 
@@ -26,3 +32,4 @@
 - **Floor Map**: [.docs/README.md](file:///.docs/README.md)
 - **Protocol**: [.docs/protocol/](file:///.docs/protocol/)
 - **Glossary**: [.docs/domain/glossary.md](file:///.docs/domain/glossary.md)
+- **What's Next**: Run `/lfe-whats-next` for instant orientation

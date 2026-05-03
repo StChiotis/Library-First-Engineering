@@ -20,21 +20,34 @@ This repository is a "Blank Canvas" template for AI-Founders and CTOs to bootstr
 
 ---
 
-## 🏛️ The LFE Process
-LFE orchestrates AI agents through a disciplined assembly line, ensuring every change is planned and verified.
+## 🏛️ The LFE Process (V2)
+LFE V2 orchestrates AI agents through **sub-pipelines per persona** with **file-based coordination** — each step writes a physical file that the next step reads, eliminating context window leakage.
 
 ```mermaid
-graph LR
-Gate{Gate} -- "Major (Full Pipeline)" --> Architect[Architect: Plan]
-Architect --> Builder[Builder: Code]
-Builder --> Inspector[Inspector: Test]
-Inspector --> Archivist[Archivist: Doc]
-Gate -. "Minor (Scout Mode)" .-> Scout[Scout: Quick Fix]
-Scout --> Archivist
+graph TD
+    Gate{Complexity Gate} -- "Major" --> Grill["🥸 Architect: /lfe-grill-with-docs"]
+    Grill --> PRD["🥸 Architect: /lfe-to-prd"]
+    PRD --> Issues["🥸 Architect: /lfe-to-issues"]
+    Issues --> SliceGate{"🛑 Human approves slices"}
+    SliceGate --> Plan["🥸 Architect: Draft Plan"]
+    Plan --> PlanGate{"🛑 Human approves plan"}
+    PlanGate --> Build["🔨 Builder: /lfe-builder"]
+    Build --> TDD["🔨 Builder: /lfe-tdd"]
+    TDD --> Zoom["🕵️ Inspector: /lfe-zoom-out"]
+    Zoom --> Inspect["🕵️ Inspector: /lfe-inspector"]
+    Inspect -- Pass --> Archive["📚 Archivist: /lfe-archivist"]
+    Inspect -- Fail --> Diagnose["🕵️ Inspector: /lfe-diagnose"]
+    Diagnose --> Build
+    Archive --> MoreSlices{More slices?}
+    MoreSlices -- Yes --> Plan
+    MoreSlices -- No --> Cleanup[Cleanup .plans/]
+    Gate -. "Minor" .-> Scout["🚀 Scout: /lfe-scout"]
+    Scout --> Archive
 ```
 
 > [!TIP]
-> View the [Full Assembly Line Protocol](.docs/protocol/ASSEMBLY_LINE.md) for a detailed breakdown of the "Major Change" workflow.
+> View the [Full Assembly Line Protocol](.docs/protocol/ASSEMBLY_LINE.md) for the complete V2 sub-pipeline architecture.
+> Run `/lfe-whats-next` at any point for instant pipeline orientation.
 > For mature, scaling projects, consider adopting our [Optional Industry Standards](.docs/protocol/INDUSTRY_STANDARDS.md) to enforce LFE at the CI/CD and platform level.
 
 
@@ -56,14 +69,16 @@ Most solo developers and teams building with AI today rely on "execute-first" ch
 - **Standard AI**: Guesses business rules and math formulas based on scattered code context.
 - **The LFE Advantage**: **Logic Sovereignty**. The AI is strictly trained to treat `.docs/domain/domain-knowledge.md` as the supreme law. It will never guess a business rule; it will always look it up.
 
-| Feature | Standard AI Workflow | **LFE Protocol (V1.0)** |
+| Feature | Standard AI Workflow | **LFE Protocol (V2.0)** |
 | :--- | :--- | :--- |
 | **Autonomy** | Unrestricted (Cowboy Coding) | **Persona-Based Tool-Locking** |
-| **Planning** | Implicit ("Just do it") | **Mandatory `.plans/` Documentation** |
-| **Logic** | Scattered / Hallucinated | **Logic Centralization (Truth Home)** |
-| **Verification** | Self-Verified by AI | **Independent Inspector Audit** |
-| **Governance** | Code-First (Spaghetti Decay) | **Docs-as-Infrastructure** |
-| **Safety** | Trust-Based | **Zero-Trust (Break-Glass Override)** |
+| **Planning** | Implicit ("Just do it") | **Sub-Pipeline Skills with File-Based Coordination** |
+| **Logic** | Scattered / Hallucinated | **Logic Centralization + Domain Language (`CONTEXT.md`)** |
+| **Verification** | Self-Verified by AI | **Independent Inspector Audit (zoom-out → inspect → diagnose)** |
+| **Governance** | Code-First (Spaghetti Decay) | **Docs-as-Infrastructure + ADR Governance** |
+| **Safety** | Trust-Based | **Zero-Trust + Session Recovery via `.plans/`** |
+| **Quality** | Optional / Ad-hoc | **Mandatory TDD Pass (red-green-refactor)** |
+| **Maintenance** | Reactive | **Scheduled Architecture Sweeps (every 5 sessions)** |
 
 ---
 
@@ -80,19 +95,22 @@ Regardless of your tooling, the integrity of the codebase ultimately relies on t
 
 ---
 
-## 🏛️ The 4 Pillars of LFE
+## 🏛️ The 5 Pillars of LFE V2
 
 ### 1. The Library System
 A project is a library, not a dump. We enforce a three-layer hierarchy (**Entrance Card → Floor Map → Shelf Index**) to bound AI context and ensure agents find the truth in under 300 lines of orientation.
 
 ### 2. Persona Sovereignty
-We separate "Thinking" from "Doing." By orchestrating AI into distinct personas (**Architect → Builder → Inspector → Archivist**), we enforce a disciplined assembly line that prevents "cowboy coding."
+We separate "Thinking" from "Doing." By orchestrating AI into distinct personas (**Architect → Builder → Inspector → Archivist**), each running a defined **sub-pipeline of skills** in strict order, we enforce discipline that prevents "cowboy coding."
 
 ### 3. Logic Sovereignty
-Domain logic is sacred. LFE ensures all core business rules are centralized in designated modules. The AI is trained to respect these modules as the sole authority for the project's logic.
+Domain logic is sacred. LFE ensures all core business rules are centralized in designated modules. The AI is trained to use the canonical vocabulary from `CONTEXT.md` and respect domain documentation as the sole authority.
 
 ### 4. The Rolling Window
 Knowledge has a shelf life. LFE maintains a lean "Active Working Memory" for AI agents by moving stale history to archives, preventing context-drift and hallucination.
+
+### 5. File-Based Coordination (V2)
+Every pipeline step writes a physical coordination file to `.plans/`. The next step reads that file — not the conversation. This eliminates context window leakage, enables session crash recovery, and creates an audit trail.
 
 ---
 
@@ -105,7 +123,8 @@ Knowledge has a shelf life. LFE maintains a lean "Active Working Memory" for AI 
 ## 🛠️ Quick Start
 1. **Clone this structure** into your new project.
 2. **Onboard the AI**: The repository includes pre-configured rule files for popular AI IDEs (`.cursorrules`, `.windsurfrules`, `.clinerules`, `.antigravityrules`, and `.github/copilot-instructions.md`). Alternatively, use the **[System Prompt Adapter](file:///.agents/adapters/system_prompt.txt)** for standalone agents.
-3. **Run the Complexity Gate**: Ask your agent: *"I have adopted the LFE protocol. Run /lfe-boot to begin."*
+3. **Boot the Protocol**: Ask your agent: *"I have adopted the LFE protocol. Run /lfe-boot to begin."*
+4. **Navigate**: At any point, run `/lfe-whats-next` to see exactly where you are in the pipeline and what to do next.
 
 ---
 
@@ -124,7 +143,7 @@ The **Library-First Engineering (LFE) Protocol** is the original creation and in
 ---
 
 ## 📜 Credits & Attributions
-- **Utility Skills**: The core utility skills in the `.agents/skills` directory (*Grill-me, Diagnose, TDD, etc.*) were adapted from the open-source work of **[Matt Pocock](https://github.com/mattpocock/skills)**. We acknowledge his work in the agentic skills space.
+- **Utility Skills**: The core utility skills in the `.agents/skills` directory were inspired by and adapted from the open-source work of **[Matt Pocock](https://github.com/mattpocock/skills)** (`grill-with-docs`, `tdd`, `improve-codebase-architecture`, `zoom-out`). All skills have been reframed as LFE-native (`lfe-*`) with file-based coordination I/O, persona sub-pipeline positioning, and domain language governance.
 
 ---
 *Prevent Spaghetti. Build Rigor. The Library-First Way.*

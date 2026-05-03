@@ -1,9 +1,15 @@
 ---
 name: lfe-grill-me
-description: Interview the user relentlessly about a plan or design until reaching shared understanding.
+description: "[DEPRECATED] Use /lfe-grill-with-docs instead. Lightweight interview skill without documentation write-back."
 ---
 
 # LFE Grill Me
+
+> ⚠️ **DEPRECATED**: This skill has been superseded by `/lfe-grill-with-docs`, which does everything this skill does PLUS updates `CONTEXT.md` and ADRs inline during the session.
+>
+> Use `/lfe-grill-with-docs` for all Major Changes in the Architect sub-pipeline.
+>
+> This skill is preserved only for non-code brainstorming sessions where documentation write-back is not needed.
 
 ## Process
 1. **Interview**: Ask one question at a time.

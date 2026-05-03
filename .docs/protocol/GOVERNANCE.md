@@ -16,11 +16,27 @@
 - If the implementation in `src/` contradicts the documentation in `.docs/`, the code is considered "broken" or "drifting."
 - The agent must either fix the code to match the docs or escalate to the Architect to update the docs (following an ADR).
 
+## 📖 Domain Language Governance
+**`CONTEXT.md` is the canonical glossary.**
+- All agents must use the terms defined in `CONTEXT.md` when naming tests, writing code, or discussing architecture.
+- If a term is used that conflicts with `CONTEXT.md`, the agent must call it out and resolve the conflict before proceeding.
+- New terms are added to `CONTEXT.md` inline during `/lfe-grill-with-docs` sessions, following the format in `CONTEXT-FORMAT.md`.
+- Architectural decisions are recorded in `docs/adr/` following `ADR-FORMAT.md`. An ADR is only warranted when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
+
+## 📁 Coordination File Governance
+**`.plans/` is the transaction log. It is sacred.**
+- Every sub-pipeline step writes its output to a numbered file in `.plans/`.
+- The next step reads that file as its sole input — never the conversation.
+- Coordination files are created by their respective skills and deleted ONLY by the Archivist when the mission is complete.
+- **No agent may delete coordination files prematurely.** If files are found orphaned, the Hygiene audit will flag them.
+- `pipeline_status.md` tracks which coordination files exist and which steps are complete.
+
 ## 🧹 Contextual Hygiene
 To prevent "Spaghetti Decay" and context window bloat:
 1. **Shelf Indexes**: Every major folder must have a `README.md` or index at the top of its files to allow agents to "scout" without reading every file.
 2. **The Rolling Window**: Stale history in `CHANGELOG.md` or mission logs must be moved to `.docs/archive/` periodically.
 3. **Implicit Confidence**: No file should exist in the repository that is not indexed or referenced in the Library System.
+4. **Architecture Sweeps**: Scheduled every 5 sessions via session count in `pipeline_status.md`. Triggers `/lfe-hygiene` → `/lfe-improve-architecture`.
 
 ---
 
