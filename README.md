@@ -190,6 +190,21 @@ Both categories produce broken architecture by opposite paths. LFE supplies the 
 
 ---
 
+## Scaling LFE — adoption tiers
+
+LFE is fully operational from session one with zero install. Optional enhancements add platform-level enforcement as the project matures:
+
+| Tier | What you adopt | When |
+| :--- | :--- | :--- |
+| **0 — Solo** | Clone + `/lfe-boot`. No install, no config. Full pipeline enforced via skills + adapters. | Day 0 |
+| **1 — Team** | Add CI/CD (GitHub Actions) as a Cloud Inspector. Add PR templates with an LFE compliance checklist. | When collaborating |
+| **2 — Production** | Add `CODEOWNERS` for Logic Sovereignty paths. Add pre-commit hooks + secret scanning. | Before public release |
+
+> [!NOTE]
+> CI/CD and platform governance are **always optional**. LFE never mandates a specific toolchain. Adopt each tier only when it solves a real pain — see [`.docs/protocol/INDUSTRY_STANDARDS.md`](.docs/protocol/INDUSTRY_STANDARDS.md) for implementation references.
+
+---
+
 ## Known limitations
 
 LFE is honest about what it does *not* solve:
@@ -198,6 +213,14 @@ LFE is honest about what it does *not* solve:
 - **Non-text artifacts.** Designs, binary assets, and data files live outside the library and need their own discipline.
 - **Very small scripts in non-LFE repos.** For sub-100-line one-offs outside an LFE project, framework overhead exceeds its benefit. Inside an LFE repo, use `/lfe-scout` instead.
 - **Model capability floor.** Personas enforce structure, not competence. A weak model with LFE still ships weak code — just with better paperwork.
+
+---
+
+## Real-world reference implementation
+
+LFE is actively being applied to a production project. A public case study — demonstrating the full pipeline on a live codebase — is in progress and will be published in a follow up [Article on Medium](https://medium.com/@StChiotis).
+
+Until then: all 17 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
 
 ---
 
@@ -227,6 +250,6 @@ MIT — use it, remix it, apply it anywhere. Attribution appreciated, not requir
 
 <div align="center">
   <strong>Prevent spaghetti. Build rigor. The Library-First way.</strong><br>
-  <sub>⭐ Star the repo · 💬 Open a Discussion · 📝 <a href="https://medium.com/@st.chiotis94">Read the manifesto on Medium</a></sub>
+  <sub>⭐ Star the repo · 💬 Open a Discussion · 📝 Share the framework</sub>
 </div>
 

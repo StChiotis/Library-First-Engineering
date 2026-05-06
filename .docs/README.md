@@ -16,7 +16,7 @@
 |---|---|---|
 | Entrance card | [`pipeline_status.md`](../pipeline_status.md) | Current session state, active mission, coordination file tracker, session count. |
 | Agent Guide | [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md) | Core instructions for any AI entering this repo (V2: skill catalog, coordination table). |
-| Adapters | [`.cursorrules`](../.cursorrules), [`.windsurfrules`](../.windsurfrules), [`.clinerules`](../.clinerules), [`.antigravityrules`](../.antigravityrules) | IDE-specific protocol enforcement files. |
+| Adapters | [`.cursorrules`](../.cursorrules), [`.windsurfrules`](../.windsurfrules), [`.clinerules`](../.clinerules), [`.antigravityrules`](../.antigravityrules) | IDE-specific protocol enforcement files. A token-compact Cursor variant lives in [`.agents/adapters/cursor/.cursorrules`](../.agents/adapters/cursor/.cursorrules) for context-constrained environments. |
 | Copilot | [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) | GitHub Copilot adapter. |
 | System Prompt | [`.agents/adapters/system_prompt.txt`](../.agents/adapters/system_prompt.txt) | Raw LLM adapter (copy-paste for ChatGPT, Claude, etc.). |
 | Floor map | **this file** | Navigation index. |

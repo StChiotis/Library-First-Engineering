@@ -28,7 +28,7 @@ When resolving conflicts, use this priority order:
 1. **Legal & Compliance** – `.docs/legal/*`
 2. **Domain Logic & Math** – `.docs/domain/domain-knowledge.md`
 3. **Domain Language** – `CONTEXT.md`
-4. **Architecture Decisions** – `docs/adr/`
+4. **Architecture Decisions** – `.docs/architecture/architecture-decisions.md`
 5. **Architecture** – `.docs/architecture/architecture-decisions.md`
 6. **Code Implementation** – `src/**`
 7. **Planning** – `.plans/active_plan.md`

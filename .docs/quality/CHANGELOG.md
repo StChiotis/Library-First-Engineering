@@ -1,12 +1,17 @@
-# LFE Project Changelog
+# Project Changelog
 
-This project follows the **7-Milestone Rolling Window** rule. 
+This project follows the **7-Milestone Rolling Window** rule.
 Older milestones are moved to `.docs/archive/changelog-history.md` by the Archivist.
 
-## [V1.0.0] — Initial Release
+<!--
+Example entry (for LLM format guidance — delete this comment when your first milestone ships):
+
+## [v1.0.0] — YYYY-MM-DD
 ### Added
-- Agnostic Protocol Core (`.docs/protocol/`).
-- Library-First structural hierarchy.
-- Persona Tool-locking (Architect, Builder, Inspector, Archivist).
-- Complexity Gate & Emergency Override logic.
-- Mission Control Dashboard (`pipeline_status.md`).
+- [Feature or capability added this milestone]
+### Fixed
+- [Bug or regression fixed]
+### Changed
+- [Behaviour or interface that changed]
+-->
+
