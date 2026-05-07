@@ -24,7 +24,7 @@ Ensure the repository remains LFE-compliant. Detect drift between the Library an
 
 ### 2. Coordination Layer Audit
 - Check `.plans/` for orphaned coordination files:
-  - If mission is marked complete in `pipeline_status.md` but coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `tdd_report.md`, `inspection_report.md`) still exist → flag as "Stale Coordination Files"
+  - If mission is marked complete in `pipeline_status.md` but coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`) still exist → flag as "Stale Coordination Files"
   - If `active_plan.md` exists but Active Persona is NOT Architect or Builder → flag as "Orphaned Plan"
 - Verify the `Coordination Files` row in `pipeline_status.md` matches the actual files present in `.plans/`
 
@@ -43,6 +43,11 @@ Ensure the repository remains LFE-compliant. Detect drift between the Library an
 ### 5. Skills Audit
 - Verify every skill in `.agents/skills/` has a `SKILL.md` with YAML frontmatter (name + description).
 - Verify no skill references a deprecated skill (e.g., `lfe-grill-me` instead of `lfe-grill-with-docs`).
+- Verify `.agents/permissions.json` maps exactly to the roles defined in `.docs/protocol/PERSONAS.md` (no documentation drift in tool gateways).
+
+### 6. Scaling Audit
+- Verify there are no directories in `.docs/` with 3+ files missing a `README.md` Shelf Index.
+- Verify there are no files in `.docs/` exceeding ~6,000 characters.
 
 ## Output
 A "Hygiene Report" listing all structural violations categorized by severity:

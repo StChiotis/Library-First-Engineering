@@ -21,7 +21,7 @@
 - All agents must use the terms defined in `CONTEXT.md` when naming tests, writing code, or discussing architecture.
 - If a term is used that conflicts with `CONTEXT.md`, the agent must call it out and resolve the conflict before proceeding.
 - New terms are added to `CONTEXT.md` inline during `/lfe-grill-with-docs` sessions, following the format in `CONTEXT-FORMAT.md`.
-- Architectural decisions are recorded in `docs/adr/` following `ADR-FORMAT.md`. An ADR is only warranted when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
+- Architectural decisions are recorded in `.docs/architecture/` following `ADR-FORMAT.md`. An ADR is only warranted when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
 
 ## 📁 Coordination File Governance
 **`.plans/` is the transaction log. It is sacred.**
@@ -33,10 +33,11 @@
 
 ## 🧹 Contextual Hygiene
 To prevent "Spaghetti Decay" and context window bloat:
-1. **Shelf Indexes**: Every major folder must have a `README.md` or index at the top of its files to allow agents to "scout" without reading every file.
+1. **Shelf Indexes**: Every folder with 3 or more files must have a `README.md` index at the top of its files to allow agents to "scout" without reading every file.
 2. **The Rolling Window**: Stale history in `CHANGELOG.md` or mission logs must be moved to `.docs/archive/` periodically.
 3. **Implicit Confidence**: No file should exist in the repository that is not indexed or referenced in the Library System.
 4. **Architecture Sweeps**: Scheduled every 5 sessions via session count in `pipeline_status.md`. Triggers `/lfe-hygiene` → `/lfe-improve-architecture`.
+5. **Atomic Docs**: Any documentation file exceeding ~6,000 characters (~1,500 tokens) must be split into smaller atomic files to preserve context window economics. *(Exemption: Root-level orchestration files like `README.md` and `LLM_AGENT_GUIDE.md` are exempt from this rule to preserve cohesive onboarding).*
 
 ---
 

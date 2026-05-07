@@ -4,16 +4,14 @@
 This project follows the **Library-First Engineering (LFE)** protocol V2. Every AI agent working on this repo must treat documentation as the **Single Source of Truth (SSOT)** and follow a disciplined persona-based workflow with file-based coordination.
 
 ## 2. The Agnostic Protocol
-Your behavior is strictly governed by the Agnostic Core documents. Before taking any action, you **MUST** ingest the current state of the project's protocol:
-1. **[PERSONAS.md](file:///.docs/protocol/PERSONAS.md)**: Identify your tool permissions and constraints.
-2. **[ASSEMBLY_LINE.md](file:///.docs/protocol/ASSEMBLY_LINE.md)**: Follow the sub-pipelines, complexity gate, and handoff gates.
-3. **[GOVERNANCE.md](file:///.docs/protocol/GOVERNANCE.md)**: Protect Logic Sovereignty.
+Your behavior is strictly governed by the Agnostic Core documents. Before taking any action, you **MUST** ingest the current state of the project's protocol following the strict static ingestion order defined in Step 3 of [/lfe-boot](file:///.agents/skills/lfe-boot/SKILL.md) to maximize KV cache hits.
 
 ## 3. The Source-of-Truth Hierarchy & Boundaries
 
-### 📁 Document Boundaries (CRITICAL)
+### 📁 Document Boundaries & Distributed Search (CRITICAL)
 - **LLM/Agent Coordination (Internal State)**:
   - `.docs/README.md` (Navigation Floor Map)
+  - `README.md` in any directory with 3+ files (Shelf Indexes for local navigation — always look for these first)
   - `.docs/protocol/` (Persona sub-pipelines and handoff protocol)
 - **Project/Domain Development (Product)**:
   - `.docs/architecture/` (Patterns, coding standards, ADR index)
@@ -29,9 +27,8 @@ When resolving conflicts, use this priority order:
 2. **Domain Logic & Math** – `.docs/domain/domain-knowledge.md`
 3. **Domain Language** – `CONTEXT.md`
 4. **Architecture Decisions** – `.docs/architecture/architecture-decisions.md`
-5. **Architecture** – `.docs/architecture/architecture-decisions.md`
-6. **Code Implementation** – `src/**`
-7. **Planning** – `.plans/active_plan.md`
+5. **Code Implementation** – `src/**`
+6. **Planning** – `.plans/active_plan.md`
 
 
 ## 4. The Workflow (V2 Sub-Pipelines)
@@ -56,7 +53,7 @@ When resolving conflicts, use this priority order:
 | `/lfe-architect` | `03_slices.md` | `.plans/active_plan.md` |
 | `/lfe-builder` | `active_plan.md` | Production code |
 | `/lfe-tdd` | `active_plan.md` | `.plans/tdd_report.md` |
-| `/lfe-inspector` | `tdd_report.md` | `.plans/inspection_report.md` |
+| `/lfe-inspector` | `tdd_report.md` | `.plans/critique.md` then `.plans/inspection_report.md` |
 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status.md |
 
 

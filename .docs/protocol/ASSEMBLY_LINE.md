@@ -5,9 +5,15 @@ This document defines the lifecycle of a task within a Library-First Engineering
 ```mermaid
 graph TD
     Start([Session Start]) --> Boot[lfe-boot]
+    Start -. "Emergency" .-> Force[LFE-FORCE]
+    Force -.-> Patch[Direct Patch] -.-> LogDebt[Log Protocol Debt] -.-> End
+
     Boot --> Resume{Interrupted\nsession?}
     Resume -- "Yes" --> ResumePoint[Resume from\nlast step]
-    Resume -- "No" --> Gate{Complexity Gate}
+    Resume -- "No" --> DebtCheck{Protocol Debt?}
+    
+    DebtCheck -- "Yes" --> Block[Force Inspector/Archivist]
+    DebtCheck -- "No" --> Gate{Complexity Gate}
 
     Gate -- "Minor Fix" --> Scout[Scout Mode]
     Scout --> Archivist
@@ -42,8 +48,8 @@ graph TD
     subgraph archivist [Phase 4: Archivist Sub-Pipeline]
         Archive[Step 1: lfe-archivist]
         Archive --> SliceCheck{More slices?}
-        SliceCheck -- "Yes" --> Plan
-        SliceCheck -- "No" --> Cleanup[Cleanup .plans/]
+        SliceCheck -- "Yes" --> Partial[Partial Cleanup] --> Plan
+        SliceCheck -- "No" --> Cleanup[Full Cleanup .plans/]
     end
 
     Cleanup --> HygieneGate{Hygiene due?\n5+ sessions}
@@ -77,6 +83,7 @@ Every skill writes its output to a physical file. The next skill reads that file
 ├── 03_slices.md              ← Output of lfe-to-issues (reads 02)
 ├── active_plan.md            ← Output of lfe-architect for current slice (reads 03)
 ├── tdd_report.md             ← Output of lfe-tdd (reads active_plan)
+├── critique.md               ← Output of lfe-inspector (Devil's Advocate pass)
 └── inspection_report.md      ← Output of lfe-inspector (reads tdd_report)
 ```
 
@@ -128,7 +135,7 @@ Each step reads the previous step's coordination file.
 | Step | Skill | Input | Output |
 |---|---|---|---|
 | 1 | `/lfe-zoom-out` | Codebase | System context map |
-| 2 | `/lfe-inspector` | `tdd_report.md` | `.plans/inspection_report.md` |
+| 2 | `/lfe-inspector` | `tdd_report.md` | `.plans/critique.md` then `.plans/inspection_report.md` |
 | 3 | `/lfe-diagnose` (if failed) | Failing behavior | Fix → back to Builder |
 
 ## Phase 4: Archivist Sub-Pipeline

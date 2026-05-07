@@ -1,0 +1,54 @@
+{
+  "description": "Forward-Looking Standard: MCP-Ready Tool Gateways. When loaded by an MCP-compatible IDE, this file physically disables agent tools per persona.",
+  "personas": {
+    "architect": {
+      "allowed_tools": [
+        "view_file",
+        "list_dir",
+        "grep_search",
+        "read_url_content",
+        "write_to_file"
+      ],
+      "write_constraints": [".docs/**", ".plans/**", "CONTEXT.md"]
+    },
+    "builder": {
+      "allowed_tools": [
+        "view_file",
+        "list_dir",
+        "replace_file_content",
+        "multi_replace_file_content",
+        "write_to_file",
+        "run_command"
+      ],
+      "write_constraints": ["src/**", ".plans/**", "tests/**"]
+    },
+    "inspector": {
+      "allowed_tools": [
+        "view_file",
+        "list_dir",
+        "run_command",
+        "write_to_file"
+      ],
+      "write_constraints": [".plans/**", "tests/**"]
+    },
+    "archivist": {
+      "allowed_tools": [
+        "view_file",
+        "list_dir",
+        "replace_file_content",
+        "multi_replace_file_content",
+        "write_to_file"
+      ],
+      "write_constraints": [".docs/**", "pipeline_status.md", "README.md", "CHANGELOG.md", ".plans/**"]
+    },
+    "scout": {
+      "allowed_tools": [
+        "view_file",
+        "list_dir",
+        "replace_file_content"
+      ],
+      "write_constraints": ["**/*"],
+      "forbidden_actions": ["delete_file", "rename_file"]
+    }
+  }
+}

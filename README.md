@@ -100,10 +100,12 @@ When an AI agent (or a human teammate) opens an LFE repo, it asks the same **six
 5. **What am I forbidden from doing?** → the IDE rule files and governance.
 6. **How should I write what I write?** → the format contracts.
 
-**Two boundary rules** close the loop:
+**Two boundary rules, a scaling model, and strict mechanical loop closures** keep the system deterministic:
 
+- **Mechanical Loop Closures.** Every phase of the pipeline requires a physical file to be written to `.plans/` before control is passed. If a crash occurs, the system reads these files to resume exactly where it left off. For an exhaustive map of how the framework handles crashes, multi-slice pivots, and emergency overrides, see [`LOOP_ARCHITECTURE.md`](.docs/protocol/LOOP_ARCHITECTURE.md).
 - **Framework surface vs. product code.** The framework lives in `.docs/`, `.plans/`, `.agents/`, and a handful of root files. Everything else is product code. Agents must not mix the two.
 - **Memory has retention, not infinite scrollback.** Long-term memory lives in a **7-milestone rolling window** in `.docs/quality/CHANGELOG.md`. Short-term memory lives in `.plans/` and is wiped by the Archivist at end-of-mission. When an agent asks *"what shipped recently?"*, the answer is `CHANGELOG.md` — not chat history, not git log.
+- **Distributed Library Scaling.** To prevent context window bloat, knowledge scales across three tiers: **Tier 1** (Master Floor Map in `.docs/README.md`) → **Tier 2** (Shelf Indexes in folders with 3+ files) → **Tier 3** (Atomic Docs split at ~1,500 tokens).
 
 > [!TIP]
 > Every question your AI agents currently improvise the answer to has a single, file-backed source of truth in LFE.
@@ -172,6 +174,8 @@ Both categories produce broken architecture by opposite paths. LFE supplies the 
 ## Getting started
 
 > LFE is a framework, not a package. There is nothing to install. You adopt the pattern in your own repo.
+
+**👉 Start Here:** Read the [**LFE User Manual: The Human Guide**](USER_MANUAL.md) for a straightforward, end-to-end cheat sheet on how to drive this framework day-to-day.
 
 1. **Use this template** — click *Use this template* on the GitHub page, or:
 

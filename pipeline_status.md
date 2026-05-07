@@ -7,7 +7,7 @@
 | **Active Persona** | Architect |
 | **Active Mission** | Day 0 — Discovery and Domain Initialization |
 | **Pipeline Phase** | Ready |
-| **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  tdd ⬜  inspect ⬜ |
+| **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  tdd ⬜  critique ⬜  inspect ⬜ |
 | **Session Count** | 1 |
 | **Last Architecture Sweep** | Never (due in 4 sessions) |
 | **Engine Status** | [BLANK CANVAS] |

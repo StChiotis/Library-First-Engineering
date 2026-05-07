@@ -1,9 +1,5 @@
 # LFE Boilerplate — Git Ignore
 
-# --- Personal Strategy & Private Files (Founder Only) ---
-STELIOS/
-STELIOS/**/*
-
 # --- OS & IDE ---
 .DS_Store
 Thumbs.db

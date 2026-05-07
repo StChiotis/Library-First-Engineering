@@ -17,7 +17,7 @@ Read `pipeline_status.md`. Extract and hold:
 - **Session Count** (For hygiene scheduling)
 
 ### Step 2 — Check for Interrupted Session or State Anomaly
-Scan `.plans/` for coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `tdd_report.md`, `inspection_report.md`).
+Scan `.plans/` for coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`).
 
 - **Scenario A: Normal Interrupted Session**
   If files exist in `.plans/` and the entrance card state indicates the mission is in progress:
@@ -35,11 +35,13 @@ Scan `.plans/` for coordination files (`01_grill_summary.md`, `02_prd.md`, `03_s
 
 
 
-### Step 3 — Read the Agnostic Core
-Read the protocol definitions in:
-1. `.docs/protocol/PERSONAS.md` (Verify your permissions)
-2. `.docs/protocol/ASSEMBLY_LINE.md` (Verify the current stage)
-3. `.docs/protocol/GOVERNANCE.md` (Confirm Logic Sovereignty)
+### Step 3 — Read the Agnostic Core (Strict Ingestion Order)
+To maximize KV cache hits, read these static protocol definitions in this EXACT order:
+1. `LLM_AGENT_GUIDE.md` (Core workflow)
+2. `.docs/protocol/PERSONAS.md` (Verify your permissions)
+3. `.docs/protocol/ASSEMBLY_LINE.md` (Verify the current stage)
+4. `.docs/protocol/GOVERNANCE.md` (Confirm Logic Sovereignty)
+5. `CONTEXT.md` (Canonical glossary)
 
 ### Step 4 — Check for Blank Canvas (Day 0)
 Inspect the `Engine Status` from the entrance card (`pipeline_status.md`).
@@ -47,11 +49,17 @@ Inspect the `Engine Status` from the entrance card (`pipeline_status.md`).
 - **If not**: Proceed to Step 5.
 
 
-### Step 5 — Complexity Gate
+### Step 5 — Check for Protocol Debt
+Read `.docs/quality/PROTOCOL_DEBT.md`.
+- **If there are unresolved entries**: You MUST intercept the user's request and refuse to start a new mission. State:
+  > *"⚠️ Protocol Debt detected from a previous LFE-FORCE emergency. You must resolve this debt before starting new work. Please run an Inspector/Archivist mission to document the hotfix."*
+- **If the log is empty or all entries are resolved**: Proceed to Step 6.
+
+### Step 6 — Complexity Gate
 Ask the user:
 > *"Is this a **Major Architectural Change** (Full Pipeline) or a **Minor Fix** (Scout Mode)?"*
 
-### Step 6 — Report State
+### Step 7 — Report State
 Output a single, concise block:
 
 ```

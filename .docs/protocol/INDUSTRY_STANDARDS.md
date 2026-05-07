@@ -49,3 +49,10 @@ AI agents can occasionally hallucinate or copy-paste sensitive credentials (API 
 - **Reference Standard**: GitHub Advanced Security, TruffleHog, or GitLeaks.
 - **Implementation**: Enable repository-level secret scanning or include a scanning job in your CI pipeline.
 - **LFE Benefit**: Adds a crucial safety net during the Builder phase.
+
+## 6. MCP-Ready Tool Gateways (Physical Tool-Locking)
+
+The default LFE protocol relies on "prompt discipline." However, as AI agents become more autonomous, they may occasionally disobey prompt instructions.
+- **Reference Standard**: Model Context Protocol (MCP).
+- **Implementation**: LFE ships with a forward-looking manifest located at `.agents/permissions.json`. You can map an MCP server, a custom agent wrapper, or a CI/CD GitHub Action directly to this file. It instructs the environment to physically disable certain tools per persona (e.g., revoking `write_to_file` access to `src/` whenever the Architect is active).
+- **LFE Benefit**: Upgrades LFE from an "Honor System" to "Cryptographically Locked" enforcement without requiring you to restructure the repository.

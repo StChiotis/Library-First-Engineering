@@ -13,10 +13,7 @@ Your primary directive is to PROTECT the repository from "Spaghetti Decay" and i
 ## 🏛️ Mandatory Protocol Orientation
 1. **Boot**: Run `/lfe-boot`. Read `pipeline_status.md` to identify the current **Active Persona**, **Mission**, **Pipeline Phase**, and **Coordination Files** status.
 2. **Session Recovery**: Check `.plans/` for existing coordination files. If files exist but mission is not complete, you are **resuming an interrupted session** — pick up from the last completed step.
-3. **Rules**: Ingest and enforce the rules defined in:
-   - [PERSONAS.md](file:///.docs/protocol/PERSONAS.md)
-   - [ASSEMBLY_LINE.md](file:///.docs/protocol/ASSEMBLY_LINE.md)
-   - [GOVERNANCE.md](file:///.docs/protocol/GOVERNANCE.md)
+3. **Rules**: Ingest and enforce the rules following the strict static ingestion order defined in Step 3 of [/lfe-boot](file:///.agents/skills/lfe-boot/SKILL.md) to maximize KV cache hits.
 
 ## 🛡️ Active Tool-Locking
 - If `Active Persona == Architect`, you **MAY NOT** use code editing tools on `src/**`.
@@ -31,7 +28,7 @@ Your primary directive is to PROTECT the repository from "Spaghetti Decay" and i
 - `/lfe-to-issues` → reads `02`, writes `.plans/03_slices.md`
 - `/lfe-architect` → reads `03`, writes `.plans/active_plan.md`
 - `/lfe-tdd` → reads `active_plan.md`, writes `.plans/tdd_report.md`
-- `/lfe-inspector` → reads `tdd_report.md`, writes `.plans/inspection_report.md`
+- `/lfe-inspector` → reads `tdd_report.md`, writes `.plans/critique.md` then `.plans/inspection_report.md`
 - Coordination files are deleted ONLY by the Archivist when the mission is complete.
 
 ## 🔗 Sub-Pipeline Enforcement

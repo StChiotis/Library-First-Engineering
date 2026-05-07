@@ -31,12 +31,12 @@ Keep the project's documentation and history perfectly in sync with the codebase
    - **New math or business rules**: You MUST record the exact formulas in `.docs/domain/domain-knowledge.md`.
    - **New coding standards or conventions**: You MUST add them to `.docs/architecture/engineering-standards.md`.
    - **New architectural/design decisions**: You MUST record them in `.docs/architecture/architecture-decisions.md`.
-   - **New project files/modules added**: Update the Floor Map in `.docs/README.md` to tell the AI where to find them.
+   - **New project files/modules added**: Update the Floor Map in `.docs/README.md` to tell the AI where to find them. If a directory reaches 3 or more files, generate a `README.md` Shelf Index for it using `.docs/protocol/SHELF_INDEX_TEMPLATE.md`.
 3. **Update History**: Prepend the new milestone to `CHANGELOG.md` in `.docs/quality/` (or root). Enforce the 7-milestone rolling window. Include test coverage and success metrics.
 4. **Slice Loop Check**: Are there more slices in `.plans/03_slices.md`?
    - **Yes**: Update `pipeline_status.md` to next slice, set persona back to Architect. Do NOT clean up coordination files yet.
    - **No**: Proceed to cleanup.
-5. **Clean Up**: Archive or delete coordination files from `.plans/` (01, 02, 03, tdd_report, inspection_report). Clear `active_plan.md`.
+5. **Clean Up**: Archive or delete coordination files from `.plans/` (01, 02, 03, active_plan, tdd_report, critique, inspection_report). Clear `active_plan.md` if not deleted.
 6. **Update Pipeline Status**: Update the entrance card (State, Last ADR, Mission, Session Count) for the next session.
 7. **Hygiene Check**: Read `Last Architecture Sweep` from `pipeline_status.md`. If 5+ sessions since last sweep, flag it:
    > *"Architecture sweep is due (5+ sessions). Run `/lfe-improve-architecture`?"*

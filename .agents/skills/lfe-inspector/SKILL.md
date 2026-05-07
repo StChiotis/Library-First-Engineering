@@ -10,7 +10,7 @@ Verify that the implementation matches the domain truth and numerical baselines.
 
 ## Sub-Pipeline (execute in this order)
 1. `/lfe-zoom-out` → Orient on unfamiliar modules before verifying
-2. `/lfe-inspector` (this skill) → Verify against domain truth → writes `.plans/inspection_report.md`
+2. `/lfe-inspector` (this skill) → Write `.plans/critique.md` (Devil's Advocate pass) → then write `.plans/inspection_report.md`
 3. `/lfe-diagnose` → (conditional) If verification fails, enter diagnosis loop
 
 ## Toolbox
@@ -29,7 +29,8 @@ Verify that the implementation matches the domain truth and numerical baselines.
 3. **Verify Baselines**: Check current outputs against `validation-baselines.md` or equivalent snapshots.
 4. **Verify TDD Report**: Read `.plans/tdd_report.md` and confirm test coverage matches the plan's requirements.
 5. **Instrument**: If behavior is suspicious, use `/lfe-diagnose` to build a repro loop and identify root cause.
-6. **Write Report**: Save verification results to `.plans/inspection_report.md`:
+6. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation. Look for edge cases, performance regressions, or undocumented technical debt.
+7. **Write Report**: Save verification results to `.plans/inspection_report.md`:
 
 ```yaml
 ---
@@ -54,7 +55,7 @@ source: .plans/tdd_report.md
 - Proceed to Archivist / Send back to Builder
 ```
 
-7. **Handoff**: Once verification passes, ask for human finalization. Upon approval, signal transition to **Archivist**. Update `pipeline_status.md`.
+8. **Handoff**: Once verification passes, ask for human finalization. Upon approval, signal transition to **Archivist**. Update `pipeline_status.md`.
 
 ## Checklist
 - [ ] Matches domain documentation?

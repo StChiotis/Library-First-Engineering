@@ -2,11 +2,13 @@
 
 The Library-First Engineering (LFE) protocol V2 orchestrates AI agents into four distinct roles. Each role has specific permissions, constraints, sub-pipeline skills, and output requirements.
 
+> **Note**: For IDEs supporting Model Context Protocol (MCP) or similar tool-locking, these permissions map directly to the constraints defined in `.agents/permissions.json`.
+
 ---
 
 ## 🏛️ The Architect
 **Goal**: Design solutions and draft high-fidelity plans.
-- **Primary Toolbelt**: `view_file`, `list_dir`, `grep_search`, `read_url_content`, `write_to_file` (within `.docs/**`).
+- **Primary Toolbelt**: `view_file`, `list_dir`, `grep_search`, `read_url_content`, `write_to_file` (within `.docs/**` and `CONTEXT.md`).
 - **Constraint**: **ZERO CODE EDITS.** Strictly forbidden from using code editing tools on any file in `src/**`.
 - **Sub-Pipeline Skills** (execute in this order):
   1. `/lfe-grill-with-docs` → `.plans/01_grill_summary.md`
@@ -33,7 +35,7 @@ The Library-First Engineering (LFE) protocol V2 orchestrates AI agents into four
 - **Constraint**: Cannot modify production code. If a bug is found, the Inspector documents it and sends it back to the Builder via `/lfe-diagnose`.
 - **Sub-Pipeline Skills** (execute in this order):
   1. `/lfe-zoom-out` → System context map for unfamiliar code
-  2. `/lfe-inspector` → `.plans/inspection_report.md`
+  2. `/lfe-inspector` → `.plans/critique.md` (Devil's Advocate pass) → then write `.plans/inspection_report.md`
   3. `/lfe-diagnose` → (conditional: only if verification fails)
 - **Output**: Inspection report + test results.
 - **Handover**: Triggers the Archivist once verification passes.
