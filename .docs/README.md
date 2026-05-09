@@ -24,7 +24,7 @@
 | Floor map | **this file** | Navigation index. |
 | Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 16 LFE persona skills (sub-pipeline architecture). |
 | Domain Language | [`CONTEXT.md`](../CONTEXT.md) (root) | Canonical glossary — all agents must use these terms. |
-| Framework Roadmap | [`LFE-ROADMAP.md`](../LFE-ROADMAP.md) (root) | Planned improvements for the LFE framework. |
+| Framework Roadmap | [GitHub Issues](https://github.com/StChiotis/Library-First-Engineering/issues) | Planned improvements for the LFE framework (tracked as Issues). |
 | Project Roadmap | [`.docs/strategy/roadmap.md`](./strategy/roadmap.md) | What is the planned evolution of the product? |
 | Architecture Decisions | [`.docs/architecture/`](./architecture/) | Architectural Decision Records. |
 | Coordination | [`.plans/`](../.plans/) | Transaction log for pipeline steps (see below). |
