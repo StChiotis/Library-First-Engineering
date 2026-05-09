@@ -1,17 +1,15 @@
-# LFE Assembly Line — Workflow Protocol V2
+# LFE Assembly Line — Workflow Protocol
 
 This document defines the lifecycle of a task within a Library-First Engineering (LFE) repository.
 
 ```mermaid
 graph TD
     Start([Session Start]) --> Boot[lfe-boot]
-    Start -. "Emergency" .-> Force[LFE-FORCE]
-    Force -.-> Patch[Direct Patch] -.-> LogDebt[Log Protocol Debt] -.-> End
 
-    Boot --> Resume{Interrupted\nsession?}
-    Resume -- "Yes" --> ResumePoint[Resume from\nlast step]
+    Boot --> Resume{Interrupted<br>session?}
+    Resume -- "Yes" --> ResumePoint[Resume from<br>last step]
     Resume -- "No" --> DebtCheck{Protocol Debt?}
-    
+
     DebtCheck -- "Yes" --> Block[Force Inspector/Archivist]
     DebtCheck -- "No" --> Gate{Complexity Gate}
 
@@ -22,12 +20,12 @@ graph TD
     subgraph architect [Phase 1: Architect Sub-Pipeline]
         Grill[Step 1: lfe-grill-with-docs] --> PRD[Step 2: lfe-to-prd]
         PRD --> Issues[Step 3: lfe-to-issues]
-        Issues --> SliceApprove{Human approves\nslices?}
+        Issues --> SliceApprove{Human approves<br>slices?}
         SliceApprove -- "No" --> Issues
         SliceApprove -- "Yes" --> Plan[Step 4: lfe-architect]
     end
 
-    Plan --> PlanApprove{Human approves\nplan?}
+    Plan --> PlanApprove{Human approves<br>plan?}
     PlanApprove -- "No" --> Plan
     PlanApprove -- "Yes" --> Build
 
@@ -52,7 +50,7 @@ graph TD
         SliceCheck -- "No" --> Cleanup[Full Cleanup .plans/]
     end
 
-    Cleanup --> HygieneGate{Hygiene due?\n5+ sessions}
+    Cleanup --> HygieneGate{Hygiene due?<br>5+ sessions}
     HygieneGate -- "Not due" --> End
     HygieneGate -- "Due" --> Hygiene
 
@@ -62,10 +60,11 @@ graph TD
 
     ArchImprove --> End
 
-    Start -- "Emergency" --> Force{LFE-FORCE}
-    Force --> Patch[Direct Patch]
-    Patch --> LogDebt[Log Protocol Debt]
-    LogDebt --> NextSession[Next Session: Resolution]
+    subgraph forcelane ["Manual override — bypass at any phase"]
+        Force[LFE-FORCE] --> Patch[Direct Patch]
+        Patch --> LogDebt[Log Protocol Debt]
+        LogDebt --> NextSession[Next Session: Resolution]
+    end
 
     End([Session End])
 ```

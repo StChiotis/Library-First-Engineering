@@ -3,14 +3,13 @@
 | Category | Status / Value |
 | :--- | :--- |
 | **Integrity Score** | 🟢 [Integrity: 100%] |
-| **State** | [READY TO DEPLOY NEW PROJECT] |
+| **Mission State** | [BLANK CANVAS] |
 | **Active Persona** | Architect |
 | **Active Mission** | Day 0 — Discovery and Domain Initialization |
 | **Pipeline Phase** | Ready |
 | **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  tdd ⬜  critique ⬜  inspect ⬜ |
 | **Session Count** | 1 |
 | **Last Architecture Sweep** | Never (due in 4 sessions) |
-| **Engine Status** | [BLANK CANVAS] |
 
 ---
 
@@ -34,4 +33,3 @@
 - **Domain Glossary**: [CONTEXT.md](file:///CONTEXT.md)
 - **Glossary Extension**: [.docs/domain/glossary.md](file:///.docs/domain/glossary.md)
 - **What's Next**: Run `/lfe-whats-next` for instant orientation
-

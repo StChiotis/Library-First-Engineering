@@ -33,6 +33,9 @@ When domain relationships are being discussed, stress-test them with specific sc
 ### Cross-reference with code
 When the human states how something works, check whether the code agrees. If contradiction found, surface it: *"Your code cancels entire Orders, but you just said partial cancellation is possible — which is right?"*
 
+### Cross-context check (if applicable)
+Before declaring any term, check whether `.docs/domain/CONTEXT-MAP.md` exists. If it does, verify whether the term is already declared in another context. If yes, prompt the Brain for the relationship classification (shared kernel / customer-supplier / translation / separate ways) and record the decision in CONTEXT-MAP.md.
+
 ### Update CONTEXT.md and Domain Rules Inline
 When a new domain term or math/business rule is resolved, you MUST update the project's development documents IMMEDIATELY:
 - **Canonical Terms**: Append directly to `CONTEXT.md` (root) and `.docs/domain/glossary.md` right there. Don't batch — capture as they happen. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).

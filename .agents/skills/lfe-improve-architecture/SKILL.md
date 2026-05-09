@@ -17,8 +17,8 @@ Use these terms exactly — don't substitute "component," "service," "API," or "
 - **Module** — anything with an interface and an implementation
 - **Interface** — everything a caller must know to use the module
 - **Implementation** — the code inside
-- **Depth** — leverage at the interface: a lot of behaviour behind a small interface
-- **Seam** — where an interface lives; a place behaviour can be altered without editing in place
+- **Depth** — leverage at the interface: a lot of behavior behind a small interface
+- **Seam** — where an interface lives; a place behavior can be altered without editing in place
 - **Adapter** — a concrete thing satisfying an interface at a seam
 - **Leverage** — what callers get from depth
 - **Locality** — what maintainers get from depth

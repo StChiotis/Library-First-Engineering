@@ -1,7 +1,7 @@
 ---
 name: lfe-zoom-out
 description: Give a high-level system map when encountering unfamiliar code. Use in the Inspector sub-pipeline as Step 1 before verification.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # LFE Zoom Out
