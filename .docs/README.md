@@ -54,7 +54,8 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 |---|---|
 | [`ASSEMBLY_LINE.md`](./protocol/ASSEMBLY_LINE.md) | How do agents hand off work? (sub-pipelines + coordination layer) |
 | [`GOVERNANCE.md`](./protocol/GOVERNANCE.md) | What are the rules for Logic Sovereignty, Domain Language, and coordination files? |
-| [`PERSONAS.md`](./protocol/PERSONAS.md) | What are the constraints, tools, and sub-pipeline skills for each AI role? |
+| [`PERSONAS.md`](./protocol/PERSONAS.md) | Persona index — links to individual contracts. |
+| [`personas/`](./protocol/personas/README.md) | Individual persona contracts (one file per role). |
 | [`INDUSTRY_STANDARDS.md`](./protocol/INDUSTRY_STANDARDS.md) | What optional CI/CD enhancements are available? |
 | [`LOOP_ARCHITECTURE.md`](./protocol/LOOP_ARCHITECTURE.md) | How does the framework mechanically handle loops, crashes, and overrides? |
 | [`SHELF_INDEX_TEMPLATE.md`](./protocol/SHELF_INDEX_TEMPLATE.md) | Standardized template for local directory indexes |
