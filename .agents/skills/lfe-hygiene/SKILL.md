@@ -12,7 +12,7 @@ description: Conduct a structural audit of the repository to detect "Documentati
 - **Next Step**: `/lfe-improve-architecture` (Step 2)
 
 ## Mission
-Ensure the repository remains LFE-compliant. Detect drift between the Library and the physical filesystem, and verify the V2 coordination layer is clean.
+Ensure the repository remains LFE-compliant. Detect drift between the Library and the physical filesystem, and verify the coordination layer is clean.
 
 ## Workflow
 
@@ -42,12 +42,20 @@ Ensure the repository remains LFE-compliant. Detect drift between the Library an
 
 ### 5. Skills Audit
 - Verify every skill in `.agents/skills/` has a `SKILL.md` with YAML frontmatter (name + description).
-- Verify no skill references a deprecated skill (e.g., `lfe-grill-me` instead of `lfe-grill-with-docs`).
+- Verify no skill references a deprecated skill.
 - Verify `.agents/permissions.json` maps exactly to the roles defined in `.docs/protocol/PERSONAS.md` (no documentation drift in tool gateways).
 
 ### 6. Scaling Audit
 - Verify there are no directories in `.docs/` with 3+ files missing a `README.md` Shelf Index.
 - Verify there are no files in `.docs/` exceeding ~6,000 characters.
+
+### 7. Retention Check
+Walk the Retention Policy table in `.docs/protocol/GOVERNANCE.md`. For each row:
+- Identify aged-out entries in the hot file per its retention rule.
+- Move those entries to the corresponding cold file in `.docs/archive/`, preserving their full content and adding a row to the cold file's index table.
+- Update the hot file's Cold Tier Pointer (`Last archive sweep: session N`) to the current session.
+- If a hot file is missing its Cold Tier Pointer, or a cold file is missing its Hot Tier Pointer + Index, flag it as a violation.
+- Honor any project overrides declared in `LLM_AGENT_GUIDE.md` under `## Retention Policy Overrides`.
 
 ## Output
 A "Hygiene Report" listing all structural violations categorized by severity:

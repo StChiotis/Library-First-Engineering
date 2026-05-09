@@ -21,7 +21,7 @@
 - All agents must use the terms defined in `CONTEXT.md` when naming tests, writing code, or discussing architecture.
 - If a term is used that conflicts with `CONTEXT.md`, the agent must call it out and resolve the conflict before proceeding.
 - New terms are added to `CONTEXT.md` inline during `/lfe-grill-with-docs` sessions, following the format in `CONTEXT-FORMAT.md`.
-- Architectural decisions are recorded in `.docs/architecture/` following `ADR-FORMAT.md`. An ADR is only warranted when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
+- Architectural decisions are recorded as numbered sections inside the single canonical file `.docs/architecture/architecture-decisions.md`, following `ADR-FORMAT.md`. An ADR is only warranted when a decision is hard to reverse, surprising without context, and the result of a real trade-off.
 
 ## 📁 Coordination File Governance
 **`.plans/` is the transaction log. It is sacred.**
@@ -38,6 +38,34 @@ To prevent "Spaghetti Decay" and context window bloat:
 3. **Implicit Confidence**: No file should exist in the repository that is not indexed or referenced in the Library System.
 4. **Architecture Sweeps**: Scheduled every 5 sessions via session count in `pipeline_status.md`. Triggers `/lfe-hygiene` → `/lfe-improve-architecture`.
 5. **Atomic Docs**: Any documentation file exceeding ~6,000 characters (~1,500 tokens) must be split into smaller atomic files to preserve context window economics. *(Exemption: Root-level orchestration files like `README.md` and `LLM_AGENT_GUIDE.md` are exempt from this rule to preserve cohesive onboarding).*
+
+---
+
+## 📦 Retention Policy
+
+Sessions are the unit of time across LFE — not calendar months. Each retention-managed file has a **hot tier** (active, current) and a **cold tier** (archive). The Hygiene sweep (every 5 sessions) walks this table and moves aged-out entries from hot to cold.
+
+| Document | Hot retention | Cold home | Archive trigger |
+|---|---|---|---|
+| `.docs/quality/CHANGELOG.md` | 7 most recent milestones *(existing rule)* | `.docs/archive/changelog-history.md` | When 8th milestone ships |
+| `.docs/architecture/architecture-decisions.md` | All `accepted` / `proposed` ADRs + last 15 sessions of `superseded` / `deprecated` | `.docs/archive/architecture-decisions-history.md` | At hygiene sweep (every 5 sessions) |
+| `.docs/quality/token-budget.md` *(created in Sprint 3)* | 15 most recent sessions | `.docs/archive/token-budget-history.md` | At hygiene sweep |
+| `.docs/quality/PROTOCOL_DEBT.md` | All `open` entries; `resolved` kept 1 hygiene cycle then archived | `.docs/archive/protocol-debt-history.md` | At hygiene sweep |
+| `.docs/quality/known-issues.md` | All `open`; `resolved` / `won't-fix` kept 1 hygiene cycle then archived | `.docs/archive/known-issues-history.md` | At hygiene sweep |
+| `.plans/` *(coordination)* | Until mission complete; archivist clears at end-of-mission | N/A | At end-of-mission |
+
+### Index discipline (mandatory)
+- **Every hot file ends with a Cold Tier Pointer** in this exact form:
+  > `**Archive:** Older entries are in [archive/<filename>-history.md](../archive/<filename>-history.md). Last archive sweep: session N.`
+- **Every cold file starts with a Hot Tier Pointer plus an Index table.** The pointer names the active hot file and the trigger; the index table lists every archived entry with the session it was archived in.
+
+### Project tunability
+The numeric values in this table (15, 7, 5) are framework defaults. Projects override them in their own `LLM_AGENT_GUIDE.md` under a `## Retention Policy Overrides` section. The framework respects explicit overrides; it does not respect implicit ones.
+
+---
+
+## 🫵 The Brain Persona
+The Brain Persona is bound by the contract in [PERSONAS.md](PERSONAS.md), including its Definition of Done.
 
 ---
 

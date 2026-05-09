@@ -1,7 +1,9 @@
-# LLM Agent Guide — Library-First Engineering (LFE) V2
+# LLM Agent Guide — Library-First Engineering (LFE)
+
+> **Canonical agent-rules source.** This is the single source of truth for AI-agent behavior in an LFE repository. The IDE adapters at the repo root (`.cursorrules`, `.windsurfrules`, `.clinerules`, `.antigravityrules`, `.github/copilot-instructions.md`) and `.agents/adapters/system_prompt.txt` are pointer stubs that reference this file — do not edit them to change agent behavior; edit *here*. Projects may declare overrides in dedicated sections (`## Brain Persona Overrides`, `## Retention Policy Overrides`, etc.); the framework respects explicit overrides only.
 
 ## 1. Mission & Scope
-This project follows the **Library-First Engineering (LFE)** protocol V2. Every AI agent working on this repo must treat documentation as the **Single Source of Truth (SSOT)** and follow a disciplined persona-based workflow with file-based coordination.
+This project follows the **Library-First Engineering (LFE)** protocol. Every AI agent working on this repo must treat documentation as the **Single Source of Truth (SSOT)** and follow a disciplined persona-based workflow with file-based coordination.
 
 ## 2. The Agnostic Protocol
 Your behavior is strictly governed by the Agnostic Core documents. Before taking any action, you **MUST** ingest the current state of the project's protocol following the strict static ingestion order defined in Step 3 of [/lfe-boot](file:///.agents/skills/lfe-boot/SKILL.md) to maximize KV cache hits.
@@ -14,12 +16,12 @@ Your behavior is strictly governed by the Agnostic Core documents. Before taking
   - `README.md` in any directory with 3+ files (Shelf Indexes for local navigation — always look for these first)
   - `.docs/protocol/` (Persona sub-pipelines and handoff protocol)
 - **Project/Domain Development (Product)**:
-  - `.docs/architecture/` (Patterns, coding standards, ADR index)
+  - `.docs/architecture/` (Patterns, coding standards; ADRs live as numbered sections in the single canonical [`architecture-decisions.md`](.docs/architecture/architecture-decisions.md))
   - `.docs/domain/` (Math and business rules SSOT)
-  - `.docs/quality/` (CHANGELOG, known issues, protocol debt)
+  - `.docs/quality/` (CHANGELOG, known issues, protocol debt; retention rules for these files are defined in the Retention Policy section of [`GOVERNANCE.md`](.docs/protocol/GOVERNANCE.md))
   - `.docs/strategy/` (Roadmaps and goals)
   - `.docs/legal/` (Compliance)
-  - `.docs/archive/` (Historical records)
+  - `.docs/archive/` (Cold-tier home for retention-managed files; populated by the Hygiene sweep)
 
 ### 🔝 Conflict Resolution Hierarchy
 When resolving conflicts, use this priority order:
@@ -31,7 +33,16 @@ When resolving conflicts, use this priority order:
 6. **Planning** – `.plans/active_plan.md`
 
 
-## 4. The Workflow (V2 Sub-Pipelines)
+## 3.5 Multi-Context Handling
+
+If `.docs/domain/CONTEXT-MAP.md` exists in your project:
+1. Read CONTEXT-MAP.md before declaring any glossary term.
+2. When a candidate term already exists in another context, prompt the Brain to classify the relationship: **shared kernel** (same meaning), **customer/supplier** (one upstream, other downstream), **translation** (concept maps but term differs), or **separate ways** (term collision, distinct concepts).
+3. Record the classification in CONTEXT-MAP.md inline. ADR if hard to reverse.
+
+If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.md` exclusively.
+
+## 4. The Workflow (Sub-Pipelines)
 1. **Orientation**: Run `/lfe-boot` to read `pipeline_status.md`, check for interrupted sessions, and load the Protocol.
 2. **Complexity Gate**: Ask the human: *"Is this a Major Architectural Change or a Minor Fix?"*
 3. **Execution**: Follow the persona sub-pipelines in strict order:
@@ -74,7 +85,17 @@ To preserve the context window, all AI agents are instructed via their system ad
   - *Compliance*: Use `.plans/` for coordination files and transient analysis. Use `.docs/` ONLY for permanent, verified project knowledge.
 - **Exception (The Grill Phase)**: During the Architect's planning phase (or when using `/lfe-grill-with-docs`), the agent MUST ask necessary probing questions. Even then, questions must be direct and strictly focused on resolving design dependencies.
 
-## 9. Available Skills (17)
+## 8.6 The Brain Persona
+
+The human reviewer is a first-class persona — 🫵 **The Brain — You**. The Brain is not an implicit reviewer; the framework defines a contract and Definition of Done for them, identical in shape to the AI personas. See [`PERSONAS.md`](.docs/protocol/PERSONAS.md) for the full contract (universal-at-every-gate invariants, per-gate acceptance criteria, mission-level DoD).
+
+Project-specific overrides go under `## Brain Persona Overrides` in this file. Framework respects explicit overrides only — never implicit ones.
+
+## 8.7 Token Budget Self-Reporting
+
+The Archivist appends session token costs to `.docs/quality/token-budget.md` at end-of-mission. The agent should self-report rough per-phase token costs (e.g., from chat-metadata estimates) so the framework can detect drift over time. Phases that exceed +50% over their rolling average get flagged into the next session's `pipeline_status.md`.
+
+## 9. Available Skills (16)
 | Skill | Phase | Purpose |
 |---|---|---|
 | `/lfe-boot` | 0 | Session bootstrap and recovery |
@@ -93,4 +114,3 @@ To preserve the context window, all AI agents are instructed via their system ad
 | `/lfe-improve-architecture` | 5.2 | Deep module extraction |
 | `/lfe-extract-domain` | Any | Domain knowledge rescue |
 | `/lfe-whats-next` | Any | Pipeline navigation |
-| `/lfe-grill-me` | — | ⚠️ DEPRECATED — use `/lfe-grill-with-docs` |

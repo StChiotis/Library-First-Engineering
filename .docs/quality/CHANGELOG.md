@@ -12,6 +12,11 @@ Example entry (for LLM format guidance — delete this comment when your first m
 ### Fixed
 - [Bug or regression fixed]
 ### Changed
-- [Behaviour or interface that changed]
+- [Behavior or interface that changed]
 -->
 
+_(No milestones shipped yet.)_
+
+---
+
+**Archive:** Older entries are in [archive/changelog-history.md](../archive/changelog-history.md). Last archive sweep: session 0.

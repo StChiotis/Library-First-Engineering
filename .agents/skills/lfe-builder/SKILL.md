@@ -19,7 +19,7 @@ Execute the approved plan in `.plans/active_plan.md` into production-ready code.
 1. **Plan Adherence**: Do not implement features not defined in the active plan.
 2. **Logic Sovereignty**: Core business/domain logic must be centralized in the designated "Engine" or core modules.
 3. **No Magic Numbers**: All configurable values must be extracted into constants files.
-4. **MVC-Lite**: Keep UI/DOM logic separate from core domain logic.
+4. **Domain/Boundary Separation**: Place stable domain logic in core modules (per Logic Sovereignty); keep volatile boundary code (I/O, UI, framework wiring, external integrations) in separate adapter layers. The project's `engineering-standards.md` defines what "core" and "boundary" mean for this project type.
 5. **File-Based Input**: Read `active_plan.md` as the source of truth, not conversation context.
 
 ## Workflow

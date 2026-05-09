@@ -12,7 +12,6 @@
     <a href="LICENSE">
       <img src="https://img.shields.io/github/license/StChiotis/Library-First-Engineering" alt="License">
     </a>
-    <img src="https://img.shields.io/badge/version-v2-2ea44f" alt="Version v2">
   </p>
   <h1>🧱 Library-First Engineering</h1>
   <p>
@@ -22,8 +21,17 @@
 </div>
 
 > [!NOTE]
-> **Status: v2 — stable, iterating.**  
+> **Status: stable, iterating.**  
 > Active improvements only — no breaking changes are expected. New persona behaviors and sub-pipeline skills are added in a backwards-compatible way.
+
+> [!TIP]
+> **Quick start (60 seconds)**
+> 1. Click *Use this template* on the GitHub page (or `git clone https://github.com/StChiotis/Library-First-Engineering.git my-project`).
+> 2. Open in your IDE; run `/lfe-boot` at the start of every session.
+> 3. Answer the Complexity Gate: **Major Change** (full pipeline) or **Minor Fix** (`/lfe-scout`).
+> 4. Run one feature end-to-end through Architect → Builder → Inspector → Archivist. One change per session.
+>
+> Detailed guide: [Getting started](#getting-started) below. Philosophy: keep reading.
 
 ---
 
@@ -110,6 +118,8 @@ When an AI agent (or a human teammate) opens an LFE repo, it asks the same **six
 > [!TIP]
 > Every question your AI agents currently improvise the answer to has a single, file-backed source of truth in LFE.
 
+For projects with multiple bounded contexts (e.g., separate Billing and Inventory domains with their own languages), LFE supports federation via [`CONTEXT-MAP.md`](.docs/domain/CONTEXT-MAP.md). Most projects don't need it.
+
 <details>
 <summary><b>Click to expand — exact file paths for each question</b></summary>
 
@@ -134,7 +144,7 @@ When an AI agent (or a human teammate) opens an LFE repo, it asks the same **six
 | **Verification** | Self-verified by the same agent | Visual preview only | Independent Inspector audit |
 | **Recovery** | Re-prompt from memory | Fork the project and retry | Resume from `.plans/` after any crash |
 
-*Vibe-coding platforms cited: Lovable, v0, Bolt, Replit Agent.*
+*Vibe-coding platforms cited (as of 2026-Q1; this category evolves quickly): Lovable, v0, Bolt, Replit Agent.*
 
 ---
 
@@ -147,6 +157,8 @@ When an AI agent (or a human teammate) opens an LFE repo, it asks the same **six
 | **Flatter cost curve** | **Reproducible decisions** | **Maintainable at scale** |
 | **Faster onboarding** | **Independent persona audit** | **IDE & agent portable** |
 | **Lean context window** | **Audit-trail by default** | **Spaghetti-proof architecture** |
+
+Want to see actual session costs? See [`token-budget.md`](.docs/quality/token-budget.md) — every mission's rough token count, tracked over time, with automatic drift detection.
 
 ---
 
@@ -168,6 +180,8 @@ Both categories produce broken architecture by opposite paths. LFE supplies the 
 3. **⚖️ Logic Sovereignty** — domain rules are absolute and explicit.
 4. **⏳ The Rolling Window** — archive stale context to keep working memory lean.
 5. **📂 File-Based Coordination** — every step is a file, so crashes and handoffs are recoverable.
+
+The framework defines five personas including 🫵 **The Brain — You**. The human is a first-class persona with their own contract and Definition of Done — see [PERSONAS.md](.docs/protocol/PERSONAS.md). Defaults are tunable per project via `LLM_AGENT_GUIDE.md`.
 
 ---
 
@@ -224,7 +238,7 @@ LFE is honest about what it does *not* solve:
 
 LFE is actively being applied to a production project. A public case study — demonstrating the full pipeline on a live codebase — is in progress and will be published in a follow up [Article on Medium](https://medium.com/@StChiotis).
 
-Until then: all 17 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
+Until then: all 16 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
 
 ---
 

@@ -16,10 +16,10 @@ _Avoid_: API, signature (too narrow).
 What's inside a module. Distinct from **Adapter**: a thing can be a small adapter with a large implementation (a Postgres repo) or a large adapter with a small implementation (an in-memory fake).
 
 **Depth**
-Leverage at the interface — the amount of behaviour a caller can exercise per unit of interface they have to learn. **Deep** = high leverage. **Shallow** = interface nearly as complex as the implementation.
+Leverage at the interface — the amount of behavior a caller can exercise per unit of interface they have to learn. **Deep** = high leverage. **Shallow** = interface nearly as complex as the implementation.
 
 **Seam** _(from Michael Feathers)_
-A place where you can alter behaviour without editing in that place. The *location* at which a module's interface lives.
+A place where you can alter behavior without editing in that place. The *location* at which a module's interface lives.
 _Avoid_: boundary (overloaded with DDD's bounded context).
 
 **Adapter**

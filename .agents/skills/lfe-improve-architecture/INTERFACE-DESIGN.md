@@ -15,9 +15,9 @@ Before exploring alternatives, write:
 ### 2. Generate alternatives
 Produce 3+ radically different interfaces for the deepened module:
 
-- **Option A**: Minimize the interface — 1–3 entry points max. Maximise leverage per entry point.
-- **Option B**: Maximise flexibility — support many use cases and extension.
-- **Option C**: Optimise for the most common caller — make the default case trivial.
+- **Option A**: Minimize the interface — 1–3 entry points max. Maximize leverage per entry point.
+- **Option B**: Maximize flexibility — support many use cases and extension.
+- **Option C**: Optimize for the most common caller — make the default case trivial.
 - **Option D** (if applicable): Design around ports & adapters for cross-seam dependencies.
 
 Each option outputs:

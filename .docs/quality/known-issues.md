@@ -16,3 +16,7 @@ Track ongoing bugs, "smells," and architectural debt here.
 - [Database Coupling] The UserService directly accesses the DB driver instead of using the repository pattern. Needs refactoring.
 -->
 - [Your Debt 1]
+
+---
+
+**Archive:** Older entries are in [archive/known-issues-history.md](../archive/known-issues-history.md). Last archive sweep: session 0.

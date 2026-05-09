@@ -44,7 +44,7 @@ To maximize KV cache hits, read these static protocol definitions in this EXACT 
 5. `CONTEXT.md` (Canonical glossary)
 
 ### Step 4 — Check for Blank Canvas (Day 0)
-Inspect the `Engine Status` from the entrance card (`pipeline_status.md`).
+Inspect the `Mission State` from the entrance card (`pipeline_status.md`). The legal values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
 - **If it indicates `[BLANK CANVAS]`**: You MUST immediately execute the instructions of the `/lfe-extract-domain` skill to extract the project's domain requirements from the user right now. Do NOT wait for another command.
 - **If not**: Proceed to Step 5.
 

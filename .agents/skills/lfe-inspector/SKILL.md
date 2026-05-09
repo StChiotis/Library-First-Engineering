@@ -26,7 +26,7 @@ Verify that the implementation matches the domain truth and numerical baselines.
 ## Workflow
 1. **Orient**: Run `/lfe-zoom-out` on any unfamiliar modules to get system context before diving in.
 2. **Verify Logic**: Compare implementation logic against formulas in the project's domain documentation.
-3. **Verify Baselines**: Check current outputs against `validation-baselines.md` or equivalent snapshots.
+3. **Verify Baselines**: If your project keeps validation snapshots in `.docs/quality/validation-baselines.md`, confirm the implementation matches them. (The file is a template; populated only when your project has reproducible golden outputs.)
 4. **Verify TDD Report**: Read `.plans/tdd_report.md` and confirm test coverage matches the plan's requirements.
 5. **Instrument**: If behavior is suspicious, use `/lfe-diagnose` to build a repro loop and identify root cause.
 6. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation. Look for edge cases, performance regressions, or undocumented technical debt.

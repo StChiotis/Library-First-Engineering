@@ -2,6 +2,8 @@
 
 > This file defines the canonical terms for the project. These terms override any synonyms the AI might want to use. Read this at the start of any session touching documentation or core logic.
 
+<!-- TEMPLATE: protocol-meta terms (Library System, Logic Centralization, CHANGELOG Rolling Window) live here as bootstrap content. When the project populates a real domain glossary, migrate these meta terms to .docs/protocol/ per the boundary rules in LLM_AGENT_GUIDE.md §3. -->
+
 ---
 
 ## 1. Documentation Architecture
@@ -30,7 +32,7 @@ Define the canonical terms that the AI must use.
 
 ---
 
-## 3. Documentation Conventions
+## 4. Documentation Conventions
 
 ### CHANGELOG Rolling Window Rule
 `quality/CHANGELOG.md` maintains a **7-milestone rolling window**.

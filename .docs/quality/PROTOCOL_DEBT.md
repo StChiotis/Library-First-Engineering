@@ -8,3 +8,7 @@ This file tracks every instance where the LFE Protocol was bypassed using the `L
 | Date | Mission | Reason for LFE-FORCE | Resolution Status |
 | :--- | :--- | :--- | :--- |
 | _(No entries yet)_ | — | — | — |
+
+---
+
+**Archive:** Older entries are in [archive/protocol-debt-history.md](../archive/protocol-debt-history.md). Last archive sweep: session 0.

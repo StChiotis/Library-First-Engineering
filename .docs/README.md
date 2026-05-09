@@ -10,19 +10,19 @@
 
 ---
 
-## How this library is organised
+## How this library is organized
 
 | Layer | File | Purpose |
 |---|---|---|
 | Entrance card | [`pipeline_status.md`](../pipeline_status.md) | Current session state, active mission, coordination file tracker, session count. |
 | User Manual | [`USER_MANUAL.md`](../USER_MANUAL.md) | The human guide: how to drive the framework day-to-day. |
-| Agent Guide | [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md) | Core instructions for any AI entering this repo (V2: skill catalog, coordination table). |
-| Adapters | [`.cursorrules`](../.cursorrules), [`.windsurfrules`](../.windsurfrules), [`.clinerules`](../.clinerules), [`.antigravityrules`](../.antigravityrules) | IDE-specific protocol enforcement files. A token-compact Cursor variant lives in [`.agents/adapters/cursor/.cursorrules`](../.agents/adapters/cursor/.cursorrules) for context-constrained environments. |
+| Agent Guide | [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md) | Core instructions for any AI entering this repo (skill catalog, coordination table). |
+| Adapters | [`.cursorrules`](../.cursorrules), [`.windsurfrules`](../.windsurfrules), [`.clinerules`](../.clinerules), [`.antigravityrules`](../.antigravityrules) | IDE-specific pointer stubs that reference the canonical [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md). Do not edit to change agent behavior — edit the canonical file instead. |
 | Copilot | [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) | GitHub Copilot adapter. |
 | System Prompt | [`.agents/adapters/system_prompt.txt`](../.agents/adapters/system_prompt.txt) | Raw LLM adapter (copy-paste for ChatGPT, Claude, etc.). |
-| Change History | [`.docs/archive/changelog-history.md`](./archive/changelog-history.md) | Historical changelog records beyond the rolling window. |
+| Change History | [`.docs/archive/`](./archive/) (see [Shelf Index](./archive/README.md)) | Cold-tier archives for retention-managed files: `changelog-history.md`, `architecture-decisions-history.md`, `protocol-debt-history.md`, `known-issues-history.md`, `token-budget-history.md`. Populated by the Hygiene sweep per the Retention Policy in [`GOVERNANCE.md`](./protocol/GOVERNANCE.md). |
 | Floor map | **this file** | Navigation index. |
-| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 17 LFE persona skills (V2 sub-pipeline architecture). |
+| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 16 LFE persona skills (sub-pipeline architecture). |
 | Domain Language | [`CONTEXT.md`](../CONTEXT.md) (root) | Canonical glossary — all agents must use these terms. |
 | Framework Roadmap | [`LFE-ROADMAP.md`](../LFE-ROADMAP.md) (root) | Planned improvements for the LFE framework. |
 | Project Roadmap | [`.docs/strategy/roadmap.md`](./strategy/roadmap.md) | What is the planned evolution of the product? |
@@ -35,7 +35,7 @@
 
 ## Coordination Layer (`.plans/`)
 
-The V2 pipeline uses file-based coordination. Each skill writes output to `.plans/`, and the next skill reads it as input.
+The pipeline uses file-based coordination. Each skill writes output to `.plans/`, and the next skill reads it as input.
 
 | File | Written by | Read by |
 |---|---|---|
@@ -52,7 +52,7 @@ The V2 pipeline uses file-based coordination. Each skill writes output to `.plan
 
 | File | Answers the question… |
 |---|---|
-| [`ASSEMBLY_LINE.md`](./protocol/ASSEMBLY_LINE.md) | How do agents hand off work? (V2 sub-pipelines + coordination layer) |
+| [`ASSEMBLY_LINE.md`](./protocol/ASSEMBLY_LINE.md) | How do agents hand off work? (sub-pipelines + coordination layer) |
 | [`GOVERNANCE.md`](./protocol/GOVERNANCE.md) | What are the rules for Logic Sovereignty, Domain Language, and coordination files? |
 | [`PERSONAS.md`](./protocol/PERSONAS.md) | What are the constraints, tools, and sub-pipeline skills for each AI role? |
 | [`INDUSTRY_STANDARDS.md`](./protocol/INDUSTRY_STANDARDS.md) | What optional CI/CD enhancements are available? |
@@ -77,6 +77,8 @@ The V2 pipeline uses file-based coordination. Each skill writes output to `.plan
 |---|---|
 | [`domain-knowledge.md`](./domain/domain-knowledge.md) | What is the authoritative logic and math specification? |
 | [`glossary.md`](./domain/glossary.md) | What are the canonical terms used in this project? |
+| [`CONTEXT-MAP.md`](./domain/CONTEXT-MAP.md) | When to populate? Only if your project has multiple bounded contexts. Otherwise, root `CONTEXT.md` is sufficient. Format guidance is in the file itself. |
+| [`README.md`](./domain/README.md) | **Shelf Index**: Local navigation for the domain layer. |
 
 > **Note:** `CONTEXT.md` (at repo root) is the primary domain glossary maintained by `/lfe-grill-with-docs`. `glossary.md` may be used for extended domain reference.
 
@@ -97,6 +99,8 @@ The V2 pipeline uses file-based coordination. Each skill writes output to `.plan
 | [`CHANGELOG.md`](./quality/CHANGELOG.md) | What changed recently? (7-milestone rolling window) |
 | [`known-issues.md`](./quality/known-issues.md) | What bugs or technical debt currently exist? |
 | [`PROTOCOL_DEBT.md`](./quality/PROTOCOL_DEBT.md) | What LFE-FORCE protocol bypasses need to be resolved? |
+| [`token-budget.md`](./quality/token-budget.md) | What did each session cost? Used for drift detection. |
+| [`validation-baselines.md`](./quality/validation-baselines.md) | What outputs/snapshots is the Inspector verifying against? |
 | [`README.md`](./quality/README.md) | **Shelf Index**: Local navigation for the quality layer. |
 
 ---
