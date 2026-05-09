@@ -27,7 +27,7 @@
 > [!TIP]
 > **Quick start (60 seconds)**
 > 1. Click *Use this template* on the GitHub page (or `git clone https://github.com/StChiotis/Library-First-Engineering.git my-project`).
-> 2. Open in your IDE; run `/lfe-boot` at the start of every session.
+> 2. Open in your IDE; run `/lfe-boot` at the start of every session. *No IDE adapter? In ChatGPT/Claude.ai or any raw LLM chat, paste [`.agents/adapters/system_prompt.txt`](.agents/adapters/system_prompt.txt) as your first message before running `/lfe-boot`.*
 > 3. Answer the Complexity Gate: **Major Change** (full pipeline) or **Minor Fix** (`/lfe-scout`).
 > 4. Run one feature end-to-end through Architect → Builder → Inspector → Archivist. One change per session.
 >

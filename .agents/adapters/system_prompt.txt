@@ -1,6 +1,8 @@
-# LFE System Prompt Adapter (Raw LLM)
+# LFE System Prompt Adapter — Raw LLM Fallback
 
-Copy and paste this prompt into your LLM (ChatGPT, Claude, etc.) to "boot" it into LFE compliance for this session.
+**When to use this:** You're working in a raw LLM chat (ChatGPT, Claude.ai, etc.) that has no automatic adapter loading. If your IDE auto-loads `.cursorrules` / `.windsurfrules` / `.clinerules` / `.antigravityrules` / `.github/copilot-instructions.md`, you do NOT need this — your adapter is already active.
+
+Copy the prompt below as your first message in the chat to bootstrap LFE compliance for the session.
 
 ---
 

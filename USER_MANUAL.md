@@ -11,7 +11,9 @@ Think of LFE like a car. The AI agents are the engine. The `.docs/` directory is
 ## 1. Day 0: Starting a New Project
 If you have just cloned the LFE template, your repository is a "Blank Canvas." The AI doesn't know what you are building yet.
 
-1. **Open your AI chat** (Cursor, Windsurf, Cline, or whatever agent you use).
+1. **Open your AI chat:**
+   - **In an IDE** (Cursor, Windsurf, Cline, Antigravity, Claude Code, GitHub Copilot): the adapter file in the repo root is auto-loaded — proceed directly.
+   - **In a raw LLM** (ChatGPT, Claude.ai, etc.): paste the content of [`.agents/adapters/system_prompt.txt`](.agents/adapters/system_prompt.txt) as your first message to bootstrap LFE compliance for the session.
 2. **Type the command:** `/lfe-boot`
 3. **The AI will detect the Blank Canvas** and immediately trigger the `/lfe-extract-domain` skill. 
 4. **The Interview:** The AI will ask you questions about your app (What does it do? Who are the users? What are the core rules?).
