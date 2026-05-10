@@ -96,7 +96,7 @@ phase: builder
 step: tdd
 status: complete
 timestamp: <ISO-8601>
-source: active_plan.md
+source: .plans/active_plan.md
 slice: <copied from active_plan.md>
 tests_passed: <N>
 tests_failed: 0

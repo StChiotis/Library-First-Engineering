@@ -54,8 +54,12 @@ Keep the project's documentation and history perfectly in sync with the codebase
    - `hygiene_report.md` is owned by the Hygiene sub-pipeline — do NOT delete it from a per-mission Archivist run; leave it for `/lfe-improve-architecture` to consume and clear.
    - Update `pipeline_status.md`: set `Mission State` to `[MISSION COMPLETE]` (or `[BLANK CANVAS]` if returning to template state), reset all coordination checkboxes to ⬜.
 6. **Update Pipeline Status (cross-cutting fields)**: Beyond the checkbox/persona resets handled by Step 5a/5b, set the cross-cutting entrance-card fields for the next session — Mission, Session Count, Last ADR, and `Mission State`. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
-7. **Hygiene Check**: Read `Last Architecture Sweep` from `pipeline_status.md`. If 5+ sessions since last sweep, flag it:
-   > *"Architecture sweep is due (5+ sessions). Run `/lfe-improve-architecture`?"*
+7. **Hygiene Check**: Read `Last Architecture Sweep` from `pipeline_status.md`. If 5+ sessions since last sweep, flag it. Surface the trade-off so the human can decide with context:
+   - **If `03_slices.md` exists with unfinished slices** (multi-slice mission in progress):
+     > *"Architecture sweep is due (5+ sessions). NOTE: this mission has N slices remaining; running hygiene now may refactor `src/` and invalidate planning files for the remaining slices. Run / defer to mission end / skip this cycle?"*
+   - **Otherwise** (mission complete or single-slice):
+     > *"Architecture sweep is due (5+ sessions). Run `/lfe-improve-architecture`?"*
+   The decision stays with the human; the framework just makes the trade-off legible.
 
 ## Checklist
 - [ ] CHANGELOG has exactly 7 or fewer milestones?

@@ -43,7 +43,7 @@ The Archivist enforces two cleanup tiers, defined in `lfe-archivist/SKILL.md`:
 - **Partial Cleanup** (between slices): delete execution files — `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`. **Keep** planning files — `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
 - **Full Cleanup** (mission complete): delete every file in `.plans/`.
 
-`hygiene_report.md` belongs to the Hygiene sub-pipeline and is consumed by `/lfe-improve-architecture`, then cleared at end of the hygiene cycle — not by per-mission Archivist runs.
+`hygiene_report.md` belongs to the Hygiene sub-pipeline. Its primary reader is the **human** (audit findings to review and triage). `/lfe-improve-architecture` may reference it for priority context but does not formally consume it — that skill walks the codebase fresh. The report is deleted by `/lfe-improve-architecture`'s final step at the end of the hygiene cycle, not by per-mission Archivist runs.
 
 ## Why this exists
 

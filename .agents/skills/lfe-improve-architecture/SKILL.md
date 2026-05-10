@@ -63,3 +63,6 @@ Side effects inline:
 - **Candidate rejected with load-bearing reason?** Offer an ADR
 
 See [INTERFACE-DESIGN.md](./INTERFACE-DESIGN.md) for exploring alternative interfaces.
+
+### 4. Close the hygiene cycle
+When the grilling loop ends (whether work was done or the human decided to skip), delete `.plans/hygiene_report.md`. Its informational purpose has been served — the human reviewed it, decided what to act on, and either acted or deferred. Leaving it in `.plans/` would cause the next hygiene sweep to flag it as orphaned per the Section 6.5 Coordination Contract Audit.

@@ -31,7 +31,7 @@ phase: inspector
 step: diagnose
 status: complete
 timestamp: <ISO-8601>
-source: tdd_report.md
+source: .plans/tdd_report.md
 slice: <copied from active_plan.md — used by /lfe-builder to detect a stale report>
 ---
 ```
