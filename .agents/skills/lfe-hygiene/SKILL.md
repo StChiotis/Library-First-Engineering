@@ -29,7 +29,7 @@ The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth
 - **Between slices** (`Mission State == [IN-FLIGHT: <phase>]` and Active Persona is Architect): planning files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`) MAY exist; execution files (`active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`) MUST NOT — flag any present as "Partial Cleanup Skipped".
 - **Mid-mission**: `active_plan.md` exists but Active Persona is NOT Architect or Builder → flag as "Orphaned Plan".
 - **Hygiene cycle**: `hygiene_report.md` is owned by the Hygiene sub-pipeline; flag only if it persists outside an active hygiene cycle.
-- Verify the `Coordination Files` row in `pipeline_status.md` matches the actual files present in `.plans/`.
+- Verify the `Coordination Files` row in `pipeline_status.md` matches the **mainline** files in `.plans/` (the eight checkboxes are `01 02 03 plan build tdd critique inspect`). Conditional artifacts (`diagnosis_report.md`, `hygiene_report.md`) intentionally have no checkbox — their presence on disk is not row-drift.
 
 ### 3. State Audit
 - Verify `pipeline_status.md` reflects the current reality:

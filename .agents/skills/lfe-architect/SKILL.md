@@ -27,7 +27,20 @@ Convert intent into a rigorous plan in `.plans/active_plan.md`. You are the gate
 3. **PRD Phase**: Run `/lfe-to-prd` to synthesize the grill output into a structured PRD.
 4. **Slicing Phase**: Run `/lfe-to-issues` to break the PRD into vertical slices. Wait for human approval.
 5. **Risk Assessment**: Identify "High Risk" zones (core math, state management, security). Determine if automated tests are required.
-6. **Active Plan**: Draft `.plans/active_plan.md` for the current slice:
+6. **Active Plan**: Draft `.plans/active_plan.md` for the current slice. Frontmatter follows the contract in [`COORDINATION_FILES.md`](../../../.docs/protocol/COORDINATION_FILES.md):
+
+```yaml
+---
+phase: architect
+step: 4_active_plan
+status: complete
+timestamp: <ISO-8601>
+source: .plans/03_slices.md
+slice: <slice number from 03_slices.md>
+---
+```
+
+Body sections:
    - **Problem Statement**
    - **Proposed Solution**
    - **Affected Documents** (First priority)
@@ -42,4 +55,7 @@ Convert intent into a rigorous plan in `.plans/active_plan.md`. You are the gate
 - `/lfe-diagnose`: Use to reproduce bugs before planning fixes.
 
 ## Handoff
-Wait for **explicit human approval** of the plan. Once approved, update `pipeline_status.md` to `Active Persona: Builder` and stop.
+Wait for **explicit human approval** of the plan. Once approved:
+1. Mark the `plan ✅` checkbox in `pipeline_status.md`'s Coordination Files row.
+2. Set `Active Persona: Builder`.
+3. Stop.

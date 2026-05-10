@@ -32,7 +32,7 @@ Verify that the implementation matches the domain truth and numerical baselines.
 3. **Verify Baselines**: If your project keeps validation snapshots in `.docs/quality/validation-baselines.md`, confirm the implementation matches them. (The file is a template; populated only when your project has reproducible golden outputs.)
 4. **Verify TDD Report (or Protocol Debt entry)**: Read `.plans/tdd_report.md` and confirm test coverage matches the plan's requirements. If that file is absent because the work arrived via `LFE-FORCE`, follow Hard Rule #4's fallback: read the latest unresolved entry in `.docs/quality/PROTOCOL_DEBT.md` and verify the hotfix directly. Mark the verification's `source:` field accordingly.
 5. **Instrument** (mission path only): If behavior is suspicious AND `source: .plans/tdd_report.md`, use `/lfe-diagnose` to build a repro loop and identify root cause. **Do NOT trigger `/lfe-diagnose` on the LFE-FORCE recovery path** — Diagnose returns to Builder, which would read a non-existent `active_plan.md`. See Step 7b instead.
-6. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation (or, on the LFE-FORCE path, against the hotfix). Look for edge cases, performance regressions, or undocumented technical debt.
+6. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation (or, on the LFE-FORCE path, against the hotfix). Look for edge cases, performance regressions, or undocumented technical debt. Mark the `critique ✅` checkbox in `pipeline_status.md`.
 7. **Write Report**: Save verification results to `.plans/inspection_report.md`:
 
 ```yaml
@@ -63,14 +63,14 @@ source: .plans/tdd_report.md   # or .docs/quality/PROTOCOL_DEBT.md on LFE-FORCE 
 ```
 
 7b. **LFE-FORCE recovery branch** (only when `source: .docs/quality/PROTOCOL_DEBT.md`):
-   - **PASS** → write the report (status: passed) including the `## Debt Entry Verified` block. Hand off to Archivist; the Archivist's Protocol Debt Resolution step (Archivist Workflow Step 4.5) will mark the matching entry resolved and the next boot will unblock the pipeline.
+   - **PASS** → write the report (status: passed) including the `## Debt Entry Verified` block. Hand off to Archivist; the Archivist's Protocol Debt Resolution step (Archivist Workflow Step 3.6) will mark the matching entry resolved and the next boot will unblock the pipeline.
    - **FAIL** → write the report (status: failed) including the `## Debt Entry Verified` block. Do NOT trigger `/lfe-diagnose`. Halt and present the human with three triage options:
      1. **Issue another `LFE-FORCE` patch** (creates a new debt entry; the old one stays open).
      2. **Roll back the hotfix** (revert `src/` to pre-patch state; the original debt entry is closed as `rolled-back`).
      3. **Convert to full pipeline** (run `/lfe-grill-with-docs` to architect a retroactive plan, then build/test/verify normally).
    The pipeline stays blocked until the human chooses. The Archivist must NOT mark the debt entry resolved on a failed verification.
 
-8. **Handoff**: Once verification passes, ask for human finalization. Upon approval, signal transition to **Archivist**. Update `pipeline_status.md`.
+8. **Handoff**: Once verification passes, ask for human finalization. Upon approval, mark the `inspect ✅` checkbox in `pipeline_status.md`'s Coordination Files row, signal transition to **Archivist**, and set `Active Persona: Archivist`.
 
 ## Checklist
 - [ ] Matches domain documentation?

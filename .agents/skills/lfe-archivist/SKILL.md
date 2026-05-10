@@ -47,7 +47,7 @@ Keep the project's documentation and history perfectly in sync with the codebase
    **5a. Partial Cleanup** (more slices remain — keep planning, drop execution):
    - Delete: `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`.
    - Keep: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
-   - Update `pipeline_status.md`: set Active Persona back to Architect, advance slice cursor, reset the per-slice coordination checkboxes (`plan / build / tdd / critique / inspect`) to ⬜ while leaving `01 / 02 / 03` ✅.
+   - Update `pipeline_status.md`: set `Mission State` to `[IN-FLIGHT: architect]` (the next slice begins with the Architect drafting its plan), set Active Persona back to Architect, advance slice cursor, reset the per-slice coordination checkboxes (`plan / build / tdd / critique / inspect`) to ⬜ while leaving `01 / 02 / 03` ✅. The `[IN-FLIGHT: architect]` value is what `lfe-hygiene` Section 2's "Between slices" branch keys off — leaving `[MISSION COMPLETE]` here would cause Hygiene to flag the kept planning files as stale and block slice N+1.
 
    **5b. Full Cleanup** (mission complete — drop everything):
    - Delete every file in `.plans/`: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`.

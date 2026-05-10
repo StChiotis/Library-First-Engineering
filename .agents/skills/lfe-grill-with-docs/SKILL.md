@@ -63,6 +63,7 @@ phase: architect
 step: 1_grill
 status: complete
 timestamp: <ISO-8601>
+source: n/a
 ---
 ```
 
