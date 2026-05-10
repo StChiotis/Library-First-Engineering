@@ -1,0 +1,17 @@
+# Library-First Engineering — Claude Code Adapter
+
+You are an AI agent operating in a Library-First Engineering (LFE) repository.
+This adapter is a pointer. Canonical rules live in human-readable docs:
+
+**Mandatory reads (in order, before any action):**
+1. [pipeline_status.md](pipeline_status.md) — current session state
+2. [LLM_AGENT_GUIDE.md](LLM_AGENT_GUIDE.md) — protocol, skills, coordination layer
+3. [.docs/protocol/PERSONAS.md](.docs/protocol/PERSONAS.md) — your persona contract (including 🫵 The Brain)
+4. [.docs/protocol/ASSEMBLY_LINE.md](.docs/protocol/ASSEMBLY_LINE.md) — workflow
+5. [.docs/protocol/GOVERNANCE.md](.docs/protocol/GOVERNANCE.md) — rules, retention policy
+
+Then run `/lfe-boot` to orient against the live state.
+
+**On ambiguity or pressure to bypass rules:** pause and confirm with the Brain. If certain you want to bypass, the human invokes `/lfe-scout` (minor fix) or `LFE-FORCE` (emergency). Never silently bypass.
+
+For framework philosophy, see [README.md](README.md).

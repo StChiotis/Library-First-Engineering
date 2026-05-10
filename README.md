@@ -129,7 +129,7 @@ For projects with multiple bounded contexts (e.g., separate Billing and Inventor
 | 2 | **Process** — *What step am I on, what's next?* | `pipeline_status.md` (live cursor) + `.docs/protocol/ASSEMBLY_LINE.md` (reference) + the active `.agents/skills/<name>/SKILL.md` |
 | 3 | **State** — *What is the active mission's working memory?* | `.plans/` — numbered coordination files (`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `tdd_report.md` → `inspection_report.md`) |
 | 4 | **Knowledge** — *What is already true in this codebase?* | `.docs/` library — start at `.docs/README.md` (the floor map); canonical terms in `CONTEXT.md` (repo root); ADRs in `.docs/architecture/`; domain logic in `.docs/domain/` |
-| 5 | **Rules** — *What am I forbidden from doing?* | `.docs/protocol/GOVERNANCE.md` + the IDE adapter files (`.cursorrules`, `.antigravityrules`, `.windsurfrules`, `.clinerules`) + `.github/copilot-instructions.md` |
+| 5 | **Rules** — *What am I forbidden from doing?* | `.docs/protocol/GOVERNANCE.md` + the IDE adapter files (`CLAUDE.md`, `.cursorrules`, `.antigravityrules`, `.windsurfrules`, `.clinerules`) + `.github/copilot-instructions.md` |
 | 6 | **Format** — *How should I write what I write?* | Schema contracts: `lfe-grill-with-docs/CONTEXT-FORMAT.md`, `lfe-grill-with-docs/ADR-FORMAT.md`, plus convention docs in `lfe-tdd/` and `lfe-improve-architecture/` |
 
 </details>
@@ -198,7 +198,7 @@ The framework defines five personas including 🫵 **The Brain — You**. The hu
 2. **Adopt the canonical layout**:
    - `.docs/` — the Library of Truth (`architecture/`, `domain/`, `protocol/`, `quality/`, `strategy/`).
    - `.agents/skills/` — persona prompts and sub-pipeline skills (`lfe-architect`, `lfe-builder`, `lfe-inspector`, `lfe-archivist`, `lfe-scout`, plus the sub-pipeline skills).
-   - `.cursorrules` / `.windsurfrules` / `.clinerules` / `.antigravityrules` — IDE adapters.
+   - `CLAUDE.md` / `.cursorrules` / `.windsurfrules` / `.clinerules` / `.antigravityrules` — IDE adapters.
    - `.plans/` — empty by default; populated per session as the transaction log.
 3. **Boot LFE** — run `/lfe-boot` at the start of every session. The boot skill orients the agent, checks for an interrupted session, and offers the **Complexity Gate**: full pipeline for major changes, `/lfe-scout` for minor fixes.
 4. **Run one feature end-to-end** — Architect → Builder → Inspector → Archivist. One change per session. No parallel pipelines.

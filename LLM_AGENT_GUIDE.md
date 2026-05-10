@@ -1,6 +1,6 @@
 # LLM Agent Guide — Library-First Engineering (LFE)
 
-> **Canonical agent-rules source.** This is the single source of truth for AI-agent behavior in an LFE repository. The IDE adapters at the repo root (`.cursorrules`, `.windsurfrules`, `.clinerules`, `.antigravityrules`, `.github/copilot-instructions.md`) and `.agents/adapters/system_prompt.txt` are pointer stubs that reference this file — do not edit them to change agent behavior; edit *here*. Projects may declare overrides in dedicated sections (`## Brain Persona Overrides`, `## Retention Policy Overrides`, etc.); the framework respects explicit overrides only.
+> **Canonical agent-rules source.** This is the single source of truth for AI-agent behavior in an LFE repository. The IDE adapters at the repo root (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `.clinerules`, `.antigravityrules`, `.github/copilot-instructions.md`) and `.agents/adapters/system_prompt.txt` are pointer stubs that reference this file — do not edit them to change agent behavior; edit *here*. Projects may declare overrides in dedicated sections (`## Brain Persona Overrides`, `## Retention Policy Overrides`, etc.); the framework respects explicit overrides only.
 
 ## 1. Mission & Scope
 This project follows the **Library-First Engineering (LFE)** protocol. Every AI agent working on this repo must treat documentation as the **Single Source of Truth (SSOT)** and follow a disciplined persona-based workflow with file-based coordination.
