@@ -35,6 +35,10 @@ Keep the project's documentation and history perfectly in sync with the codebase
    - **New project files/modules added**: Update the Floor Map in `.docs/README.md` to tell the AI where to find them. If a directory reaches 3 or more files, generate a `README.md` Shelf Index for it using `.docs/protocol/SHELF_INDEX_TEMPLATE.md`.
 3. **Update History**: Prepend the new milestone to `CHANGELOG.md` in `.docs/quality/` (or root). Enforce the 7-milestone rolling window. Include test coverage and success metrics.
 3.5. **Update Token Budget**: Append the session's rough token cost (best-effort estimate from chat metadata or model self-report) to `.docs/quality/token-budget.md` "Recent sessions" table. After updating, recompute rolling averages in the "Rolling baselines" table. If any phase's last-session delta exceeds +50% over rolling avg, add a ⚠️ flag with a one-line note to the next session's `pipeline_status.md`.
+3.6. **Protocol Debt Resolution** (LFE-FORCE recoveries only): Inspect `.plans/inspection_report.md` frontmatter.
+   - If `source: .docs/quality/PROTOCOL_DEBT.md` AND `status: passed`: locate the entry in `.docs/quality/PROTOCOL_DEBT.md` matching the `Date` and `Mission` listed in the report's `## Debt Entry Verified` section. Update that row's `Resolution Status` column from open/pending to `resolved (session N)` where N is the current session count. **This is the unlock mechanism — without it, `lfe-boot` Step 5 will re-block on the next session and the pipeline never recovers from `LFE-FORCE`.**
+   - If `source: .docs/quality/PROTOCOL_DEBT.md` AND `status: failed`: do NOT mark the entry resolved. The Inspector has already halted for human triage; the debt remains open by design until the human chooses re-patch / rollback / convert-to-pipeline.
+   - If `source: .plans/tdd_report.md` (normal mission): skip this step.
 4. **Slice Loop Check**: Are there more slices in `.plans/03_slices.md`?
    - **Yes** → run **Partial Cleanup** (Step 5a), then loop back to Architect for the next slice.
    - **No** → run **Full Cleanup** (Step 5b).
@@ -61,4 +65,5 @@ Keep the project's documentation and history perfectly in sync with the codebase
 - [ ] Coordination files archived/cleared (if mission complete)?
 - [ ] Session count incremented?
 - [ ] Architecture sweep due date checked?
+- [ ] (LFE-FORCE recovery only) Protocol Debt entry marked `resolved (session N)`?
 

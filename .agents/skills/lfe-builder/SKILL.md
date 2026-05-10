@@ -23,7 +23,7 @@ Execute the approved plan in `.plans/active_plan.md` into production-ready code.
 5. **File-Based Input**: Read `active_plan.md` as the source of truth, not conversation context.
 
 ## Workflow
-1. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`.
+1. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`. **If `.plans/diagnosis_report.md` exists**, this is a retry path after a failed inspection — `/lfe-diagnose` has already applied the fix to `src/` and recorded the *Root Cause* and *Fix Summary*. Read those sections so you understand the post-diagnosis state, but **do not re-implement the slice**. Skip Steps 2–3 (Implement/Refactor) and proceed directly to Step 4 (Mark Done) with a fresh `builder_done.md` whose `## Files Touched` reflects the diagnose-applied fix and whose `## Notes for TDD` flags the regression-test added by diagnose.
 2. **Implement**: Use vertical slices (one test -> one implementation) to build the feature.
 3. **Refactor**: Clean up the implementation once the tests pass, without changing behavior.
 4. **Mark Done**: Before handing off to TDD, write `.plans/builder_done.md` so the implementation phase has a physical checkpoint for crash recovery (a session that dies between coding and TDD must not re-implement). Schema below.

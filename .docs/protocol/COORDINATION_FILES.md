@@ -8,11 +8,15 @@
 ---
 phase: <architect | builder | inspector | archivist | hygiene>
 step: <skill name without the lfe- prefix>
-status: complete | failed
+status: complete | failed | passed
 timestamp: <ISO-8601>
-source: <input file relative to .plans/, or "n/a">
+source: <input path, or "n/a">
 ---
 ```
+
+**Field notes:**
+- `status`: most skills use `complete` / `failed`. Verification skills (`/lfe-inspector`) use `passed` / `failed` because the verdict — not the execution — is what downstream consumers branch on.
+- `source`: by default, the relative path inside `.plans/` (e.g., `.plans/tdd_report.md`). Cross-tier sources are allowed when a skill legitimately reads from outside `.plans/` — write the path relative to the repo root (e.g., `.docs/quality/PROTOCOL_DEBT.md` for the Inspector's LFE-FORCE recovery branch). Use `n/a` only when the skill takes no file input (e.g., `/lfe-grill-with-docs` reads conversation; `/lfe-hygiene` reads the whole repo).
 
 Skills MAY add typed fields below `source:` (e.g., `tests_passed: <N>`, `tests_failed: <N>` for `tdd_report.md`).
 

@@ -62,7 +62,7 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 | `/lfe-to-prd` | `01_grill_summary.md` | `.plans/02_prd.md` |
 | `/lfe-to-issues` | `02_prd.md` | `.plans/03_slices.md` |
 | `/lfe-architect` | `03_slices.md` | `.plans/active_plan.md` |
-| `/lfe-builder` | `active_plan.md` | Production code + `.plans/builder_done.md` |
+| `/lfe-builder` | `active_plan.md` *(plus `diagnosis_report.md` on retry after failed inspection)* | Production code + `.plans/builder_done.md` |
 | `/lfe-tdd` | `active_plan.md` + `builder_done.md` | `.plans/tdd_report.md` |
 | `/lfe-inspector` | `tdd_report.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
 | `/lfe-diagnose` *(conditional)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
