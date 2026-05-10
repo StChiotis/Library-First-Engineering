@@ -35,7 +35,7 @@
 
 ## Coordination Layer (`.plans/`)
 
-The pipeline uses file-based coordination. Each skill writes output to `.plans/`, and the next skill reads it as input.
+The pipeline uses file-based coordination. Each skill writes output to `.plans/`, and the next skill reads it as input. The full schema and registry live in [`COORDINATION_FILES.md`](./protocol/COORDINATION_FILES.md).
 
 | File | Written by | Read by |
 |---|---|---|
@@ -43,8 +43,11 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 | `02_prd.md` | `/lfe-to-prd` | `/lfe-to-issues` |
 | `03_slices.md` | `/lfe-to-issues` | `/lfe-architect` |
 | `active_plan.md` | `/lfe-architect` | `/lfe-builder`, `/lfe-tdd` |
+| `builder_done.md` | `/lfe-builder` | `/lfe-tdd` (resume marker) |
 | `tdd_report.md` | `/lfe-tdd` | `/lfe-inspector` |
 | `inspection_report.md` | `/lfe-inspector` | `/lfe-archivist` |
+| `diagnosis_report.md` | `/lfe-diagnose` (conditional) | `/lfe-builder` (next iteration) |
+| `hygiene_report.md` | `/lfe-hygiene` (every 5 sessions) | `/lfe-improve-architecture` |
 
 ---
 
@@ -53,6 +56,7 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 | File | Answers the question… |
 |---|---|
 | [`ASSEMBLY_LINE.md`](./protocol/ASSEMBLY_LINE.md) | How do agents hand off work? (sub-pipelines + coordination layer) |
+| [`COORDINATION_FILES.md`](./protocol/COORDINATION_FILES.md) | What is the frontmatter schema and registry for `.plans/` files? |
 | [`GOVERNANCE.md`](./protocol/GOVERNANCE.md) | What are the rules for Logic Sovereignty, Domain Language, and coordination files? |
 | [`PERSONAS.md`](./protocol/PERSONAS.md) | Persona index — links to individual contracts. |
 | [`personas/`](./protocol/personas/README.md) | Individual persona contracts (one file per role). |

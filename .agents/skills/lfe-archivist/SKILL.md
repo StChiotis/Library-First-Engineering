@@ -38,7 +38,7 @@ Keep the project's documentation and history perfectly in sync with the codebase
 4. **Slice Loop Check**: Are there more slices in `.plans/03_slices.md`?
    - **Yes**: Update `pipeline_status.md` to next slice, set persona back to Architect. Do NOT clean up coordination files yet.
    - **No**: Proceed to cleanup.
-5. **Clean Up**: Archive or delete coordination files from `.plans/` (01, 02, 03, active_plan, tdd_report, critique, inspection_report). Clear `active_plan.md` if not deleted.
+5. **Clean Up**: Archive or delete coordination files from `.plans/` (01, 02, 03, active_plan, builder_done, tdd_report, critique, inspection_report, diagnosis_report). Clear `active_plan.md` if not deleted.
 6. **Update Pipeline Status**: Update the entrance card (Mission State, Last ADR, Mission, Session Count) for the next session. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
 7. **Hygiene Check**: Read `Last Architecture Sweep` from `pipeline_status.md`. If 5+ sessions since last sweep, flag it:
    > *"Architecture sweep is due (5+ sessions). Run `/lfe-improve-architecture`?"*

@@ -8,6 +8,7 @@ This directory contains the operational rules, sub-pipeline workflows, and perso
 | File | Purpose | Status |
 |---|---|---|
 | `ASSEMBLY_LINE.md` | Defines how agents hand off work via sub-pipelines and the coordination layer. | Active |
+| `COORDINATION_FILES.md` | Frontmatter schema and registry for `.plans/` coordination files. | Active |
 | `GOVERNANCE.md` | Defines rules for Logic Sovereignty, Domain Language, scaling, and coordination files. | Active |
 | `PERSONAS.md` | Persona index — links to individual contracts in `personas/`. | Active |
 | [`personas/`](personas/README.md) | Individual persona contract files (one per role). | Active |
