@@ -94,4 +94,4 @@ source: n/a
 - Proceed to `/lfe-improve-architecture` for architecture sweep? (Yes/No)
 ```
 
-If fully clean, the report still gets written — body reads `Repo is LFE-Compliant. Zero Drift Detected.` Critical findings MUST be resolved by the Architect before any further refactoring.
+If fully clean, the report still gets written — body reads `Repo is LFE-Compliant. Zero Drift Detected.` Critical findings should be reviewed and triaged by the human before further refactoring; the framework surfaces the findings but does not block work — when to act on them is a human judgment call (typical defer reason: mid-mission, hold until completion).
