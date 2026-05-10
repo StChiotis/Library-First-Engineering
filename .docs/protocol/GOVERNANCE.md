@@ -69,6 +69,16 @@ The Brain Persona is bound by the contract in [PERSONAS.md](PERSONAS.md), includ
 
 ---
 
+## 🔁 Idempotency Principle
+
+Skills that mutate persistent state (`CHANGELOG.md`, session count, `PROTOCOL_DEBT.md`, archive files) must be **safely re-runnable from any partial state**. A crash mid-skill must not cause the next session's re-run to double-apply the mutation.
+
+The guard goes in the skill that mutates, **when the bug it prevents is being fixed** — not preemptively across every skill. Example guards: check the topmost CHANGELOG milestone before prepending; refuse to increment a session count whose marker is already set; check `Resolution Status` before marking a debt entry resolved. The marker can be a frontmatter field, a magic-comment in the file being mutated, or a sentinel file in `.plans/`. Every project chooses what fits.
+
+This principle exists so the framework can recover from crashes without manual cleanup. It is not an invitation to add idempotency ceremony to skills that don't mutate persistent state.
+
+---
+
 ## 🚨 Emergency Protocol (The "Break-Glass" Rule)
 In rare cases of legitimate "Production Down" emergencies, the human may bypass the assembly line.
 

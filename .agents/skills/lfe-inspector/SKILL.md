@@ -42,6 +42,7 @@ step: inspection
 status: passed | failed
 timestamp: <ISO-8601>
 source: .plans/tdd_report.md   # or .docs/quality/PROTOCOL_DEBT.md on LFE-FORCE recovery
+slice: <copied from active_plan.md; omit on LFE-FORCE recovery path (no plan)>
 ---
 ```
 

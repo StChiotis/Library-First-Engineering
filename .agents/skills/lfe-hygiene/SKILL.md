@@ -52,6 +52,12 @@ The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth
 - Verify there are no directories in `.docs/` with 3+ files missing a `README.md` Shelf Index.
 - Verify there are no files in `.docs/` exceeding ~6,000 characters.
 
+### 6.5 Coordination Contract Audit
+The contract in [`COORDINATION_FILES.md`](../../../.docs/protocol/COORDINATION_FILES.md) defines a frontmatter schema and per-tier file lists. Drift between the contract and what skills actually do is the framework's most common silent-failure class. Two cheap mechanical checks:
+
+- **Frontmatter conformance**: for every file currently in `.plans/`, parse the YAML frontmatter and verify required fields (`phase`, `step`, `status`, `timestamp`, `source`) are present with legal values. For execution-tier files (`active_plan.md`, `builder_done.md`, `tdd_report.md`, `inspection_report.md`, `diagnosis_report.md`), also verify `slice:` is present (unless `inspection_report.source` is `.docs/quality/PROTOCOL_DEBT.md`, in which case `slice` is legitimately absent). Flag any file with missing/illegal fields.
+- **Cleanup-list parity**: the file lists in `lfe-archivist/SKILL.md` Step 5a (Partial Cleanup delete) and Step 5b (Full Cleanup delete) must match the lists in this skill's Section 2 audit. Read both skills, extract the lists, diff them. Flag any divergence — drift here means orphan-detection and cleanup are operating on different sets, which silently corrupts the multi-slice loop.
+
 ### 7. Retention Check
 Walk the Retention Policy table in `.docs/protocol/GOVERNANCE.md`. For each row:
 - Identify aged-out entries in the hot file per its retention rule.
