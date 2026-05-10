@@ -73,7 +73,7 @@ A "Loop" is defined as a sequence of state changes. In LFE, these state changes 
 2. **Patch**: Agent applies hotfix directly to `src/`.
 3. **Debt Logging**: Agent writes entry to `.docs/quality/PROTOCOL_DEBT.md`.
 4. **The Block**: Next session starts. `/lfe-boot` detects unresolved Protocol Debt and locks the pipeline.
-5. **Resolution**: Human runs Inspector to verify the hotfix -> Archivist documents it -> Debt cleared -> Pipeline unlocks.
+5. **Resolution**: Human runs Inspector. Because `LFE-FORCE` skipped the Builder/TDD path, no `tdd_report.md` exists — Inspector follows its **Protocol Debt fallback** (see [`lfe-inspector/SKILL.md`](../../.agents/skills/lfe-inspector/SKILL.md) Hard Rule #4): read the latest unresolved `PROTOCOL_DEBT.md` entry, verify the hotfix directly against `src/`, write `inspection_report.md` with `source: PROTOCOL_DEBT.md`. Archivist then documents the change and clears the debt entry. Pipeline unlocks.
 
 ---
 

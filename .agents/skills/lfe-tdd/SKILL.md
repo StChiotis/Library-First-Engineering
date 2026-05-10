@@ -8,7 +8,7 @@ description: Red-green-refactor quality pass on code the Builder just wrote. Use
 ## Position in Pipeline
 - **Phase**: 2 (Builder sub-pipeline, Step 2)
 - **Persona**: Builder
-- **Input**: `active_plan.md` + code written by lfe-builder
+- **Input**: `active_plan.md` + `.plans/builder_done.md` (resume marker — confirms implementation phase completed) + code written by lfe-builder
 - **Output**: `.plans/tdd_report.md`
 
 ## Philosophy
