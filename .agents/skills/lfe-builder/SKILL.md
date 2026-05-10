@@ -23,17 +23,46 @@ Execute the approved plan in `.plans/active_plan.md` into production-ready code.
 5. **File-Based Input**: Read `active_plan.md` as the source of truth, not conversation context.
 
 ## Workflow
-1. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`.
+1. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`. **If `.plans/diagnosis_report.md` exists**, this is a retry path after a failed inspection — `/lfe-diagnose` has already applied the fix to `src/` and recorded the *Root Cause* and *Fix Summary*. Read those sections so you understand the post-diagnosis state, but **do not re-implement the slice**. Skip Steps 2–3 (Implement/Refactor) and proceed directly to Step 4 (Mark Done) with a fresh `builder_done.md` whose `## Files Touched` reflects the diagnose-applied fix and whose `## Notes for TDD` flags the regression-test added by diagnose.
 2. **Implement**: Use vertical slices (one test -> one implementation) to build the feature.
 3. **Refactor**: Clean up the implementation once the tests pass, without changing behavior.
-4. **TDD Pass**: Run `/lfe-tdd` for the red-green-refactor quality pass.
-5. **Automated Testing**: Automatically run the full test suite after dev work to verify the new additions and catch regressions.
-6. **Handoff**: Once code is written, TDD pass complete, and all automated tests are passing, signal the transition to **Inspector**.
+4. **Mark Done**: Before handing off to TDD, write `.plans/builder_done.md` so the implementation phase has a physical checkpoint for crash recovery (a session that dies between coding and TDD must not re-implement). Schema below.
+5. **TDD Pass**: Run `/lfe-tdd` for the red-green-refactor quality pass.
+6. **Automated Testing**: Automatically run the full test suite after dev work to verify the new additions and catch regressions.
+7. **Handoff**: Once code is written, `builder_done.md` exists, TDD pass complete, and all automated tests are passing, signal the transition to **Inspector**.
+
+## Coordination File Output
+
+When implementation completes, write `.plans/builder_done.md` per the contract in [COORDINATION_FILES.md](../../../.docs/protocol/COORDINATION_FILES.md):
+
+```yaml
+---
+phase: builder
+step: builder
+status: complete
+timestamp: <ISO-8601>
+source: active_plan.md
+---
+```
+
+```markdown
+## Files Touched
+- <path/to/file>: <summary of change>
+
+## Plan Adherence
+- All `active_plan.md` items implemented? Yes / No (note any deferrals)
+
+## Notes for TDD
+- <hot spots or non-obvious behaviors the next step should test first>
+```
+
+Update `pipeline_status.md` coordination tracker to mark the build step as ✅.
 
 ## Checklist
 - [ ] Logic routed through the central Engine/Core?
 - [ ] Constants used instead of hardcoded numbers?
 - [ ] Tests passing for the current implementation slice?
+- [ ] `builder_done.md` written to `.plans/`?
 - [ ] TDD report written to `.plans/tdd_report.md`?
 - [ ] Code follows the project's `engineering-standards.md`?
 - [ ] `pipeline_status.md` updated with coordination file status?

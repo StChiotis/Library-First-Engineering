@@ -84,7 +84,7 @@ No reliance on chat context. The graph below mirrors `.docs/protocol/ASSEMBLY_LI
 <summary><b>Click to expand — coordination layer, bypass routes, and persona tool-locking</b></summary>
 
 **Coordination layer.** Each skill writes to a file in `.plans/` and the next skill reads it:
-`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `tdd_report.md` → `inspection_report.md`. If a session crashes, the files remain and `lfe-boot` resumes from the last step.
+`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `builder_done.md` → `tdd_report.md` → `inspection_report.md`. If a session crashes, the files remain and `lfe-boot` resumes from the last step. Frontmatter schema and full registry: [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md).
 
 **Bypass routes** — when the full pipeline is overkill:
 
@@ -127,7 +127,7 @@ For projects with multiple bounded contexts (e.g., separate Billing and Inventor
 | :-- | :--- | :--- |
 | 1 | **Identity** — *Who am I right now?* | `.docs/protocol/PERSONAS.md` — tool-locked persona contracts |
 | 2 | **Process** — *What step am I on, what's next?* | `pipeline_status.md` (live cursor) + `.docs/protocol/ASSEMBLY_LINE.md` (reference) + the active `.agents/skills/<name>/SKILL.md` |
-| 3 | **State** — *What is the active mission's working memory?* | `.plans/` — numbered coordination files (`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `tdd_report.md` → `inspection_report.md`) |
+| 3 | **State** — *What is the active mission's working memory?* | `.plans/` — numbered coordination files (`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `builder_done.md` → `tdd_report.md` → `inspection_report.md`); schema in [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md) |
 | 4 | **Knowledge** — *What is already true in this codebase?* | `.docs/` library — start at `.docs/README.md` (the floor map); canonical terms in `CONTEXT.md` (repo root); ADRs in `.docs/architecture/`; domain logic in `.docs/domain/` |
 | 5 | **Rules** — *What am I forbidden from doing?* | `.docs/protocol/GOVERNANCE.md` + the IDE adapter files (`CLAUDE.md`, `.cursorrules`, `.antigravityrules`, `.windsurfrules`, `.clinerules`) + `.github/copilot-instructions.md` |
 | 6 | **Format** — *How should I write what I write?* | Schema contracts: `lfe-grill-with-docs/CONTEXT-FORMAT.md`, `lfe-grill-with-docs/ADR-FORMAT.md`, plus convention docs in `lfe-tdd/` and `lfe-improve-architecture/` |

@@ -54,7 +54,7 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 5. **Orientation Shortcut**: Run `/lfe-whats-next` at any point for instant pipeline orientation.
 
 ## 5. File-Based Coordination (CRITICAL)
-**Every skill reads its input from a coordination file in `.plans/`, NOT from conversation context.** This prevents context window information loss between steps.
+**Every skill reads its input from a coordination file in `.plans/`, NOT from conversation context.** This prevents context window information loss between steps. The frontmatter schema and full registry live in [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md).
 
 | Step | Reads | Writes |
 |---|---|---|
@@ -62,13 +62,15 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 | `/lfe-to-prd` | `01_grill_summary.md` | `.plans/02_prd.md` |
 | `/lfe-to-issues` | `02_prd.md` | `.plans/03_slices.md` |
 | `/lfe-architect` | `03_slices.md` | `.plans/active_plan.md` |
-| `/lfe-builder` | `active_plan.md` | Production code |
-| `/lfe-tdd` | `active_plan.md` | `.plans/tdd_report.md` |
-| `/lfe-inspector` | `tdd_report.md` | `.plans/critique.md` then `.plans/inspection_report.md` |
+| `/lfe-builder` | `active_plan.md` *(plus `diagnosis_report.md` on retry after failed inspection)* | Production code + `.plans/builder_done.md` |
+| `/lfe-tdd` | `active_plan.md` + `builder_done.md` | `.plans/tdd_report.md` |
+| `/lfe-inspector` | `tdd_report.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
+| `/lfe-diagnose` *(conditional)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
+| `/lfe-hygiene` *(every 5 sessions)* | Full repo | `.plans/hygiene_report.md` |
 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status.md |
 
 
-Coordination files are archived/deleted ONLY by the Archivist when the mission is complete. If a session crashes, the files remain for recovery.
+Coordination files are archived/deleted ONLY by the Archivist when the mission is complete (or by the Hygiene sub-pipeline for `hygiene_report.md`). If a session crashes, the files remain for recovery.
 
 ## 6. Session Recovery
 If coordination files exist in `.plans/` but `pipeline_status.md` does not show mission complete, the session was interrupted. The agent must:

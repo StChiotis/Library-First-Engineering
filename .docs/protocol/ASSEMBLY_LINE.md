@@ -81,10 +81,15 @@ Every skill writes its output to a physical file. The next skill reads that file
 ├── 02_prd.md                 ← Output of lfe-to-prd (reads 01)
 ├── 03_slices.md              ← Output of lfe-to-issues (reads 02)
 ├── active_plan.md            ← Output of lfe-architect for current slice (reads 03)
-├── tdd_report.md             ← Output of lfe-tdd (reads active_plan)
+├── builder_done.md           ← Output of lfe-builder (crash-recovery checkpoint)
+├── tdd_report.md             ← Output of lfe-tdd (reads active_plan + builder_done)
 ├── critique.md               ← Output of lfe-inspector (Devil's Advocate pass)
-└── inspection_report.md      ← Output of lfe-inspector (reads tdd_report)
+├── inspection_report.md      ← Output of lfe-inspector (reads tdd_report)
+├── diagnosis_report.md       ← Output of lfe-diagnose (conditional, on inspector fail)
+└── hygiene_report.md         ← Output of lfe-hygiene (every 5 sessions)
 ```
+
+The frontmatter contract for these files lives in [`COORDINATION_FILES.md`](COORDINATION_FILES.md).
 
 **Lifecycle:**
 - Files are **created** as each step completes
@@ -126,31 +131,34 @@ Each step reads the previous step's coordination file.
 
 | Step | Skill | Input | Output |
 |---|---|---|---|
-| 1 | `/lfe-builder` | `active_plan.md` | Production code in `src/**` |
-| 2 | `/lfe-tdd` | `active_plan.md` + code | `.plans/tdd_report.md` |
+| 1 | `/lfe-builder` | `active_plan.md` | Production code in `src/**` + `.plans/builder_done.md` |
+| 2 | `/lfe-tdd` | `active_plan.md` + `builder_done.md` | `.plans/tdd_report.md` |
 
 ## Phase 3: Inspector Sub-Pipeline
 
 | Step | Skill | Input | Output |
 |---|---|---|---|
 | 1 | `/lfe-zoom-out` | Codebase | System context map |
-| 2 | `/lfe-inspector` | `tdd_report.md` | `.plans/critique.md` then `.plans/inspection_report.md` |
-| 3 | `/lfe-diagnose` (if failed) | Failing behavior | Fix → back to Builder |
+| 2 | `/lfe-inspector` | `tdd_report.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
+| 3 | `/lfe-diagnose` (if failed) | Failing behavior | `.plans/diagnosis_report.md` → back to Builder |
 
 ## Phase 4: Archivist Sub-Pipeline
 
 | Step | Skill | Input | Output |
 |---|---|---|---|
 | 1 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status |
-| 2 | Slice loop check | `03_slices.md` | Loop to Phase 1 Step 4 or proceed |
-| 3 | Cleanup | All `.plans/` files | Archive/delete coordination files |
+| 2 | Slice loop check | `03_slices.md` | Branch: Partial Cleanup (loop) or Full Cleanup (proceed) |
+| 3a | Partial Cleanup *(more slices)* | Execution files | Delete `active_plan / builder_done / tdd_report / critique / inspection_report / diagnosis_report`; keep `01 / 02 / 03` |
+| 3b | Full Cleanup *(mission complete)* | All `.plans/` files | Delete every coordination file (except `hygiene_report.md`, owned by Phase 5) |
+
+The exact file lists are enumerated in [`lfe-archivist/SKILL.md`](../../.agents/skills/lfe-archivist/SKILL.md) Step 5; `lfe-hygiene` mirrors them for orphan detection.
 
 ## Phase 5: Hygiene Sub-Pipeline (every 5 sessions)
 
 | Step | Skill | Input | Output |
 |---|---|---|---|
-| 1 | `/lfe-hygiene` | Full repo | Structural audit report |
-| 2 | `/lfe-improve-architecture` | Audit + CONTEXT.md | Deepening opportunities |
+| 1 | `/lfe-hygiene` | Full repo | `.plans/hygiene_report.md` |
+| 2 | `/lfe-improve-architecture` | `hygiene_report.md` + CONTEXT.md | Deepening opportunities |
 
 ---
 

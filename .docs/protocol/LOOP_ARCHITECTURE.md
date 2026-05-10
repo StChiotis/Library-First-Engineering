@@ -73,7 +73,14 @@ A "Loop" is defined as a sequence of state changes. In LFE, these state changes 
 2. **Patch**: Agent applies hotfix directly to `src/`.
 3. **Debt Logging**: Agent writes entry to `.docs/quality/PROTOCOL_DEBT.md`.
 4. **The Block**: Next session starts. `/lfe-boot` detects unresolved Protocol Debt and locks the pipeline.
-5. **Resolution**: Human runs Inspector to verify the hotfix -> Archivist documents it -> Debt cleared -> Pipeline unlocks.
+5. **Verify**: Inspector runs with the **Protocol Debt fallback** (see [`lfe-inspector/SKILL.md`](../../.agents/skills/lfe-inspector/SKILL.md) Hard Rule #4): reads the latest unresolved `PROTOCOL_DEBT.md` entry, verifies the hotfix against `src/`, writes `inspection_report.md` with `source: .docs/quality/PROTOCOL_DEBT.md` and the entry's `Date` + `Mission` in the body's `## Debt Entry Verified` section.
+6. **Branch on outcome**:
+   - **PASS** → Archivist runs **Step 3.6 (Protocol Debt Resolution)**: locates the matching debt entry by `Date` + `Mission` and updates its `Resolution Status` to `resolved (session N)`. Cleanup proceeds. Next boot's Step 5 finds no unresolved debt → pipeline unlocks. ✅
+   - **FAIL** → Inspector does NOT trigger `/lfe-diagnose` (no `active_plan.md` exists for the standard fix loop). Inspector writes `status: failed`, halts, and presents three triage options to the human:
+     1. Issue another `LFE-FORCE` patch (creates a new debt entry; the old one stays open).
+     2. Roll back the hotfix (revert `src/`; original entry closes as `rolled-back`).
+     3. Convert to full pipeline (run `/lfe-grill-with-docs` to architect a retroactive plan, then build/test/verify normally).
+   Pipeline remains blocked until the human chooses. The Archivist must NOT mark the entry resolved.
 
 ---
 
