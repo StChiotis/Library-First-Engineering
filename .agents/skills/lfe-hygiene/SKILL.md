@@ -23,10 +23,13 @@ Ensure the repository remains LFE-compliant. Detect drift between the Library an
 - **Identify "Ghost" Files**: Files listed in the Floor Map that no longer exist.
 
 ### 2. Coordination Layer Audit
-- Check `.plans/` for orphaned coordination files:
-  - If mission is marked complete in `pipeline_status.md` but coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`) still exist → flag as "Stale Coordination Files"
-  - If `active_plan.md` exists but Active Persona is NOT Architect or Builder → flag as "Orphaned Plan"
-- Verify the `Coordination Files` row in `pipeline_status.md` matches the actual files present in `.plans/`
+The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth for which files should be present at each lifecycle moment. This audit checks for drift from those rules.
+
+- **Mission complete** (`Mission State == [MISSION COMPLETE]` or `[BLANK CANVAS]`): no execution OR planning files should remain. If any of `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md` still exist → flag as "Stale Coordination Files".
+- **Between slices** (`Mission State == [IN-FLIGHT: <phase>]` and Active Persona is Architect): planning files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`) MAY exist; execution files (`active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`) MUST NOT — flag any present as "Partial Cleanup Skipped".
+- **Mid-mission**: `active_plan.md` exists but Active Persona is NOT Architect or Builder → flag as "Orphaned Plan".
+- **Hygiene cycle**: `hygiene_report.md` is owned by the Hygiene sub-pipeline; flag only if it persists outside an active hygiene cycle.
+- Verify the `Coordination Files` row in `pipeline_status.md` matches the actual files present in `.plans/`.
 
 ### 3. State Audit
 - Verify `pipeline_status.md` reflects the current reality:

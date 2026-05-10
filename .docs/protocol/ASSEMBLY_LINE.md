@@ -147,8 +147,11 @@ Each step reads the previous step's coordination file.
 | Step | Skill | Input | Output |
 |---|---|---|---|
 | 1 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status |
-| 2 | Slice loop check | `03_slices.md` | Loop to Phase 1 Step 4 or proceed |
-| 3 | Cleanup | All `.plans/` files | Archive/delete coordination files |
+| 2 | Slice loop check | `03_slices.md` | Branch: Partial Cleanup (loop) or Full Cleanup (proceed) |
+| 3a | Partial Cleanup *(more slices)* | Execution files | Delete `active_plan / builder_done / tdd_report / critique / inspection_report / diagnosis_report`; keep `01 / 02 / 03` |
+| 3b | Full Cleanup *(mission complete)* | All `.plans/` files | Delete every coordination file (except `hygiene_report.md`, owned by Phase 5) |
+
+The exact file lists are enumerated in [`lfe-archivist/SKILL.md`](../../.agents/skills/lfe-archivist/SKILL.md) Step 5; `lfe-hygiene` mirrors them for orphan detection.
 
 ## Phase 5: Hygiene Sub-Pipeline (every 5 sessions)
 

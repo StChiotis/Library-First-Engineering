@@ -36,10 +36,20 @@ Keep the project's documentation and history perfectly in sync with the codebase
 3. **Update History**: Prepend the new milestone to `CHANGELOG.md` in `.docs/quality/` (or root). Enforce the 7-milestone rolling window. Include test coverage and success metrics.
 3.5. **Update Token Budget**: Append the session's rough token cost (best-effort estimate from chat metadata or model self-report) to `.docs/quality/token-budget.md` "Recent sessions" table. After updating, recompute rolling averages in the "Rolling baselines" table. If any phase's last-session delta exceeds +50% over rolling avg, add a ⚠️ flag with a one-line note to the next session's `pipeline_status.md`.
 4. **Slice Loop Check**: Are there more slices in `.plans/03_slices.md`?
-   - **Yes**: Update `pipeline_status.md` to next slice, set persona back to Architect. Do NOT clean up coordination files yet.
-   - **No**: Proceed to cleanup.
-5. **Clean Up**: Archive or delete coordination files from `.plans/` (01, 02, 03, active_plan, builder_done, tdd_report, critique, inspection_report, diagnosis_report). Clear `active_plan.md` if not deleted.
-6. **Update Pipeline Status**: Update the entrance card (Mission State, Last ADR, Mission, Session Count) for the next session. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
+   - **Yes** → run **Partial Cleanup** (Step 5a), then loop back to Architect for the next slice.
+   - **No** → run **Full Cleanup** (Step 5b).
+5. **Clean Up** — choose one tier. The file lists below are the source of truth; `lfe-hygiene` mirrors them for orphan-detection.
+
+   **5a. Partial Cleanup** (more slices remain — keep planning, drop execution):
+   - Delete: `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`.
+   - Keep: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
+   - Update `pipeline_status.md`: set Active Persona back to Architect, advance slice cursor, reset the per-slice coordination checkboxes (`plan / build / tdd / critique / inspect`) to ⬜ while leaving `01 / 02 / 03` ✅.
+
+   **5b. Full Cleanup** (mission complete — drop everything):
+   - Delete every file in `.plans/`: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`.
+   - `hygiene_report.md` is owned by the Hygiene sub-pipeline — do NOT delete it from a per-mission Archivist run; leave it for `/lfe-improve-architecture` to consume and clear.
+   - Update `pipeline_status.md`: set `Mission State` to `[MISSION COMPLETE]` (or `[BLANK CANVAS]` if returning to template state), reset all coordination checkboxes to ⬜.
+6. **Update Pipeline Status (cross-cutting fields)**: Beyond the checkbox/persona resets handled by Step 5a/5b, set the cross-cutting entrance-card fields for the next session — Mission, Session Count, Last ADR, and `Mission State`. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
 7. **Hygiene Check**: Read `Last Architecture Sweep` from `pipeline_status.md`. If 5+ sessions since last sweep, flag it:
    > *"Architecture sweep is due (5+ sessions). Run `/lfe-improve-architecture`?"*
 
