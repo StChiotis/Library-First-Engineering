@@ -46,9 +46,9 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 1. **Orientation**: Run `/lfe-boot` to read `pipeline_status.md`, check for interrupted sessions, and load the Protocol.
 2. **Complexity Gate**: Ask the human: *"Is this a Major Architectural Change or a Minor Fix?"*
 3. **Execution**: Follow the persona sub-pipelines in strict order:
-   - **Architect**: `/lfe-grill-with-docs` → `/lfe-to-prd` → `/lfe-to-issues` → `/lfe-architect`
+   - **Architect**: `/lfe-grill-with-docs` → `/lfe-to-prd` → `/lfe-to-issues` → `/lfe-architect` → `/lfe-plan-critique` *(🛡 auto-gate: PASS / WARN / BLOCK; max 2 plan revisions)*
    - **Builder**: `/lfe-builder` → `/lfe-tdd`
-   - **Inspector**: `/lfe-zoom-out` → `/lfe-inspector` → `/lfe-diagnose` (if failed)
+   - **Inspector**: `/lfe-zoom-out` → `/lfe-inspector` *(includes Cycle Guard + Sub-Skill Dispatch — see `.docs/quality/inspector-config.md`)* → `/lfe-diagnose` (if first failure)
    - **Archivist**: `/lfe-archivist` → slice loop → cleanup
 4. **Hygiene**: Scheduled every 5 sessions. Run `/lfe-hygiene` → `/lfe-improve-architecture`.
 5. **Orientation Shortcut**: Run `/lfe-whats-next` at any point for instant pipeline orientation.
@@ -62,10 +62,16 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 | `/lfe-to-prd` | `01_grill_summary.md` | `.plans/02_prd.md` |
 | `/lfe-to-issues` | `02_prd.md` | `.plans/03_slices.md` |
 | `/lfe-architect` | `03_slices.md` | `.plans/active_plan.md` |
+| `/lfe-plan-critique` | `active_plan.md`, `02_prd.md`, `03_slices.md`, `.docs/` | `.plans/plan_critique.md` *(verdict: PASS / WARN / BLOCK)* |
 | `/lfe-builder` | `active_plan.md` *(plus `diagnosis_report.md` on retry after failed inspection)* | Production code + `.plans/builder_done.md` |
 | `/lfe-tdd` | `active_plan.md` + `builder_done.md` | `.plans/tdd_report.md` |
-| `/lfe-inspector` | `tdd_report.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
-| `/lfe-diagnose` *(conditional)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
+| `/lfe-security-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/security_findings.md` |
+| `/lfe-perf-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/perf_findings.md` |
+| `/lfe-complexity-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/complexity_findings.md` |
+| `/lfe-dep-audit` *(opt-in sub-skill)* | `builder_done.md`, manifest files | `.plans/checks/dep_findings.md` |
+| `/lfe-mutation-verify` *(opt-in sub-skill)* | `builder_done.md`, impl + test files | `.plans/checks/mutation_findings.md` |
+| `/lfe-inspector` | `tdd_report.md` + `.plans/checks/*.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
+| `/lfe-diagnose` *(conditional, 1st failure only)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
 | `/lfe-hygiene` *(every 5 sessions)* | Full repo | `.plans/hygiene_report.md` |
 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status.md |
 
@@ -97,7 +103,26 @@ Project-specific overrides go under `## Brain Persona Overrides` in this file. F
 
 The Archivist appends session token costs to `.docs/quality/token-budget.md` at end-of-mission. The agent should self-report rough per-phase token costs (e.g., from chat-metadata estimates) so the framework can detect drift over time. Phases that exceed +50% over their rolling average get flagged into the next session's `pipeline_status.md`.
 
-## 9. Available Skills (16)
+## 8.8 Skill Invocation Authority (CRITICAL)
+
+Skills are **dispatched by the framework**, not by the Brain. Each persona's sub-pipeline (or another skill via chaining) is responsible for invoking the next skill at the right moment, reading the coordination file the previous step left behind. The Brain interacts with you in natural-language intent ("build X", "fix Y", "is this safe?") and at the explicit human-approval gates — they do not type implementation skills directly.
+
+**Brain-typeable skills** (the only ones a human may invoke directly):
+| Skill | When |
+|---|---|
+| `/lfe-boot` | Start or resume any session — always the first thing |
+| `/lfe-whats-next` | Re-orient when lost |
+| `/lfe-scout` | Declare a Minor Fix at the Complexity Gate |
+| `/lfe-extract-domain` | Restart Day 0 discovery |
+| `LFE-FORCE` | Emergency break-glass keyword (not a slash command) |
+
+**Agent-only skills** (the framework dispatches these from within the assembly line): every other skill in §9 below — Architect sub-pipeline (`/lfe-grill-with-docs`, `/lfe-to-prd`, `/lfe-to-issues`, `/lfe-architect`, `/lfe-plan-critique`), Builder sub-pipeline (`/lfe-builder`, `/lfe-tdd`), Inspector sub-pipeline (`/lfe-zoom-out`, `/lfe-inspector`, `/lfe-diagnose`), all Inspector specialist sub-skills (`/lfe-security-check`, `/lfe-perf-check`, `/lfe-complexity-check`, `/lfe-dep-audit`, `/lfe-mutation-verify`), Archivist (`/lfe-archivist`), Hygiene (`/lfe-hygiene`, `/lfe-improve-architecture`).
+
+**Refusal protocol**: if the Brain types an agent-only skill out of sequence — `/lfe-builder` with no approved plan, an Inspector sub-skill outside dispatch context, `/lfe-archivist` with no `inspection_report.md` — refuse and route them through the assembly line. Respond with: *"This skill is dispatched by the framework, not invoked manually. Tell me what you want to accomplish and I'll run the correct sub-pipeline."*
+
+**Why this rule exists**: the assembly line's guarantees (crash recovery, no-drift, file-based handoff) depend on every skill reading a coordination file the previous step wrote in the correct order. A skill invoked out of sequence reads stale or absent inputs, produces orphaned artifacts in `.plans/`, and breaks the next `/lfe-boot`'s ability to resume. Manual invocation of internal skills is the single biggest way users accidentally corrupt LFE's state.
+
+## 9. Available Skills (22)
 | Skill | Phase | Purpose |
 |---|---|---|
 | `/lfe-boot` | 0 | Session bootstrap and recovery |
@@ -106,11 +131,17 @@ The Archivist appends session token costs to `.docs/quality/token-budget.md` at 
 | `/lfe-to-prd` | 1.2 | PRD synthesis from grill output |
 | `/lfe-to-issues` | 1.3 | Vertical slice breakdown |
 | `/lfe-architect` | 1.4 | Implementation plan for current slice |
+| `/lfe-plan-critique` | 1.5 | Pre-build 4-lens plan critique (AC, test feasibility, domain, structural) |
 | `/lfe-builder` | 2.1 | Code implementation |
 | `/lfe-tdd` | 2.2 | Red-green-refactor quality pass |
 | `/lfe-zoom-out` | 3.1 | System context for unfamiliar code |
-| `/lfe-inspector` | 3.2 | Verification against domain truth |
-| `/lfe-diagnose` | 3.3 | Bug diagnosis loop (conditional) |
+| `/lfe-inspector` | 3.2 | Verification against domain truth (with Cycle Guard + sub-skill dispatch) |
+| `/lfe-security-check` | 3.2.a | Inspector sub-skill — OWASP Top-10 prompt analysis |
+| `/lfe-perf-check` | 3.2.b | Inspector sub-skill — performance anti-pattern analysis |
+| `/lfe-complexity-check` | 3.2.c | Inspector sub-skill — cyclomatic/cognitive complexity |
+| `/lfe-dep-audit` | 3.2.d | Inspector sub-skill — dependency manifest review + Brain-run audit instruction |
+| `/lfe-mutation-verify` | 3.2.e | Inspector sub-skill — prompt-based mutation reasoning for test quality |
+| `/lfe-diagnose` | 3.3 | Bug diagnosis loop (conditional, 1st failure only) |
 | `/lfe-archivist` | 4.1 | Documentation sync and cleanup |
 | `/lfe-hygiene` | 5.1 | Structural audit |
 | `/lfe-improve-architecture` | 5.2 | Deep module extraction |

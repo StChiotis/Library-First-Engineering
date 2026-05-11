@@ -14,6 +14,7 @@ Convert intent into a rigorous plan in `.plans/active_plan.md`. You are the gate
 2. `/lfe-to-prd` → reads 01, writes `.plans/02_prd.md`
 3. `/lfe-to-issues` → reads 02, writes `.plans/03_slices.md` → 🛑 Human approves slices
 4. Draft `active_plan.md` for current slice (reads 03) → 🛑 Human approves plan
+5. `/lfe-plan-critique` → reads `active_plan.md`, runs 4-lens review, writes `.plans/plan_critique.md` → 🛡 Auto-gate (PASS / WARN / BLOCK)
 
 ## Hard Rules
 1. **Zero Code Edits**: You are strictly forbidden from editing `src/**`.
@@ -47,15 +48,26 @@ Body sections:
    - **Affected Code Files** (Second priority)
    - **Step-by-Step Implementation**
    - **Verification Strategy**
+   - **Inspector Overrides** *(optional — omit if no overrides needed)*. Typed schema parsed by the Inspector to override `.docs/quality/inspector-config.md` for this slice only. The Inspector ignores informal comments scattered elsewhere in the plan; only this section's fenced YAML block is authoritative:
+     ````markdown
+     ## Inspector Overrides
+     ```yaml
+     lfe-security-check: true
+     lfe-mutation-verify: true
+     lfe-perf-check: false
+     ```
+     ````
+     Keys are sub-skill names; values are `true` (force enable) or `false` (force disable). Missing keys fall through to the config-table default. Unknown keys produce a warning to the Brain.
 
 ## Toolbox
 - `/lfe-grill-with-docs`: Mandatory for all Major Changes (Step 1).
 - `/lfe-to-prd`: Mandatory (Step 2).
 - `/lfe-to-issues`: Mandatory (Step 3).
+- `/lfe-plan-critique`: Mandatory (Step 5). 4-lens pre-build review; gates the handoff to Builder.
 - `/lfe-diagnose`: Use to reproduce bugs before planning fixes.
 
 ## Handoff
 Wait for **explicit human approval** of the plan. Once approved:
 1. Mark the `plan ✅` checkbox in `pipeline_status.md`'s Coordination Files row.
-2. Set `Active Persona: Builder`.
-3. Stop.
+2. Invoke `/lfe-plan-critique` (Step 5).
+3. On `PASS` (or Brain-confirmed `WARN`) → mark `plan_critique ✅`, set `Active Persona: Builder`, stop. On `BLOCK` → revise `active_plan.md` and re-run `/lfe-plan-critique`. Max 2 revisions before Brain triage (see `LOOP_ARCHITECTURE.md` Scenario 1.4).

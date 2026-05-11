@@ -23,8 +23,13 @@ Check which files exist in `.plans/`:
 - `02_prd.md` — PRD complete?
 - `03_slices.md` — slices approved?
 - `active_plan.md` — plan written for current slice?
+- `plan_critique.md` — pre-build critique verdict? (PASS / WARN / BLOCK)
+- `builder_done.md` — implementation complete?
 - `tdd_report.md` — TDD pass complete?
-- `inspection_report.md` — inspection complete?
+- `.plans/checks/*.md` — Inspector sub-skill findings (if enabled)?
+- `critique.md` — Inspector 4-Eyes pass complete?
+- `inspection_report.md` — inspection verdict?
+- `diagnosis_report.md` — bug diagnosis (only on first inspection failure)?
 
 ### 3. Determine next action
 Based on what exists and what doesn't, output exactly one block:

@@ -9,7 +9,10 @@
         "read_url_content",
         "write_to_file"
       ],
-      "write_constraints": [".docs/**", ".plans/**", "CONTEXT.md"]
+      "write_constraints": [".docs/**", ".plans/**", "CONTEXT.md"],
+      "sub_skills": {
+        "lfe-plan-critique": { "write_constraints": [".plans/plan_critique.md"] }
+      }
     },
     "builder": {
       "allowed_tools": [
@@ -29,7 +32,14 @@
         "run_command",
         "write_to_file"
       ],
-      "write_constraints": [".plans/**", "tests/**"]
+      "write_constraints": [".plans/**", "tests/**"],
+      "sub_skills": {
+        "lfe-security-check": { "write_constraints": [".plans/checks/**"] },
+        "lfe-perf-check": { "write_constraints": [".plans/checks/**"] },
+        "lfe-complexity-check": { "write_constraints": [".plans/checks/**"] },
+        "lfe-dep-audit": { "write_constraints": [".plans/checks/**"] },
+        "lfe-mutation-verify": { "write_constraints": [".plans/checks/**"] }
+      }
     },
     "archivist": {
       "allowed_tools": [
