@@ -31,6 +31,8 @@
 > 3. Answer the Complexity Gate: **Major Change** (full pipeline) or **Minor Fix** (`/lfe-scout`).
 > 4. Run one feature end-to-end through Architect → Builder → Inspector → Archivist. One change per session.
 >
+> **You only ever type five commands** — `/lfe-boot`, `/lfe-whats-next`, `/lfe-scout`, `/lfe-extract-domain`, and the `LFE-FORCE` keyword. Everything else is dispatched by the AI based on your natural-language intent and approvals at the human gates. See [`USER_MANUAL.md`](USER_MANUAL.md) Section 0.
+>
 > Detailed guide: [Getting started](#getting-started) below. Philosophy: keep reading.
 
 ---
@@ -93,11 +95,15 @@ No reliance on chat context. The graph below mirrors `.docs/protocol/ASSEMBLY_LI
 
 Personas are **tool-locked**: the Architect cannot edit code, the Builder cannot rewrite plans, the Inspector cannot edit production code, the Archivist cannot change behavior. A crashed session, a new contributor, or a different agent can resume exactly where the last one stopped.
 
-**Pre-build critique gate** — Between plan approval and Builder start, `/lfe-plan-critique` runs a 4-lens review of the approved plan (Acceptance Criteria scrutiny, Test Feasibility, Domain Alignment, Structural Impact). A `BLOCK` verdict loops back to the Architect; `PASS` proceeds to Builder. Catches plan-level ambiguity before any code is written.
+**Pre-build critique gate (machine-checkable)** — Between plan approval and Builder start, `/lfe-plan-critique` runs a 4-lens review of the approved plan (Acceptance Criteria scrutiny, Test Feasibility, Domain Alignment, Structural Impact) and writes typed frontmatter to `plan_critique.md`: `verdict` (PASS / WARN / BLOCK), `revision` counter, `brain_confirmation` timestamp. The Builder's Step 1 gate parses these fields and refuses to write `src/` unless the gate is open — *no conversational approval, no body-text markers*. The 2-revision limit survives crashes because the counter lives in the file, not in chat memory. Plan-critique findings also feed Inspector Step 1.5 (priority verification targets), so the artifact is load-bearing through the pipeline.
 
-**Inspector specialist sub-skills** — Optional, opt-in via `.docs/quality/inspector-config.md`. Pure prompt-only sub-skills the Inspector dispatches during verification: `lfe-security-check` (OWASP Top-10), `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`. Findings aggregate into `critique.md`.
+**Inspector specialist sub-skills** — Optional, opt-in via `.docs/quality/inspector-config.md`. Pure prompt-only sub-skills the Inspector dispatches during verification: `lfe-security-check` (OWASP Top-10), `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`. Each writes a typed findings file (`status: complete` + `kind: sub-skill` frontmatter); the Inspector aggregates them into `critique.md`. The resume rule is **`status: complete` only** — a partial mid-write doesn't get silently accepted on the next session. Per-mission overrides live in a typed `## Inspector Overrides` YAML block inside `active_plan.md`.
 
-**Correction cycle limit** — On the 2nd consecutive failed inspection of the same slice, the Inspector halts and presents the Brain with three triage options instead of looping forever. See [`LOOP_ARCHITECTURE.md`](.docs/protocol/LOOP_ARCHITECTURE.md) Scenarios 1.4 and 2.2.
+**LFE-FORCE hotfix audit** — Even when the assembly line is bypassed for a production emergency, the recovery session runs a fixed sub-skill subset on the hotfix (always `lfe-security-check` + `lfe-complexity-check`; conditional `lfe-dep-audit` + `lfe-perf-check`). Critical findings persist to `known-issues.md` before the debt entry resolves — the debt clears, but the risks remain visible. The most dangerous code path is the one that gets the audit; ad-hoc patches don't get a free pass.
+
+**Correction cycle limit** — On the 2nd consecutive failed inspection of the same slice, the Inspector halts and presents the Brain with three triage options instead of looping forever. Same pattern for plan-critique BLOCK loops (2-revision file-based limit). See [`LOOP_ARCHITECTURE.md`](.docs/protocol/LOOP_ARCHITECTURE.md) Scenarios 1.4 and 2.2.
+
+**Skill invocation authority** — The Brain types only `/lfe-boot`, `/lfe-whats-next`, `/lfe-scout`, `/lfe-extract-domain`, or `LFE-FORCE`. Every other skill is dispatched by the framework from within the assembly line. Skills refuse direct invocation out of sequence (Hard Rule 0 on Inspector sub-skills + the Builder's machine-checkable gate). This keeps users from accidentally corrupting their own pipeline state. See [`LLM_AGENT_GUIDE.md`](LLM_AGENT_GUIDE.md) §8.8.
 
 </details>
 
@@ -148,7 +154,12 @@ For projects with multiple bounded contexts (e.g., separate Billing and Inventor
 | :--- | :--- | :--- | :--- |
 | **Logic source** | Scattered, often hallucinated | Inferred from prompts; no authoritative source | Centralized in `CONTEXT.md` |
 | **Verification** | Self-verified by the same agent | Visual preview only | Independent Inspector audit |
-| **Recovery** | Re-prompt from memory | Fork the project and retry | Resume from `.plans/` after any crash |
+| **Plan gating** | Implicit / conversational approval | None | Typed file-based gate — `verdict` + `revision` counter + `brain_confirmation` timestamp parsed by the Builder; the gate survives crashes |
+| **Quality auditing** | Self-claimed by the agent | None | Pluggable specialist sub-skills (OWASP, perf, complexity, dep, mutation) — opt-in per project, typed findings files |
+| **Hotfix safety** | None | None | LFE-FORCE recovery auto-runs security + complexity audits; Critical findings persist to `known-issues.md` |
+| **Failure looping** | Unbounded retries | Unbounded retries | 2-cycle correction limit + 2-revision plan-critique limit; Brain triage menu instead of token burn |
+| **Recovery** | Re-prompt from memory | Fork the project and retry | Resume from `.plans/` after any crash — counters and gates are file-based, not conversational |
+| **Skill discipline** | Whatever the user types | UI-driven, opaque | Five user-typeable commands; the rest is framework-dispatched and refuses direct invocation |
 
 *Vibe-coding platforms cited (as of 2026-Q1; this category evolves quickly): Lovable, v0, Bolt, Replit Agent.*
 
@@ -163,6 +174,7 @@ For projects with multiple bounded contexts (e.g., separate Billing and Inventor
 | **Flatter cost curve** | **Reproducible decisions** | **Maintainable at scale** |
 | **Faster onboarding** | **Independent persona audit** | **IDE & agent portable** |
 | **Lean context window** | **Audit-trail by default** | **Spaghetti-proof architecture** |
+| **Five commands to learn** | **Machine-checkable gates** | **Bounded failure loops** |
 
 Want to see actual session costs? See [`token-budget.md`](.docs/quality/token-budget.md) — every mission's rough token count, tracked over time, with automatic drift detection.
 

@@ -69,8 +69,8 @@ If you are doing a Major Change, the AI will cycle through four distinct "Person
    - 🛑 **HUMAN ACTION REQUIRED:** The AI will stop again. *"Do you approve this implementation plan?"* Read it carefully. If it is correct, say "Yes, proceed to Builder."
 5. **The Pre-Build Critique (`/lfe-plan-critique`):** Before any code is written, the Architect runs a 4-lens review of the approved plan — checking that every acceptance criterion is testable, the test strategy is feasible, the plan respects domain boundaries, and there is no architectural drift. The output is `.plans/plan_critique.md` with a verdict:
    - **PASS** — proceed to Builder automatically.
-   - **WARN** — findings are advisory; the AI surfaces them and asks you to confirm before continuing.
-   - **BLOCK** — the plan loops back to step 4 for revision. *Max 2 revisions per slice* — if it still fails, the AI asks you to choose: revert to the PRD, accept WARN, or abort the mission.
+   - **WARN** — findings are advisory; the AI surfaces them and asks you to confirm before continuing. When you confirm, the AI writes a timestamp into the file's frontmatter (`brain_confirmation`) — that's the file-based signal the Builder reads, not your conversational "yes". If the session crashes between you saying "yes" and the file write, you'll be asked again — by design, because the file is the truth.
+   - **BLOCK** — the plan loops back to step 4 for revision. *Max 2 revisions per slice* — the counter lives in the file's frontmatter (`revision`), so the limit survives crashes. If it still fails on the 2nd attempt, the AI asks you to choose: revert to the PRD, accept WARN, or abort the mission.
 
 #### 🔨 Phase 2: The Builder (Coding)
 1. **Implementation (`/lfe-builder`):** The Builder persona takes over and writes the actual code in `src/` based *only* on the approved plan.
