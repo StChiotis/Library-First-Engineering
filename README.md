@@ -1,24 +1,23 @@
-  <h3 align="center">
-    <em>Thinking in the Human</em> · <em>Processing in the AI</em> · <em>Truth in the Documentation</em>
-  </h3>
-<p align="center">
-  <img src=".assets/logo.png" width="300" alt="LFE Mascot">
-</p>
-<div align="center">
-    <p>
-    <a href="https://github.com/StChiotis/Library-First-Engineering/stargazers">
-      <img src="https://img.shields.io/github/stars/StChiotis/Library-First-Engineering?style=social" alt="Stars">
-    </a>
-    <a href="LICENSE">
-      <img src="https://img.shields.io/github/license/StChiotis/Library-First-Engineering" alt="License">
-    </a>
-  </p>
-  <h1>🧱 Library-First Engineering</h1>
-  <p>
-    <strong>A file-driven, persona-based framework for building production software with AI agents.</strong><br>
-    <em>Language-agnostic · IDE-agnostic · LLM-agnostic</em>
-  </p>
-</div>
+<h3 align="center"><em>Thinking in the Human · Processing in the AI · Truth in the Documentation</em></h3>
+
+<table border="0" cellspacing="0" cellpadding="20">
+  <tr>
+    <td valign="middle"><img src=".assets/logo.png" width="260" alt="LFE Mascot"></td>
+    <td valign="middle">
+      <h1>🧱 Library-First Engineering</h1>
+      <p>
+        <strong>A file-driven, persona-based framework for building production software with AI agents.</strong><br>
+        <em>Language-agnostic · IDE-agnostic · LLM-agnostic</em>
+      </p>
+      <a href="https://github.com/StChiotis/Library-First-Engineering/stargazers">
+        <img src="https://img.shields.io/github/stars/StChiotis/Library-First-Engineering?style=social" alt="Stars">
+      </a>
+      <a href="LICENSE">
+        <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
+      </a>
+    </td>
+  </tr>
+</table>
 
 > [!NOTE]
 > **Status: stable, iterating.**  
