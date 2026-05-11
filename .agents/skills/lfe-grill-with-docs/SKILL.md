@@ -36,6 +36,11 @@ When the human states how something works, check whether the code agrees. If con
 ### Cross-context check (if applicable)
 Before declaring any term, check whether `.docs/domain/CONTEXT-MAP.md` exists. If it does, verify whether the term is already declared in another context. If yes, prompt the Brain for the relationship classification (shared kernel / customer-supplier / translation / separate ways) and record the decision in CONTEXT-MAP.md.
 
+### Capture Explicit Lessons with lfe-learn
+When the Brain uses an explicit teaching pattern (`"remember: X"`, `"from now on: Y"`, `"amend Z → W"`) during the grill, do NOT write directly to docs inline. Instead, invoke `/lfe-learn` — it routes the lesson to the correct target file, proposes a diff, and logs to `CHANGELOG.md` after confirmation. `/lfe-learn` is non-blocking; return here immediately after it completes.
+
+Inline writes below are for lessons surfaced during the interview itself, not for explicit teaching moments.
+
 ### Update CONTEXT.md and Domain Rules Inline
 When a new domain term or math/business rule is resolved, you MUST update the project's development documents IMMEDIATELY:
 - **Canonical Terms**: Append directly to `CONTEXT.md` (root) and `.docs/domain/glossary.md` right there. Don't batch — capture as they happen. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).

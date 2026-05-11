@@ -25,9 +25,10 @@ Ensure the repository remains LFE-compliant. Detect drift between the Library an
 ### 2. Coordination Layer Audit
 The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth for which files should be present at each lifecycle moment. This audit checks for drift from those rules.
 
-- **Mission complete** (`Mission State == [MISSION COMPLETE]` or `[BLANK CANVAS]`): no execution OR planning files should remain. If any of `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md` still exist → flag as "Stale Coordination Files".
-- **Between slices** (`Mission State == [IN-FLIGHT: <phase>]` and Active Persona is Architect): planning files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`) MAY exist; execution files (`active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`) MUST NOT — flag any present as "Partial Cleanup Skipped".
-- **Mid-mission**: `active_plan.md` exists but Active Persona is NOT Architect or Builder → flag as "Orphaned Plan".
+- **Mission complete** (`Mission State == [MISSION COMPLETE]` or `[BLANK CANVAS]`): no execution OR planning files should remain. If any of `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md` still exist, or if `.plans/checks/` contains any files → flag as "Stale Coordination Files".
+- **Between slices** (`Mission State == [IN-FLIGHT: <phase>]` and Active Persona is Architect): planning files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`) MAY exist; execution files (`plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `.plans/checks/`) MUST NOT — flag any present as "Partial Cleanup Skipped".
+- **Mid-mission**: `active_plan.md` exists but Active Persona is NOT Architect, plan-critique, or Builder → flag as "Orphaned Plan".
+- **Plan critique checkpoint**: `plan_critique.md` should exist only between Plan Approval and Builder start. If `plan_critique.md` exists AND `builder_done.md` exists → the critique file should have been cleaned up by Partial Cleanup; flag as "Stale Plan Critique".
 - **Hygiene cycle**: `hygiene_report.md` is owned by the Hygiene sub-pipeline; flag only if it persists outside an active hygiene cycle.
 - Verify the `Coordination Files` row in `pipeline_status.md` matches the **mainline** files in `.plans/` (the eight checkboxes are `01 02 03 plan build tdd critique inspect`). Conditional artifacts (`diagnosis_report.md`, `hygiene_report.md`) intentionally have no checkbox — their presence on disk is not row-drift.
 
@@ -47,10 +48,11 @@ The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth
 - Verify every skill in `.agents/skills/` has a `SKILL.md` with YAML frontmatter (name + description).
 - Verify no skill references a deprecated skill.
 - Verify `.agents/permissions.json` maps exactly to the roles defined in `.docs/protocol/PERSONAS.md` (no documentation drift in tool gateways).
+- Verify `.docs/quality/inspector-config.md` lists every sub-skill in `.agents/skills/` whose name matches `lfe-*-check` or `lfe-*-audit` or `lfe-*-verify` — if a sub-skill exists but is absent from the config, flag as "Unconfigured Sub-Skill".
 
 ### 6. Scaling Audit
 - Verify there are no directories in `.docs/` with 3+ files missing a `README.md` Shelf Index.
-- Verify there are no files in `.docs/` exceeding ~6,000 characters.
+- Verify there are no files in `.docs/` exceeding ~6,000 characters. For any file that exceeds this threshold, check whether it has a Shelf Index header (`## Index` or similar). Flag files that are both oversized AND lack a Shelf Index as "Doc Size Violation" — these are candidates for splitting into atomic docs. Files with a Shelf Index that organise sub-entries are acceptable at larger sizes.
 
 ### 6.5 Coordination Contract Audit
 The contract in [`COORDINATION_FILES.md`](../../../.docs/protocol/COORDINATION_FILES.md) defines a frontmatter schema and per-tier file lists. Drift between the contract and what skills actually do is the framework's most common silent-failure class. Two cheap mechanical checks:

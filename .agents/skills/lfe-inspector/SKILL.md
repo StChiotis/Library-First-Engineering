@@ -26,13 +26,37 @@ Verify that the implementation matches the domain truth and numerical baselines.
    - **Fallback (LFE-FORCE recovery)**: if `.plans/tdd_report.md` does NOT exist AND `.docs/quality/PROTOCOL_DEBT.md` has at least one unresolved entry, read the latest unresolved Protocol Debt entry instead and verify the hotfix described there directly against `src/`. Set `source: .docs/quality/PROTOCOL_DEBT.md` in the inspection report frontmatter — exact full path, because Archivist Step 3.6's matcher keys off this string verbatim. This path is the ONLY way to clear Protocol Debt — the framework MUST never deadlock here.
    - **Hard fail**: if neither input exists, halt and ask the human whether to escalate to `/lfe-extract-domain` (true black box) rather than fabricate a verification.
 
+## Cycle Guard (check FIRST, before any other step)
+
+Before running any verification, check whether this is a repeated failure on the same slice:
+
+1. Read `inspection_report.md` if it exists. Check the `slice:` frontmatter field and `status:` value.
+2. Read `diagnosis_report.md` if it exists.
+3. If the current `active_plan.md` slice ID matches the `inspection_report.md` slice AND `inspection_report.md` shows `status: failed`, this is at minimum the **2nd failed cycle** on this slice.
+4. **On the 2nd failed cycle**: halt. Do not re-invoke `/lfe-diagnose`. Present the Brain with three triage options:
+   - **Option A — Accept and ship as known debt**: proceed to Archivist; log the open issue to `.docs/quality/known-issues.md` and a new `PROTOCOL_DEBT.md` entry.
+   - **Option B — Escalate LFE-FORCE**: Brain invokes `LFE-FORCE` to apply a targeted patch; old debt entry stays open.
+   - **Option C — Re-plan from scratch**: wipe execution files; loop back to Architect to re-design the slice from `03_slices.md`.
+
+   The pipeline must not proceed until Brain selects an option. Record the outcome in a new `inspection_report.md` with `status: escalated` and the chosen triage option in the body.
+
+---
+
 ## Workflow
 1. **Orient**: Run `/lfe-zoom-out` on any unfamiliar modules to get system context before diving in.
 2. **Verify Logic**: Compare implementation logic against formulas in the project's domain documentation.
 3. **Verify Baselines**: If your project keeps validation snapshots in `.docs/quality/validation-baselines.md`, confirm the implementation matches them. (The file is a template; populated only when your project has reproducible golden outputs.)
 4. **Verify TDD Report (or Protocol Debt entry)**: Read `.plans/tdd_report.md` and confirm test coverage matches the plan's requirements. If that file is absent because the work arrived via `LFE-FORCE`, follow Hard Rule #4's fallback: read the latest unresolved entry in `.docs/quality/PROTOCOL_DEBT.md` and verify the hotfix directly. Mark the verification's `source:` field accordingly.
 5. **Instrument** (mission path only): If behavior is suspicious AND `source: .plans/tdd_report.md`, use `/lfe-diagnose` to build a repro loop and identify root cause. **Do NOT trigger `/lfe-diagnose` on the LFE-FORCE recovery path** — Diagnose returns to Builder, which would read a non-existent `active_plan.md`. See Step 7b instead.
-6. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation (or, on the LFE-FORCE path, against the hotfix). Look for edge cases, performance regressions, or undocumented technical debt. Frontmatter follows the contract in [`COORDINATION_FILES.md`](../../../.docs/protocol/COORDINATION_FILES.md):
+6. **Sub-Skill Dispatch** (skip on LFE-FORCE recovery path):
+   a. Read `.docs/quality/inspector-config.md` to determine which sub-skills are enabled.
+   b. Check `active_plan.md` for an `inspector-config-override:` comment; any override takes precedence.
+   c. For each enabled sub-skill, invoke it in this fixed order: `lfe-security-check` → `lfe-perf-check` → `lfe-complexity-check` → `lfe-dep-audit` → `lfe-mutation-verify`.
+   d. Each sub-skill writes its output to `.plans/checks/<sub-skill-name>_findings.md`.
+   e. After all sub-skills complete, read all `.plans/checks/*_findings.md` files. Prepare a labelled summary block per sub-skill for inclusion in `critique.md`.
+   f. If no sub-skills are enabled, proceed without this block.
+
+6b. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation (or, on the LFE-FORCE path, against the hotfix). Look for edge cases, performance regressions, or undocumented technical debt. Frontmatter follows the contract in [`COORDINATION_FILES.md`](../../../.docs/protocol/COORDINATION_FILES.md):
 
 ```yaml
 ---
@@ -45,7 +69,26 @@ slice: <copied from active_plan.md; omit on LFE-FORCE recovery path>
 ---
 ```
 
-Body: free-form Devil's Advocate analysis. Mark the `critique ✅` checkbox in `pipeline_status.md`.
+Body: free-form Devil's Advocate analysis. If sub-skills ran (Step 6), append their findings under labelled sections:
+
+```markdown
+## Security
+<content of .plans/checks/security_findings.md, or "Sub-skill not enabled.">
+
+## Performance
+<content of .plans/checks/perf_findings.md, or "Sub-skill not enabled.">
+
+## Complexity
+<content of .plans/checks/complexity_findings.md, or "Sub-skill not enabled.">
+
+## Dependencies
+<content of .plans/checks/dep_findings.md, or "Sub-skill not enabled.">
+
+## Mutation Coverage
+<content of .plans/checks/mutation_findings.md, or "Sub-skill not enabled.">
+```
+
+Mark the `critique ✅` checkbox in `pipeline_status.md`.
 7. **Write Report**: Save verification results to `.plans/inspection_report.md`:
 
 ```yaml

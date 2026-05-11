@@ -37,9 +37,26 @@ A "Loop" is defined as a sequence of state changes. In LFE, these state changes 
 ### Scenario 2.2: The Bug Diagnosis Loop
 *The Inspector finds a regression during verification.*
 1. **Trigger**: `/lfe-inspector` fails its verification check.
-2. **Diagnose**: Inspector triggers `/lfe-diagnose` to find the root cause and writes `diagnosis_report.md`.
-3. **The Loop Back**: Control returns to the Builder to implement the fix.
-4. **Re-Verify**: Builder runs `/lfe-tdd` -> Inspector runs `/lfe-inspector`. -> **[Repeats until Inspector passes]**
+2. **Cycle Guard**: Inspector checks whether `inspection_report.md` already records a `status: failed` for the **same slice ID** (see Cycle Guard in `lfe-inspector/SKILL.md`).
+3. **First failure** → Diagnose: Inspector triggers `/lfe-diagnose` to find the root cause and writes `diagnosis_report.md`. Control returns to Builder to implement the fix.
+4. **Re-Verify**: Builder runs `/lfe-tdd` → Inspector runs `/lfe-inspector`. -> **[One repeat allowed]**
+5. **Second failure (same slice)** → **Halt**. Inspector does NOT trigger `/lfe-diagnose` again. Instead, Inspector presents Brain with three triage options:
+   - **A — Accept as known debt**: proceed to Archivist; log issue to `known-issues.md` + `PROTOCOL_DEBT.md`.
+   - **B — Escalate LFE-FORCE**: apply a targeted hotfix; old debt entry stays open.
+   - **C — Re-plan from scratch**: wipe execution files; loop back to Architect from `03_slices.md`.
+6. Brain selects option. Pipeline is blocked until selection is made.
+
+### Scenario 1.4: The Pre-Build Critique Loop
+*The Plan Critique finds a BLOCK before the Builder starts.*
+1. **Trigger**: `/lfe-plan-critique` writes `plan_critique.md` with `verdict: BLOCK`.
+2. **Revision**: Inspector (still acting as Architect) presents findings to Brain. Architect revises `active_plan.md` to address the block.
+3. **Re-Critique**: `/lfe-plan-critique` re-runs on the revised plan. -> **[One repeat allowed]**
+4. **Second BLOCK** → **Halt**. Do NOT auto-loop again. Present Brain with triage:
+   - **A — Revert to PRD**: loop back to `/lfe-to-issues` to re-slice from `02_prd.md`.
+   - **B — Accept WARN and proceed**: Brain explicitly accepts the risk and authorises Builder.
+   - **C — Abort mission**: wipe `.plans/` execution files; mission cancelled.
+
+> *Rationale*: a plan that fails critique twice has a structural misalignment that repeated plan edits will not fix. The PRD or slice boundaries need to change.
 
 ### Scenario 2.3: The Domain Rescue Loop (Black Box)
 *Any persona encounters undocumented, highly complex code.*
@@ -91,7 +108,8 @@ A "Loop" is defined as a sequence of state changes. In LFE, these state changes 
 | :--- | :--- | :--- |
 | **During Grill** | Empty | Restarts from scratch. |
 | **After PRD** | `01`, `02` exist | Resumes at `/lfe-to-issues`. |
-| **After Plan** | `01`, `02`, `03`, `active_plan` exist | Resumes at `/lfe-builder`. |
+| **After Plan** | `01`, `02`, `03`, `active_plan` exist | Resumes at `/lfe-plan-critique`. |
+| **After Plan Critique (PASS)** | `01`, `02`, `03`, `active_plan`, `plan_critique` exist | Resumes at `/lfe-builder`. |
 | **After Coding** | `active_plan`, `builder_done` exist | Resumes at `/lfe-tdd`. |
 | **After TDD** | `tdd_report` exists | Resumes at `/lfe-inspector`. |
 | **During Inspect** | `critique` exists, no report | Resumes at `/lfe-inspector`. |

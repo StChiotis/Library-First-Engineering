@@ -27,7 +27,14 @@ graph TD
 
     Plan --> PlanApprove{Human approves<br>plan?}
     PlanApprove -- "No" --> Plan
-    PlanApprove -- "Yes" --> Build
+    PlanApprove -- "Yes" --> Critique[Step 4b: lfe-plan-critique]
+
+    Critique --> CritiqueVerdict{Verdict?}
+    CritiqueVerdict -- "PASS" --> Build
+    CritiqueVerdict -- "WARN" --> CritiqueWarn{Brain confirms?}
+    CritiqueWarn -- "Yes" --> Build
+    CritiqueWarn -- "No" --> Plan
+    CritiqueVerdict -- "BLOCK" --> Plan
 
     subgraph builder [Phase 2: Builder Sub-Pipeline]
         Build[Step 1: lfe-builder] --> TDD[Step 2: lfe-tdd]
@@ -126,6 +133,7 @@ Each step reads the previous step's coordination file.
 | 2 | `/lfe-to-prd` | `01_grill_summary.md` | `.plans/02_prd.md` | — |
 | 3 | `/lfe-to-issues` | `02_prd.md` | `.plans/03_slices.md` | 🛑 Human approves slices |
 | 4 | `/lfe-architect` | `03_slices.md` (current slice) | `.plans/active_plan.md` | 🛑 Human approves plan |
+| 4b | `/lfe-plan-critique` | `active_plan.md`, `02_prd.md`, `03_slices.md`, `.docs/` | `.plans/plan_critique.md` | 🛡 Auto-gate: PASS proceeds; WARN needs Brain; BLOCK loops back |
 
 ## Phase 2: Builder Sub-Pipeline
 
