@@ -52,7 +52,6 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
    - **Archivist**: `/lfe-archivist` → slice loop → cleanup
 4. **Hygiene**: Scheduled every 5 sessions. Run `/lfe-hygiene` → `/lfe-improve-architecture`.
 5. **Orientation Shortcut**: Run `/lfe-whats-next` at any point for instant pipeline orientation.
-6. **Dynamic Learning** (on-demand, non-blocking): When the Brain says `"remember X"`, `"from now on Y"`, or `"amend Z → W"`, run `/lfe-learn` to persist the lesson into the Library before resuming.
 
 ## 5. File-Based Coordination (CRITICAL)
 **Every skill reads its input from a coordination file in `.plans/`, NOT from conversation context.** This prevents context window information loss between steps. The frontmatter schema and full registry live in [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md).
@@ -75,7 +74,6 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 | `/lfe-diagnose` *(conditional, 1st failure only)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
 | `/lfe-hygiene` *(every 5 sessions)* | Full repo | `.plans/hygiene_report.md` |
 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status.md |
-| `/lfe-learn` *(on-demand)* | Brain teaching instruction | Update to a `.docs/` atomic doc + `CHANGELOG.md` entry |
 
 
 Coordination files are archived/deleted ONLY by the Archivist when the mission is complete (or by the Hygiene sub-pipeline for `hygiene_report.md`). If a session crashes, the files remain for recovery.
@@ -105,7 +103,26 @@ Project-specific overrides go under `## Brain Persona Overrides` in this file. F
 
 The Archivist appends session token costs to `.docs/quality/token-budget.md` at end-of-mission. The agent should self-report rough per-phase token costs (e.g., from chat-metadata estimates) so the framework can detect drift over time. Phases that exceed +50% over their rolling average get flagged into the next session's `pipeline_status.md`.
 
-## 9. Available Skills (23)
+## 8.8 Skill Invocation Authority (CRITICAL)
+
+Skills are **dispatched by the framework**, not by the Brain. Each persona's sub-pipeline (or another skill via chaining) is responsible for invoking the next skill at the right moment, reading the coordination file the previous step left behind. The Brain interacts with you in natural-language intent ("build X", "fix Y", "is this safe?") and at the explicit human-approval gates — they do not type implementation skills directly.
+
+**Brain-typeable skills** (the only ones a human may invoke directly):
+| Skill | When |
+|---|---|
+| `/lfe-boot` | Start or resume any session — always the first thing |
+| `/lfe-whats-next` | Re-orient when lost |
+| `/lfe-scout` | Declare a Minor Fix at the Complexity Gate |
+| `/lfe-extract-domain` | Restart Day 0 discovery |
+| `LFE-FORCE` | Emergency break-glass keyword (not a slash command) |
+
+**Agent-only skills** (the framework dispatches these from within the assembly line): every other skill in §9 below — Architect sub-pipeline (`/lfe-grill-with-docs`, `/lfe-to-prd`, `/lfe-to-issues`, `/lfe-architect`, `/lfe-plan-critique`), Builder sub-pipeline (`/lfe-builder`, `/lfe-tdd`), Inspector sub-pipeline (`/lfe-zoom-out`, `/lfe-inspector`, `/lfe-diagnose`), all Inspector specialist sub-skills (`/lfe-security-check`, `/lfe-perf-check`, `/lfe-complexity-check`, `/lfe-dep-audit`, `/lfe-mutation-verify`), Archivist (`/lfe-archivist`), Hygiene (`/lfe-hygiene`, `/lfe-improve-architecture`).
+
+**Refusal protocol**: if the Brain types an agent-only skill out of sequence — `/lfe-builder` with no approved plan, an Inspector sub-skill outside dispatch context, `/lfe-archivist` with no `inspection_report.md` — refuse and route them through the assembly line. Respond with: *"This skill is dispatched by the framework, not invoked manually. Tell me what you want to accomplish and I'll run the correct sub-pipeline."*
+
+**Why this rule exists**: the assembly line's guarantees (crash recovery, no-drift, file-based handoff) depend on every skill reading a coordination file the previous step wrote in the correct order. A skill invoked out of sequence reads stale or absent inputs, produces orphaned artifacts in `.plans/`, and breaks the next `/lfe-boot`'s ability to resume. Manual invocation of internal skills is the single biggest way users accidentally corrupt LFE's state.
+
+## 9. Available Skills (22)
 | Skill | Phase | Purpose |
 |---|---|---|
 | `/lfe-boot` | 0 | Session bootstrap and recovery |
@@ -126,7 +143,6 @@ The Archivist appends session token costs to `.docs/quality/token-budget.md` at 
 | `/lfe-mutation-verify` | 3.2.e | Inspector sub-skill — prompt-based mutation reasoning for test quality |
 | `/lfe-diagnose` | 3.3 | Bug diagnosis loop (conditional, 1st failure only) |
 | `/lfe-archivist` | 4.1 | Documentation sync and cleanup |
-| `/lfe-learn` | Any | Dynamic Library update on Brain teaching moments (Archivist sub-skill) |
 | `/lfe-hygiene` | 5.1 | Structural audit |
 | `/lfe-improve-architecture` | 5.2 | Deep module extraction |
 | `/lfe-extract-domain` | Any | Domain knowledge rescue |

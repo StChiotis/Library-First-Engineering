@@ -48,7 +48,7 @@ The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth
 - Verify every skill in `.agents/skills/` has a `SKILL.md` with YAML frontmatter (name + description).
 - Verify no skill references a deprecated skill.
 - Verify `.agents/permissions.json` maps exactly to the roles defined in `.docs/protocol/PERSONAS.md` (no documentation drift in tool gateways).
-- Verify `.docs/quality/inspector-config.md` lists every sub-skill in `.agents/skills/` whose name matches `lfe-*-check` or `lfe-*-audit` or `lfe-*-verify` — if a sub-skill exists but is absent from the config, flag as "Unconfigured Sub-Skill".
+- **Sub-skill discovery (kind-based, not name-based)**: scan every `.plans/checks/*_findings.md` referenced as the output of a skill in `.agents/skills/`; identify sub-skills by their findings-file frontmatter `kind: sub-skill`. Name patterns (`-check`, `-audit`, `-verify`) are an unreliable signal — only the typed marker counts. For each discovered sub-skill, verify it is listed in `.docs/quality/inspector-config.md`. If a sub-skill exists but is absent from the config, flag as "Unconfigured Sub-Skill".
 
 ### 6. Scaling Audit
 - Verify there are no directories in `.docs/` with 3+ files missing a `README.md` Shelf Index.

@@ -48,6 +48,16 @@ Body sections:
    - **Affected Code Files** (Second priority)
    - **Step-by-Step Implementation**
    - **Verification Strategy**
+   - **Inspector Overrides** *(optional — omit if no overrides needed)*. Typed schema parsed by the Inspector to override `.docs/quality/inspector-config.md` for this slice only. The Inspector ignores informal comments scattered elsewhere in the plan; only this section's fenced YAML block is authoritative:
+     ````markdown
+     ## Inspector Overrides
+     ```yaml
+     lfe-security-check: true
+     lfe-mutation-verify: true
+     lfe-perf-check: false
+     ```
+     ````
+     Keys are sub-skill names; values are `true` (force enable) or `false` (force disable). Missing keys fall through to the config-table default. Unknown keys produce a warning to the Brain.
 
 ## Toolbox
 - `/lfe-grill-with-docs`: Mandatory for all Major Changes (Step 1).

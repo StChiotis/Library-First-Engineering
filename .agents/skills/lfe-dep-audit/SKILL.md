@@ -15,6 +15,7 @@ description: Inspector sub-skill. Reviews dependency manifest files (package.jso
 Review any dependency manifest files touched by the current diff for known-risky version patterns, major version jumps, and unmaintained packages. Since actual vulnerability databases require tool execution, this skill emits a structured instruction block asking the Brain to run the appropriate audit command and paste the output — keeping the skill fully tool-agnostic.
 
 ## Hard Rules
+0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` for the current slice, halt immediately and reply: *"`/lfe-dep-audit` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
 1. **No Tool Execution**: Do not run `npm audit`, `pip audit`, `cargo audit`, or any CLI command. Reason over manifest contents only.
 2. **Manifest-Scoped**: Only audit dependency files that appear in `builder_done.md`. Do not re-audit unchanged manifests.
 3. **Emit Instruction Block**: Always emit a "Brain Action Required" block for each detected manifest type — even if no static concerns are found — because dynamic vulnerability data requires runtime tools.
@@ -68,6 +69,22 @@ Please run the following command(s) and paste the output into the chat:
 ### Step 4: Write Findings File
 
 Path: `.plans/checks/dep_findings.md`
+
+Begin the file with a YAML frontmatter block — the Inspector's dispatcher relies on `status: complete` to detect successful runs and skip them on crash recovery.
+
+```yaml
+---
+phase: inspector
+step: dep-audit
+kind: sub-skill
+status: complete
+timestamp: <ISO-8601>
+source: .plans/builder_done.md
+slice: <copied from active_plan.md>
+---
+```
+
+Body:
 
 ```markdown
 ## Dependency Audit Findings

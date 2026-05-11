@@ -18,10 +18,26 @@ Stress-test the approved plan from four angles before a single line of code is w
 1. **Zero Code Writes**: This skill operates on `.plans/` and `.docs/` only. Never touch `src/`.
 2. **4-Lens Sequential**: Run all four lenses in order. Do not skip a lens because an earlier one passed cleanly.
 3. **Single Output File**: All findings aggregate into one `plan_critique.md` — no per-lens files.
-4. **Verdict is Decisive**: A single BLOCK finding stops the Builder. WARN requires explicit Brain confirmation before Builder starts.
+4. **Verdict is Decisive**: A single BLOCK finding stops the Builder. WARN requires an explicit, file-recorded Brain confirmation before Builder starts (see Step 7 — `brain_confirmation` frontmatter field).
 5. **Domain Library Is Truth**: All domain boundary and architectural judgments must cite a specific `.docs/` file and line, not general knowledge.
+6. **Revision Counter (file-based)**: The `revision:` field in `plan_critique.md` frontmatter is the **physical substrate** for the 2-revision limit (GOVERNANCE Cycle Limits). On every run, read any existing `plan_critique.md` first to determine the current revision number. On a 2nd BLOCK, halt and present Brain triage instead of looping back. This rule exists because the file is overwritten each run — without the counter, the limit would be conversation-only and lost on crash.
 
 ## Workflow
+
+### Step 0: Counter Check (must run first)
+Before loading any other context, check whether `.plans/plan_critique.md` already exists for the current slice:
+
+1. **File does not exist** → this is **Revision 1**. Continue to Step 1.
+2. **File exists** — read its frontmatter:
+   - **`verdict: PASS` or `verdict: WARN` with `brain_confirmation` set** → the gate is already open; this skill should not have been invoked. Halt and instruct the Brain to proceed to `/lfe-builder`.
+   - **`verdict: WARN` with `brain_confirmation: null`** → Brain has not yet confirmed; re-presenting the existing WARN is correct. Skip to Step 7 (Branch on Verdict). Do NOT re-run lenses.
+   - **`verdict: BLOCK` and `revision: 1`** → the Architect has revised `active_plan.md` and is re-running. This is **Revision 2**. Continue to Step 1.
+   - **`verdict: BLOCK` and `revision: 2`** → the 2-revision limit is exhausted. **Halt immediately.** Do NOT re-run lenses. Present the Brain with three triage options (per `LOOP_ARCHITECTURE.md` Scenario 1.4):
+     - **A — Revert to PRD**: loop back to `/lfe-to-issues` from `02_prd.md`.
+     - **B — Accept WARN and proceed**: Brain explicitly downgrades the BLOCK to a WARN and authorises Builder. If chosen, update `plan_critique.md` frontmatter: `verdict: WARN`, `brain_confirmation: <ISO-8601>`. Set `Active Persona: Builder`.
+     - **C — Abort mission**: wipe `.plans/` execution files; mission cancelled.
+
+Record the determined revision number — it must appear in the frontmatter of the file you eventually write.
 
 ### Step 1: Load Context
 Read in this order:
@@ -76,6 +92,8 @@ timestamp: <ISO-8601>
 source: .plans/active_plan.md
 slice: <copied from active_plan.md>
 verdict: PASS | WARN | BLOCK
+revision: 1 | 2                        # from Step 0 counter check
+brain_confirmation: <ISO-8601 | null>   # null on first write; set by Step 7 when Brain confirms a WARN
 ---
 ```
 
@@ -101,12 +119,16 @@ Body structure:
 ```
 
 ### Step 7: Branch on Verdict
-- **PASS** → Notify Brain ("Plan critique passed — Builder may proceed."). Mark `plan_critique ✅` in `pipeline_status.md`. Set `Active Persona: Builder`.
-- **WARN** → Present findings to Brain. Brain decides: accept and proceed, or loop back to Architect. Do not start Builder until Brain explicitly confirms.
-- **BLOCK** → Loop back to Architect. Architect revises `active_plan.md` to address the finding(s). Re-run `/lfe-plan-critique`. Max 2 revision cycles before Brain triage (see `LOOP_ARCHITECTURE.md` Scenario 1.4).
+- **PASS** → Notify Brain ("Plan critique passed — Builder may proceed."). Mark `plan_critique ✅` in `pipeline_status.md`. Set `Active Persona: Builder`. Leave `brain_confirmation: null` in the file (PASS does not require explicit confirmation).
+- **WARN** → Present findings to Brain. Brain decides: accept and proceed, or loop back to Architect.
+  - **If Brain confirms**: re-write `plan_critique.md` with the same body but update frontmatter `brain_confirmation: <ISO-8601>`. This is the **file-based signal** the Builder's Step 1 gate parses; conversational confirmation is not sufficient. Set `Active Persona: Builder`.
+  - **If Brain rejects**: loop back to Architect (Step 4) for plan revision. The next `/lfe-plan-critique` run will see this file as `verdict: WARN`, `brain_confirmation: null` (Step 0 will re-present rather than re-run lenses; if Brain wants a fresh critique on the revised plan, the Architect should delete the existing `plan_critique.md` so Step 0 treats it as Revision 1 of a re-scoped plan — document this in the plan revision notes).
+- **BLOCK** → Loop back to Architect. Architect revises `active_plan.md` to address the finding(s). Re-run `/lfe-plan-critique`. Step 0 reads the existing file to detect this is **Revision 2**; on a 2nd BLOCK, Step 0 halts and presents Brain triage rather than re-running lenses (per Scenario 1.4 and the Cycle Limits in `GOVERNANCE.md`).
 
 ## Checklist
+- [ ] Step 0 counter check executed before any lens work?
 - [ ] All four lenses applied sequentially?
 - [ ] Every BLOCK finding cites a specific `.docs/` file?
-- [ ] `plan_critique.md` written with correct frontmatter verdict field?
-- [ ] Builder NOT started until verdict is PASS (or Brain confirms WARN)?
+- [ ] `plan_critique.md` written with correct frontmatter (`verdict`, `revision`, `brain_confirmation`)?
+- [ ] WARN path: `brain_confirmation` left `null` on initial write; updated to ISO-8601 only after Brain explicitly confirms?
+- [ ] Builder NOT started until `verdict: PASS` OR (`verdict: WARN` AND `brain_confirmation` is non-null)?

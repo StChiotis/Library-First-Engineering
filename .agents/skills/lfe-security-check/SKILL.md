@@ -15,6 +15,7 @@ description: Inspector sub-skill. Runs an OWASP Top-10 prompt-based security ana
 Systematically examine the implementation diff for security vulnerabilities using the OWASP Top-10 as a structured checklist. No external scanners, no Semgrep, no platform-specific tooling — reasoning over code only.
 
 ## Hard Rules
+0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` AND `.plans/tdd_report.md` for the current slice, halt immediately and reply: *"`/lfe-security-check` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
 1. **Prompt-Only Analysis**: All findings come from LLM reasoning over the diff. Do not attempt to execute code or call external APIs.
 2. **Cite Evidence**: Every finding must quote the specific code line or pattern that triggers the concern.
 3. **Severity Triage**: Rate each finding as Critical / High / Medium / Low. Only Critical blocks Builder re-run; others are advisory.
@@ -50,6 +51,22 @@ Reason through each category against the changed code:
 ### Step 3: Write Findings File
 
 Path: `.plans/checks/security_findings.md`
+
+Begin the file with a YAML frontmatter block — the Inspector's dispatcher relies on `status: complete` to detect successful runs and skip them on crash recovery. A file without this frontmatter (or with any other `status` value) will be re-invoked rather than skipped.
+
+```yaml
+---
+phase: inspector
+step: security-check
+kind: sub-skill
+status: complete
+timestamp: <ISO-8601>
+source: .plans/builder_done.md
+slice: <copied from active_plan.md>
+---
+```
+
+Body:
 
 ```markdown
 ## Security Check Findings

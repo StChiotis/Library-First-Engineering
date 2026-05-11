@@ -49,10 +49,7 @@
         "multi_replace_file_content",
         "write_to_file"
       ],
-      "write_constraints": [".docs/**", "pipeline_status.md", "README.md", "CHANGELOG.md", ".plans/**"],
-      "sub_skills": {
-        "lfe-learn": { "write_constraints": [".docs/**", "CHANGELOG.md"] }
-      }
+      "write_constraints": [".docs/**", "pipeline_status.md", "README.md", "CHANGELOG.md", ".plans/**"]
     },
     "scout": {
       "allowed_tools": [

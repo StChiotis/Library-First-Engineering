@@ -17,6 +17,7 @@ Reason about test quality by asking: "If we made this change to the production c
 This skill is expensive in reasoning tokens. Enable selectively — critical business logic, security-sensitive paths, and mission-critical calculations.
 
 ## Hard Rules
+0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` AND `.plans/tdd_report.md` for the current slice, halt immediately and reply: *"`/lfe-mutation-verify` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
 1. **Prompt-Only**: No test runner, no mutation framework, no code execution.
 2. **Diff-Scoped**: Reason only over implementation + test files in `builder_done.md`.
 3. **Candidate Mutations**: For each production function changed, propose 3–5 plausible mutations; reason whether any test would catch them.
@@ -49,6 +50,22 @@ For each changed production function or method:
 ### Step 3: Write Findings File
 
 Path: `.plans/checks/mutation_findings.md`
+
+Begin the file with a YAML frontmatter block — the Inspector's dispatcher relies on `status: complete` to detect successful runs and skip them on crash recovery.
+
+```yaml
+---
+phase: inspector
+step: mutation-verify
+kind: sub-skill
+status: complete
+timestamp: <ISO-8601>
+source: .plans/builder_done.md
+slice: <copied from active_plan.md>
+---
+```
+
+Body:
 
 ```markdown
 ## Mutation Verify Findings

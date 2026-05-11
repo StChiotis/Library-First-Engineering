@@ -35,5 +35,3 @@ Available sub-skills (all prompt-only, tool-agnostic):
 | `lfe-dep-audit` | Dependency manifest review + audit instruction |
 | `lfe-mutation-verify` | Test quality via prompt-based mutation reasoning |
 
-### 📚 Archivist — lfe-learn
-The Archivist persona includes the `lfe-learn` skill for dynamic Library updates. When the Brain explicitly teaches a rule (`"remember X"`, `"from now on Y"`, `"amend Z → W"`), the Archivist runs `/lfe-learn` to classify the lesson, route it to the correct `.docs/` file, propose a diff, and persist after confirmation. Every write is logged to `CHANGELOG.md`. This skill is non-blocking — it does not alter the pipeline sequence.

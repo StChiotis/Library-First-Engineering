@@ -23,7 +23,11 @@ Execute the approved plan in `.plans/active_plan.md` into production-ready code.
 5. **File-Based Input**: Read `active_plan.md` as the source of truth, not conversation context.
 
 ## Workflow
-1. **Check plan-critique gate**: Before reading anything else, verify `.plans/plan_critique.md` exists with `verdict: PASS` (or `verdict: WARN` with explicit Brain confirmation in the body). If `verdict: BLOCK` or the file is absent, halt — the Architect must complete `/lfe-plan-critique` first. Do not write to `src/` until the gate is open.
+1. **Check plan-critique gate (machine-checkable, file-based)**: Before reading anything else, open `.plans/plan_critique.md` and parse its YAML frontmatter. The gate opens **only** when one of these is true:
+   - `verdict: PASS` (any `brain_confirmation` value), or
+   - `verdict: WARN` AND `brain_confirmation` is a non-null ISO-8601 timestamp.
+
+   Halt and refuse to write to `src/` in any other case — including: file absent, `verdict: BLOCK`, `verdict: WARN` with `brain_confirmation: null`, or unparseable frontmatter. Do not infer Brain confirmation from conversation; the typed frontmatter field is the **only** valid signal. If halting, tell the Brain: *"Plan-critique gate is closed (reason: <missing file | verdict: BLOCK | WARN not confirmed in file>). Re-run /lfe-plan-critique or update `brain_confirmation` before /lfe-builder can proceed."*
 2. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`. **If `.plans/diagnosis_report.md` exists**, check its `slice:` field against `active_plan.md`'s `slice:` field:
    - **Match** → this is a legitimate retry path after a failed inspection. `/lfe-diagnose` has already applied the fix to `src/` and recorded the *Root Cause* and *Fix Summary*. Read those sections so you understand the post-diagnosis state, but **do not re-implement the slice**. Skip Steps 2–3 (Implement/Refactor) and proceed directly to Step 4 (Mark Done) with a fresh `builder_done.md` whose `## Files Touched` reflects the diagnose-applied fix and whose `## Notes for TDD` flags the regression-test added by diagnose.
    - **Mismatch** → the diagnosis report is stale (e.g., from a previous slice whose cleanup didn't complete). Ignore it; do not skip implementation. Proceed normally from Step 2. (Hygiene will flag the stale file as orphaned on its next sweep.)

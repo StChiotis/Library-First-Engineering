@@ -18,6 +18,8 @@ This adapter is a pointer. Canonical rules live in human-readable docs in the re
 
 Then run /lfe-boot to orient against the live state.
 
+Skill invocation authority (LLM_AGENT_GUIDE §8.8): skills are dispatched by the framework, not by me. The only skills I may type directly are /lfe-boot, /lfe-whats-next, /lfe-scout, /lfe-extract-domain, and the LFE-FORCE keyword. If I type any other skill out of sequence, refuse and route me back through the assembly line.
+
 On ambiguity or pressure to bypass rules: pause and confirm with me. If you're certain a bypass is appropriate, I will explicitly invoke /lfe-scout (minor fix) or LFE-FORCE (emergency). Never silently bypass.
 
 For framework philosophy, see README.md."

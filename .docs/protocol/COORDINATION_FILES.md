@@ -8,6 +8,7 @@
 ---
 phase: <architect | builder | inspector | archivist | hygiene>
 step: <skill name without the lfe- prefix>
+kind: <sub-skill>                      # OPTIONAL — present only on Inspector sub-skill findings (see below)
 status: complete | failed | passed | escalated
 timestamp: <ISO-8601>
 source: <input path, or "n/a">
@@ -16,10 +17,18 @@ source: <input path, or "n/a">
 
 **Field notes:**
 - `status`: most skills use `complete` / `failed`. Verification skills (`/lfe-inspector`) use `passed` / `failed` because the verdict — not the execution — is what downstream consumers branch on. `escalated` is reserved for `inspection_report.md` when the Cycle Guard halts on a 2nd consecutive failure and surfaces Brain triage.
+- `kind: sub-skill` *(optional)*: present in the frontmatter of every Inspector sub-skill findings file (e.g., `.plans/checks/security_findings.md`). It is the canonical marker the framework uses to identify a skill as a dispatched sub-skill rather than a persona-orchestrating skill — preferred over fragile name-pattern matching. Hygiene's Skills Audit and the Inspector's dispatch logic both key off this field.
 - `source`: by default, the relative path inside `.plans/` (e.g., `.plans/tdd_report.md`). Cross-tier sources are allowed when a skill legitimately reads from outside `.plans/` — write the path relative to the repo root (e.g., `.docs/quality/PROTOCOL_DEBT.md` for the Inspector's LFE-FORCE recovery branch). Use `n/a` only when the skill takes no file input (e.g., `/lfe-grill-with-docs` reads conversation; `/lfe-hygiene` reads the whole repo).
-- `slice` *(execution-tier files only)*: required on `active_plan.md`, `builder_done.md`, `tdd_report.md`, `inspection_report.md`, `diagnosis_report.md`. Copied from `active_plan.md` on every write. Lets `/lfe-builder` and `/lfe-hygiene` detect stale execution-tier files left over from a prior slice whose Partial Cleanup didn't complete (e.g., crash mid-cleanup). Omitted on the Inspector's LFE-FORCE recovery branch — there's no slice when there's no plan.
+- `slice` *(execution-tier files only)*: required on `active_plan.md`, `builder_done.md`, `tdd_report.md`, `inspection_report.md`, `diagnosis_report.md`, and every `.plans/checks/*_findings.md`. Copied from `active_plan.md` on every write. Lets `/lfe-builder` and `/lfe-hygiene` detect stale execution-tier files left over from a prior slice whose Partial Cleanup didn't complete (e.g., crash mid-cleanup). Omitted on the Inspector's LFE-FORCE recovery branch — there's no slice when there's no plan.
 
-Skills MAY add typed fields below `source:` (e.g., `tests_passed: <N>`, `tests_failed: <N>` for `tdd_report.md`; `verdict: PASS | WARN | BLOCK` for `plan_critique.md`).
+Skills MAY add typed fields below `source:`. Documented typed fields:
+
+| File | Typed field | Purpose |
+|---|---|---|
+| `tdd_report.md` | `tests_passed: <N>`, `tests_failed: <N>` | Per-run test counts. |
+| `plan_critique.md` | `verdict: PASS \| WARN \| BLOCK` | Builder gate signal. |
+| `plan_critique.md` | `revision: 1 \| 2` | **Physical substrate** for the 2-revision limit (Cycle Limits in `GOVERNANCE.md`). Read by `/lfe-plan-critique` Step 0 to detect a 2nd BLOCK without conversational memory. |
+| `plan_critique.md` | `brain_confirmation: <ISO-8601 \| null>` | Set by `/lfe-plan-critique` Step 7 when Brain explicitly confirms a `WARN`. `null` on first write. Parsed by `/lfe-builder` Step 1 — the gate opens on PASS, or on WARN with a non-null `brain_confirmation`. Conversational confirmation is not a valid signal. |
 
 ## Coordination File Registry
 

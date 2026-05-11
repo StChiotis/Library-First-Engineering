@@ -73,7 +73,7 @@ The Brain Persona is bound by the contract in [PERSONAS.md](PERSONAS.md), includ
 
 To prevent infinite loops on irreducible failures, two cycle limits are protocol-enforced:
 
-1. **Pre-build critique cycles** — Max **2 plan revisions** per slice on `BLOCK` verdicts from `/lfe-plan-critique`. On the 3rd attempt, the AI halts and presents the Brain with three triage options (revert to PRD / accept WARN / abort mission). See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 1.4.
+1. **Pre-build critique cycles** — Max **2 plan revisions** per slice on `BLOCK` verdicts from `/lfe-plan-critique`. The counter is **file-based**: stored in the `revision:` typed frontmatter field of `.plans/plan_critique.md` (schema in [`COORDINATION_FILES.md`](COORDINATION_FILES.md)). Step 0 of `/lfe-plan-critique` reads this field on every invocation — on a 2nd BLOCK (`revision: 2`), the skill halts and presents the Brain with three triage options (revert to PRD / accept WARN with file-recorded `brain_confirmation` / abort mission) instead of running lenses again. A crash between attempts does not reset the counter. See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 1.4.
 2. **Post-build inspection cycles** — Max **2 consecutive failed inspections** per slice. On the 2nd failure, the Inspector does NOT re-trigger `/lfe-diagnose`; it halts and presents three triage options (accept as known debt / escalate LFE-FORCE / re-plan from scratch). See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 2.2.
 
 The rationale: a structural problem cannot be fixed by repeated tweaks at the same level. The cycle limit forces escalation to a higher level (Brain triage, plan re-design, or accepted debt) instead of loop spinning that consumes tokens without converging.

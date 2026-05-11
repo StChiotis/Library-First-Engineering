@@ -22,7 +22,7 @@
 | System Prompt | [`.agents/adapters/system_prompt.txt`](../.agents/adapters/system_prompt.txt) | Raw LLM adapter (copy-paste for ChatGPT, Claude, etc.). |
 | Change History | [`.docs/archive/`](./archive/) (see [Shelf Index](./archive/README.md)) | Cold-tier archives for retention-managed files: `changelog-history.md`, `architecture-decisions-history.md`, `protocol-debt-history.md`, `known-issues-history.md`, `token-budget-history.md`. Populated by the Hygiene sweep per the Retention Policy in [`GOVERNANCE.md`](./protocol/GOVERNANCE.md). |
 | Floor map | **this file** | Navigation index. |
-| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 23 LFE persona skills (sub-pipeline architecture + 5 specialist Inspector sub-skills + `lfe-plan-critique` + `lfe-learn`). |
+| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 22 LFE persona skills (sub-pipeline architecture + 5 specialist Inspector sub-skills + `lfe-plan-critique`). |
 | Domain Language | [`CONTEXT.md`](../CONTEXT.md) (root) | Canonical glossary — all agents must use these terms. |
 | Framework Roadmap | [GitHub Issues](https://github.com/StChiotis/Library-First-Engineering/issues) | Planned improvements for the LFE framework (tracked as Issues). |
 | Project Roadmap | [`.docs/strategy/roadmap.md`](./strategy/roadmap.md) | What is the planned evolution of the product? |

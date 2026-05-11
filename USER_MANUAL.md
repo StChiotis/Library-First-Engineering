@@ -8,6 +8,28 @@ Think of LFE like a car. The AI agents are the engine. The `.docs/` directory is
 
 ---
 
+## 0. How You Interact with LFE (Read This First)
+
+**You describe intent in natural language. The AI translates intent into the right skill sequence.** You do not need to memorize skill names.
+
+The framework's guarantees — crash recovery, no documentation drift, repeatable quality — depend on each skill running in the right order with the right inputs. So the design is: **the AI invokes skills; you give intent and approve at gates.**
+
+**The five commands you ever type yourself:**
+
+| Command | When to type it |
+|---|---|
+| `/lfe-boot` | At the start of every session. Always. |
+| `/lfe-whats-next` | If you're not sure where you are or what comes next. |
+| `/lfe-scout` | When the AI asks at the Complexity Gate and you have a minor fix. |
+| `/lfe-extract-domain` | To restart Day 0 discovery on a Blank Canvas. |
+| `LFE-FORCE` | Emergency hotfix keyword. |
+
+For everything else, **talk to the AI**: *"build feature X"*, *"fix this typo"*, *"review the security of this change"*. The AI knows which skill to run based on the active persona and the pipeline state.
+
+The Skill Glossary at the bottom of this manual is a **reference for what the AI is doing on your behalf** — not a menu for you to invoke. If you try to bypass the assembly line by typing a skill name out of sequence (e.g., `/lfe-builder` before approving a plan), the AI is instructed to refuse and route you back through the pipeline. That refusal is the framework working as designed — it's how LFE prevents you from accidentally corrupting your own pipeline state.
+
+---
+
 ## 1. Day 0: Starting a New Project
 If you have just cloned the LFE template, your repository is a "Blank Canvas." The AI doesn't know what you are building yet.
 
@@ -76,14 +98,6 @@ Use this for **Minor Fixes** (typos, UI tweaks, simple bugs touching < 3 files).
 - **How:** Boot the session, declare a "Minor Fix", and tell the AI: *"Run `/lfe-scout` to fix the padding on the login button."*
 - **Constraint:** The Scout is physically forbidden from renaming files, changing architecture, or adding dependencies. 
 
-### Teaching the System (`/lfe-learn`)
-When you want the AI to **remember a rule across sessions**, use one of these explicit teaching patterns and the AI will trigger `/lfe-learn`:
-- `"remember: all DB writes use the repository pattern"`
-- `"from now on: API endpoints must validate at the boundary"`
-- `"amend: 'order cancellation' → 'cancellation request'"`
-
-`/lfe-learn` classifies the lesson, picks the right `.docs/` file, proposes a diff, and (after your confirmation) writes it and logs to `CHANGELOG.md`. It is non-blocking — the pipeline picks up where it left off.
-
 ### The Break-Glass Override (`LFE-FORCE`)
 Use this for **Production Emergencies** (e.g., the server is down, you need a patch *right now*).
 - **How:** Tell the AI: *"LFE-FORCE: Fix the database connection string immediately."*
@@ -117,8 +131,8 @@ LFE relies on "Persona Discipline" (telling the AI not to use certain tools). As
 
 ---
 
-## 6. The Skill Glossary
-While the AI usually calls these automatically during the Assembly Line, here is a complete dictionary of every skill available in the LFE framework. You can manually type these commands at any time to force the AI into a specific behavior.
+## 6. The Skill Glossary (Reference Only)
+This is a **reference for what the AI does on your behalf** during the Assembly Line — not a menu for you to invoke. Section 0 lists the five commands you ever type yourself; everything below is dispatched by the framework. If you try to call an agent-only skill out of sequence, the AI is instructed to refuse and route you back through the pipeline.
 
 ### 🧭 Navigation & Utility
 | Command | Purpose |

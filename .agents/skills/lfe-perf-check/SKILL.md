@@ -15,6 +15,7 @@ description: Inspector sub-skill. Analyses the implementation diff for common pe
 Detect performance anti-patterns introduced by the current implementation through structured LLM reasoning over the diff. Findings are advisory unless a pattern is provably unbounded (e.g. O(n²) in a hot path with no upper bound on n).
 
 ## Hard Rules
+0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` for the current slice, halt immediately and reply: *"`/lfe-perf-check` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
 1. **Prompt-Only**: No profiling tools, no benchmarks, no execution. Reasoning over code only.
 2. **Diff-Scoped**: Analyse only files listed in `builder_done.md`. Do not re-audit unchanged code.
 3. **Severity**: Critical (provably unbounded, certain production impact) / High (likely hot-path) / Medium (probable overhead) / Low (style concern).
@@ -46,6 +47,22 @@ Reason through each category against the changed code:
 ### Step 3: Write Findings File
 
 Path: `.plans/checks/perf_findings.md`
+
+Begin the file with a YAML frontmatter block — the Inspector's dispatcher relies on `status: complete` to detect successful runs and skip them on crash recovery.
+
+```yaml
+---
+phase: inspector
+step: perf-check
+kind: sub-skill
+status: complete
+timestamp: <ISO-8601>
+source: .plans/builder_done.md
+slice: <copied from active_plan.md>
+---
+```
+
+Body:
 
 ```markdown
 ## Performance Check Findings

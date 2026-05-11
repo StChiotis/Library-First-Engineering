@@ -17,12 +17,25 @@ Configure which specialist sub-skills the Inspector invokes for this project. Di
 
 ## How to Override Per-Mission
 
-The Brain may place a comment in `active_plan.md` like:
-```
-inspector-config-override: lfe-mutation-verify=true
-```
+Per-mission overrides live in a typed body section of `.plans/active_plan.md` called **`## Inspector Overrides`**. The Inspector parses this section after reading this config table and before dispatching sub-skills; overrides take precedence over the table above.
 
-The Inspector reads this override before dispatching sub-skills, giving it precedence over the table above.
+**Schema** (the exact format the Inspector parses — informal text or scattered comments are ignored):
+
+````markdown
+## Inspector Overrides
+```yaml
+lfe-security-check: true
+lfe-mutation-verify: true
+lfe-perf-check: false
+```
+````
+
+- Keys: any sub-skill name from the Registry above.
+- Values: `true` (force enable) or `false` (force disable).
+- Omit the section entirely when no overrides are needed.
+- Unknown keys are ignored with a warning to the Brain. Missing keys fall through to the config table default.
+
+The Architect's `active_plan.md` body template includes this section as optional. See `.agents/skills/lfe-architect/SKILL.md` Step 6.
 
 ## Dispatch Order
 
