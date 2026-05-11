@@ -26,19 +26,31 @@ Verify that the implementation matches the domain truth and numerical baselines.
    - **Fallback (LFE-FORCE recovery)**: if `.plans/tdd_report.md` does NOT exist AND `.docs/quality/PROTOCOL_DEBT.md` has at least one unresolved entry, read the latest unresolved Protocol Debt entry instead and verify the hotfix described there directly against `src/`. Set `source: .docs/quality/PROTOCOL_DEBT.md` in the inspection report frontmatter — exact full path, because Archivist Step 3.6's matcher keys off this string verbatim. This path is the ONLY way to clear Protocol Debt — the framework MUST never deadlock here.
    - **Hard fail**: if neither input exists, halt and ask the human whether to escalate to `/lfe-extract-domain` (true black box) rather than fabricate a verification.
 
-## Cycle Guard (check FIRST, before any other step)
+## Cycle Guard
 
-Before running any verification, check whether this is a repeated failure on the same slice:
+At the start of every Inspector run, determine the **cycle number** for the current slice and remember it. The cycle decision is enforced at the **failure point**, not at entry — the Builder may have fixed the issue and this attempt may pass cleanly.
 
-1. Read `inspection_report.md` if it exists. Check the `slice:` frontmatter field and `status:` value.
-2. Read `diagnosis_report.md` if it exists.
-3. If the current `active_plan.md` slice ID matches the `inspection_report.md` slice AND `inspection_report.md` shows `status: failed`, this is at minimum the **2nd failed cycle** on this slice.
-4. **On the 2nd failed cycle**: halt. Do not re-invoke `/lfe-diagnose`. Present the Brain with three triage options:
-   - **Option A — Accept and ship as known debt**: proceed to Archivist; log the open issue to `.docs/quality/known-issues.md` and a new `PROTOCOL_DEBT.md` entry.
-   - **Option B — Escalate LFE-FORCE**: Brain invokes `LFE-FORCE` to apply a targeted patch; old debt entry stays open.
-   - **Option C — Re-plan from scratch**: wipe execution files; loop back to Architect to re-design the slice from `03_slices.md`.
+### How to determine the cycle
 
-   The pipeline must not proceed until Brain selects an option. Record the outcome in a new `inspection_report.md` with `status: escalated` and the chosen triage option in the body.
+1. Read `.plans/inspection_report.md` if it exists; note its `slice:` field and `status:` value.
+2. Read `.plans/diagnosis_report.md` if it exists; note its `slice:` field.
+3. Match against the current `active_plan.md` slice ID:
+   - **No prior `inspection_report.md` for this slice** → this is **Cycle 1**.
+   - **Prior `inspection_report.md` with `status: failed` AND prior `diagnosis_report.md` for the same slice** → this is **Cycle 2**.
+   - **Prior `inspection_report.md` with `status: escalated`** → the previous run already halted at Cycle 2; pipeline should be paused awaiting Brain triage. Halt and re-present the menu.
+
+### Decision at the failure point
+
+After running verification (Workflow steps 1–4):
+
+- **Verification PASSES** → proceed normally regardless of cycle number.
+- **Verification FAILS on Cycle 1** → trigger `/lfe-diagnose` as usual.
+- **Verification FAILS on Cycle 2** → **halt**. Do NOT re-invoke `/lfe-diagnose`. Write `.plans/inspection_report.md` with `status: escalated` and present the Brain with three triage options:
+  - **Option A — Accept and ship as known debt**: proceed to Archivist; log the open issue to `.docs/quality/known-issues.md` and a new `PROTOCOL_DEBT.md` entry.
+  - **Option B — Escalate LFE-FORCE**: Brain invokes `LFE-FORCE` to apply a targeted patch; old debt entry stays open.
+  - **Option C — Re-plan from scratch**: wipe execution files; loop back to Architect to re-design the slice from `03_slices.md`.
+
+  The pipeline must not proceed until Brain selects an option. Record the chosen triage option in the body of the escalated `inspection_report.md`.
 
 ---
 
@@ -47,7 +59,10 @@ Before running any verification, check whether this is a repeated failure on the
 2. **Verify Logic**: Compare implementation logic against formulas in the project's domain documentation.
 3. **Verify Baselines**: If your project keeps validation snapshots in `.docs/quality/validation-baselines.md`, confirm the implementation matches them. (The file is a template; populated only when your project has reproducible golden outputs.)
 4. **Verify TDD Report (or Protocol Debt entry)**: Read `.plans/tdd_report.md` and confirm test coverage matches the plan's requirements. If that file is absent because the work arrived via `LFE-FORCE`, follow Hard Rule #4's fallback: read the latest unresolved entry in `.docs/quality/PROTOCOL_DEBT.md` and verify the hotfix directly. Mark the verification's `source:` field accordingly.
-5. **Instrument** (mission path only): If behavior is suspicious AND `source: .plans/tdd_report.md`, use `/lfe-diagnose` to build a repro loop and identify root cause. **Do NOT trigger `/lfe-diagnose` on the LFE-FORCE recovery path** — Diagnose returns to Builder, which would read a non-existent `active_plan.md`. See Step 7b instead.
+5. **Instrument** (mission path only): If verification fails AND `source: .plans/tdd_report.md`, consult the **Cycle Guard** (above) before invoking diagnose:
+   - **Cycle 1 failure** → use `/lfe-diagnose` to build a repro loop and identify root cause.
+   - **Cycle 2 failure** → **halt**. Write `status: escalated` and present Brain triage menu. Do NOT invoke `/lfe-diagnose`.
+   - **LFE-FORCE recovery path** (`source: PROTOCOL_DEBT.md`) → Do NOT trigger `/lfe-diagnose` regardless of cycle. See Step 7b.
 6. **Sub-Skill Dispatch** (skip on LFE-FORCE recovery path):
    a. Read `.docs/quality/inspector-config.md` to determine which sub-skills are enabled.
    b. Check `active_plan.md` for an `inspector-config-override:` comment; any override takes precedence.
@@ -95,7 +110,7 @@ Mark the `critique ✅` checkbox in `pipeline_status.md`.
 ---
 phase: inspector
 step: inspection
-status: passed | failed
+status: passed | failed | escalated
 timestamp: <ISO-8601>
 source: .plans/tdd_report.md   # or .docs/quality/PROTOCOL_DEBT.md on LFE-FORCE recovery
 slice: <copied from active_plan.md; omit on LFE-FORCE recovery path (no plan)>

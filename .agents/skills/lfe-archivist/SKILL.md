@@ -26,7 +26,13 @@ Keep the project's documentation and history perfectly in sync with the codebase
 6. **Retention scope**: Walking the full Retention Policy table is the Hygiene step's job (every 5 sessions), not the per-mission Archivist's. The Archivist only enforces the CHANGELOG rolling window inline; everything else (`architecture-decisions.md`, `PROTOCOL_DEBT.md`, `known-issues.md`, `token-budget.md`) is swept by `/lfe-hygiene`.
 
 ## Workflow
-1. **Read Report**: Read `.plans/inspection_report.md` to understand what was built and verified.
+1. **Read Report**: Read `.plans/inspection_report.md` to understand what was built and verified. **Status branch:**
+   - `status: passed` → proceed normally through Steps 2–7.
+   - `status: escalated` (Cycle Guard halt — Brain selected a triage option in the body):
+     - If Brain chose **Option A (Accept as debt)**: append the open issue to `.docs/quality/known-issues.md` and create a `PROTOCOL_DEBT.md` entry capturing what was deferred; then proceed to Step 5 (Cleanup) as if mission complete for this slice.
+     - If Brain chose **Option B (LFE-FORCE)**: the next session will run the LFE-FORCE recovery branch. Do NOT cleanup; halt and let `lfe-boot` Step 5 handle the new debt entry on the next boot.
+     - If Brain chose **Option C (Re-plan)**: wipe execution files (`plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `.plans/checks/`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`), keep planning files (`01`/`02`/`03`), set `Active Persona: Architect`, and loop back to slice re-planning.
+   - `status: failed` should never reach Archivist on the mission path — Inspector either re-loops via diagnose (Cycle 1) or escalates (Cycle 2). If it does, halt and ask Brain for guidance.
 2. **Sync Docs**: You MUST explicitly apply updates depending on the changes made:
    - **New domain terms or canonical definitions**: You MUST append them to `CONTEXT.md` and `.docs/domain/glossary.md`.
    - **New math or business rules**: You MUST record the exact formulas in `.docs/domain/domain-knowledge.md`.

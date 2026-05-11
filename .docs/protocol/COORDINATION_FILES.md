@@ -8,18 +8,18 @@
 ---
 phase: <architect | builder | inspector | archivist | hygiene>
 step: <skill name without the lfe- prefix>
-status: complete | failed | passed
+status: complete | failed | passed | escalated
 timestamp: <ISO-8601>
 source: <input path, or "n/a">
 ---
 ```
 
 **Field notes:**
-- `status`: most skills use `complete` / `failed`. Verification skills (`/lfe-inspector`) use `passed` / `failed` because the verdict — not the execution — is what downstream consumers branch on.
+- `status`: most skills use `complete` / `failed`. Verification skills (`/lfe-inspector`) use `passed` / `failed` because the verdict — not the execution — is what downstream consumers branch on. `escalated` is reserved for `inspection_report.md` when the Cycle Guard halts on a 2nd consecutive failure and surfaces Brain triage.
 - `source`: by default, the relative path inside `.plans/` (e.g., `.plans/tdd_report.md`). Cross-tier sources are allowed when a skill legitimately reads from outside `.plans/` — write the path relative to the repo root (e.g., `.docs/quality/PROTOCOL_DEBT.md` for the Inspector's LFE-FORCE recovery branch). Use `n/a` only when the skill takes no file input (e.g., `/lfe-grill-with-docs` reads conversation; `/lfe-hygiene` reads the whole repo).
 - `slice` *(execution-tier files only)*: required on `active_plan.md`, `builder_done.md`, `tdd_report.md`, `inspection_report.md`, `diagnosis_report.md`. Copied from `active_plan.md` on every write. Lets `/lfe-builder` and `/lfe-hygiene` detect stale execution-tier files left over from a prior slice whose Partial Cleanup didn't complete (e.g., crash mid-cleanup). Omitted on the Inspector's LFE-FORCE recovery branch — there's no slice when there's no plan.
 
-Skills MAY add typed fields below `source:` (e.g., `tests_passed: <N>`, `tests_failed: <N>` for `tdd_report.md`).
+Skills MAY add typed fields below `source:` (e.g., `tests_passed: <N>`, `tests_failed: <N>` for `tdd_report.md`; `verdict: PASS | WARN | BLOCK` for `plan_critique.md`).
 
 ## Coordination File Registry
 

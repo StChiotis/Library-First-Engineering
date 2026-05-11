@@ -108,10 +108,14 @@ A "Loop" is defined as a sequence of state changes. In LFE, these state changes 
 | :--- | :--- | :--- |
 | **During Grill** | Empty | Restarts from scratch. |
 | **After PRD** | `01`, `02` exist | Resumes at `/lfe-to-issues`. |
+| **After Slices** | `01`, `02`, `03` exist | Resumes at `/lfe-architect`. |
 | **After Plan** | `01`, `02`, `03`, `active_plan` exist | Resumes at `/lfe-plan-critique`. |
-| **After Plan Critique (PASS)** | `01`, `02`, `03`, `active_plan`, `plan_critique` exist | Resumes at `/lfe-builder`. |
+| **After Plan Critique (PASS / WARN-confirmed)** | `01`, `02`, `03`, `active_plan`, `plan_critique` (verdict PASS / WARN) exist | Resumes at `/lfe-builder`. |
+| **After Plan Critique (BLOCK)** | `plan_critique` (verdict BLOCK) exists | Resumes at `/lfe-architect` for revision; if this was already the 2nd BLOCK, halts at Brain triage per Scenario 1.4. |
 | **After Coding** | `active_plan`, `builder_done` exist | Resumes at `/lfe-tdd`. |
-| **After TDD** | `tdd_report` exists | Resumes at `/lfe-inspector`. |
-| **During Inspect** | `critique` exists, no report | Resumes at `/lfe-inspector`. |
+| **After TDD** | `tdd_report` exists | Resumes at `/lfe-inspector` (Cycle Guard runs first). |
+| **During Sub-Skill Dispatch** | `.plans/checks/*.md` files exist; `critique.md` absent | Resumes at `/lfe-inspector` — Inspector re-reads `.docs/quality/inspector-config.md`, skips already-completed sub-skills (their findings file is present), runs remaining enabled sub-skills, then proceeds to aggregation. |
+| **During Inspect (1st failure already recorded)** | `inspection_report.md` exists with `status: failed`, `critique` exists | Resumes at `/lfe-diagnose` (Inspector has already failed once). |
+| **During Inspect (2nd failure)** | `inspection_report.md` shows `status: escalated` with triage menu | Resumes by re-presenting Brain triage menu (Accept Debt / LFE-FORCE / Re-plan). |
 | **During Diagnose**| `diagnosis_report` exists | Resumes at Builder to fix the bug. |
 | **After Archive** | `.plans/` still full (State Anomaly) | Triggers `/lfe-zoom-out` to compare plans vs code. Asks human to manually delete `.plans/`. |
