@@ -262,6 +262,7 @@ LFE is an open-source framework. Improvements to persona prompts, governance rul
 
 - **Framework design and LFE-native skills** — [Stylianos Chiotis](https://www.linkedin.com/in/stylianos-chiotis/).
 - **Sub-pipeline skills** — adapted from [Matt Pocock's repo](https://github.com/mattpocock/skills) (`grill-with-docs`, `tdd`, `improve-codebase-architecture`, `zoom-out`), reframed and wired into the LFE assembly line as `lfe-grill-with-docs`, `lfe-tdd`, `lfe-improve-architecture`, and `lfe-zoom-out`.
+- **Inspector specialist sub-skills, plan-critique gate, and correction-cycle pattern** — adopted from [Bryan Finster's `agentic-dev-team`](https://github.com/bdfinst/agentic-dev-team) (4-lens pre-build plan review; OWASP/performance/complexity/dependency/mutation specialist passes; 2-cycle correction limit; per-project sub-skill enable/disable), reframed and wired into the LFE assembly line as `lfe-plan-critique`, the five Inspector sub-skills (`lfe-security-check`, `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`), and the Inspector Cycle Guard + Sub-Skill Dispatch protocol.
 - **Future integrations** from other skill repositories will be credited here as they're absorbed.
 
 ---
