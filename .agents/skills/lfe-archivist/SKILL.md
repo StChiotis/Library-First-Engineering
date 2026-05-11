@@ -45,12 +45,12 @@ Keep the project's documentation and history perfectly in sync with the codebase
 5. **Clean Up** — choose one tier. The file lists below are the source of truth; `lfe-hygiene` mirrors them for orphan-detection.
 
    **5a. Partial Cleanup** (more slices remain — keep planning, drop execution):
-   - Delete: `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`.
+   - Delete: `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, and the entire `.plans/checks/` directory if present.
    - Keep: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
-   - Update `pipeline_status.md`: set `Mission State` to `[IN-FLIGHT: architect]` (the next slice begins with the Architect drafting its plan), set Active Persona back to Architect, advance slice cursor, reset the per-slice coordination checkboxes (`plan / build / tdd / critique / inspect`) to ⬜ while leaving `01 / 02 / 03` ✅. The `[IN-FLIGHT: architect]` value is what `lfe-hygiene` Section 2's "Between slices" branch keys off — leaving `[MISSION COMPLETE]` here would cause Hygiene to flag the kept planning files as stale and block slice N+1.
+   - Update `pipeline_status.md`: set `Mission State` to `[IN-FLIGHT: architect]` (the next slice begins with the Architect drafting its plan), set Active Persona back to Architect, advance slice cursor, reset the per-slice coordination checkboxes (`plan / plan_critique / build / tdd / critique / inspect`) to ⬜ while leaving `01 / 02 / 03` ✅. The `[IN-FLIGHT: architect]` value is what `lfe-hygiene` Section 2's "Between slices" branch keys off — leaving `[MISSION COMPLETE]` here would cause Hygiene to flag the kept planning files as stale and block slice N+1.
 
    **5b. Full Cleanup** (mission complete — drop everything):
-   - Delete every file in `.plans/`: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`.
+   - Delete every file in `.plans/`: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, plus the entire `.plans/checks/` directory if present.
    - `hygiene_report.md` is owned by the Hygiene sub-pipeline — do NOT delete it from a per-mission Archivist run; leave it for `/lfe-improve-architecture` to consume and clear.
    - Update `pipeline_status.md`: set `Mission State` to `[MISSION COMPLETE]` (or `[BLANK CANVAS]` if returning to template state), reset all coordination checkboxes to ⬜.
 6. **Update Pipeline Status (cross-cutting fields)**: Beyond the checkbox/persona resets handled by Step 5a/5b, set the cross-cutting entrance-card fields for the next session — Mission, Session Count, Last ADR, and `Mission State`. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.

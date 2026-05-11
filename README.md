@@ -84,7 +84,7 @@ No reliance on chat context. The graph below mirrors `.docs/protocol/ASSEMBLY_LI
 <summary><b>Click to expand — coordination layer, bypass routes, and persona tool-locking</b></summary>
 
 **Coordination layer.** Each skill writes to a file in `.plans/` and the next skill reads it:
-`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `builder_done.md` → `tdd_report.md` → `inspection_report.md`. If a session crashes, the files remain and `lfe-boot` resumes from the last step. Frontmatter schema and full registry: [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md).
+`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `plan_critique.md` → `builder_done.md` → `tdd_report.md` → `.plans/checks/*` → `critique.md` → `inspection_report.md`. If a session crashes, the files remain and `lfe-boot` resumes from the last step. Frontmatter schema and full registry: [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md).
 
 **Bypass routes** — when the full pipeline is overkill:
 
@@ -92,6 +92,12 @@ No reliance on chat context. The graph below mirrors `.docs/protocol/ASSEMBLY_LI
 - **`LFE-FORCE`** — emergency break-glass for direct patches when no other route is viable. Logs an entry in `.docs/quality/PROTOCOL_DEBT.md` so the next session resolves the debt. See `.docs/protocol/GOVERNANCE.md`.
 
 Personas are **tool-locked**: the Architect cannot edit code, the Builder cannot rewrite plans, the Inspector cannot edit production code, the Archivist cannot change behavior. A crashed session, a new contributor, or a different agent can resume exactly where the last one stopped.
+
+**Pre-build critique gate** — Between plan approval and Builder start, `/lfe-plan-critique` runs a 4-lens review of the approved plan (Acceptance Criteria scrutiny, Test Feasibility, Domain Alignment, Structural Impact). A `BLOCK` verdict loops back to the Architect; `PASS` proceeds to Builder. Catches plan-level ambiguity before any code is written.
+
+**Inspector specialist sub-skills** — Optional, opt-in via `.docs/quality/inspector-config.md`. Pure prompt-only sub-skills the Inspector dispatches during verification: `lfe-security-check` (OWASP Top-10), `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`. Findings aggregate into `critique.md`.
+
+**Correction cycle limit** — On the 2nd consecutive failed inspection of the same slice, the Inspector halts and presents the Brain with three triage options instead of looping forever. See [`LOOP_ARCHITECTURE.md`](.docs/protocol/LOOP_ARCHITECTURE.md) Scenarios 1.4 and 2.2.
 
 </details>
 
@@ -127,7 +133,7 @@ For projects with multiple bounded contexts (e.g., separate Billing and Inventor
 | :-- | :--- | :--- |
 | 1 | **Identity** — *Who am I right now?* | `.docs/protocol/PERSONAS.md` — tool-locked persona contracts |
 | 2 | **Process** — *What step am I on, what's next?* | `pipeline_status.md` (live cursor) + `.docs/protocol/ASSEMBLY_LINE.md` (reference) + the active `.agents/skills/<name>/SKILL.md` |
-| 3 | **State** — *What is the active mission's working memory?* | `.plans/` — numbered coordination files (`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `builder_done.md` → `tdd_report.md` → `inspection_report.md`); schema in [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md) |
+| 3 | **State** — *What is the active mission's working memory?* | `.plans/` — numbered coordination files (`01_grill_summary.md` → `02_prd.md` → `03_slices.md` → `active_plan.md` → `plan_critique.md` → `builder_done.md` → `tdd_report.md` → `.plans/checks/*` → `critique.md` → `inspection_report.md`); schema in [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md) |
 | 4 | **Knowledge** — *What is already true in this codebase?* | `.docs/` library — start at `.docs/README.md` (the floor map); canonical terms in `CONTEXT.md` (repo root); ADRs in `.docs/architecture/`; domain logic in `.docs/domain/` |
 | 5 | **Rules** — *What am I forbidden from doing?* | `.docs/protocol/GOVERNANCE.md` + the IDE adapter files (`CLAUDE.md`, `.cursorrules`, `.antigravityrules`, `.windsurfrules`, `.clinerules`) + `.github/copilot-instructions.md` |
 | 6 | **Format** — *How should I write what I write?* | Schema contracts: `lfe-grill-with-docs/CONTEXT-FORMAT.md`, `lfe-grill-with-docs/ADR-FORMAT.md`, plus convention docs in `lfe-tdd/` and `lfe-improve-architecture/` |
@@ -238,7 +244,7 @@ LFE is honest about what it does *not* solve:
 
 LFE is actively being applied to a production project. A public case study — demonstrating the full pipeline on a live codebase — is in progress and will be published in a follow up [Article on Medium](https://medium.com/@StChiotis).
 
-Until then: all 16 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
+Until then: all 23 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
 
 ---
 

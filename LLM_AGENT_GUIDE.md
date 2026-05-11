@@ -46,12 +46,13 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 1. **Orientation**: Run `/lfe-boot` to read `pipeline_status.md`, check for interrupted sessions, and load the Protocol.
 2. **Complexity Gate**: Ask the human: *"Is this a Major Architectural Change or a Minor Fix?"*
 3. **Execution**: Follow the persona sub-pipelines in strict order:
-   - **Architect**: `/lfe-grill-with-docs` → `/lfe-to-prd` → `/lfe-to-issues` → `/lfe-architect`
+   - **Architect**: `/lfe-grill-with-docs` → `/lfe-to-prd` → `/lfe-to-issues` → `/lfe-architect` → `/lfe-plan-critique` *(🛡 auto-gate: PASS / WARN / BLOCK; max 2 plan revisions)*
    - **Builder**: `/lfe-builder` → `/lfe-tdd`
-   - **Inspector**: `/lfe-zoom-out` → `/lfe-inspector` → `/lfe-diagnose` (if failed)
+   - **Inspector**: `/lfe-zoom-out` → `/lfe-inspector` *(includes Cycle Guard + Sub-Skill Dispatch — see `.docs/quality/inspector-config.md`)* → `/lfe-diagnose` (if first failure)
    - **Archivist**: `/lfe-archivist` → slice loop → cleanup
 4. **Hygiene**: Scheduled every 5 sessions. Run `/lfe-hygiene` → `/lfe-improve-architecture`.
 5. **Orientation Shortcut**: Run `/lfe-whats-next` at any point for instant pipeline orientation.
+6. **Dynamic Learning** (on-demand, non-blocking): When the Brain says `"remember X"`, `"from now on Y"`, or `"amend Z → W"`, run `/lfe-learn` to persist the lesson into the Library before resuming.
 
 ## 5. File-Based Coordination (CRITICAL)
 **Every skill reads its input from a coordination file in `.plans/`, NOT from conversation context.** This prevents context window information loss between steps. The frontmatter schema and full registry live in [`COORDINATION_FILES.md`](.docs/protocol/COORDINATION_FILES.md).
@@ -62,12 +63,19 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 | `/lfe-to-prd` | `01_grill_summary.md` | `.plans/02_prd.md` |
 | `/lfe-to-issues` | `02_prd.md` | `.plans/03_slices.md` |
 | `/lfe-architect` | `03_slices.md` | `.plans/active_plan.md` |
+| `/lfe-plan-critique` | `active_plan.md`, `02_prd.md`, `03_slices.md`, `.docs/` | `.plans/plan_critique.md` *(verdict: PASS / WARN / BLOCK)* |
 | `/lfe-builder` | `active_plan.md` *(plus `diagnosis_report.md` on retry after failed inspection)* | Production code + `.plans/builder_done.md` |
 | `/lfe-tdd` | `active_plan.md` + `builder_done.md` | `.plans/tdd_report.md` |
-| `/lfe-inspector` | `tdd_report.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
-| `/lfe-diagnose` *(conditional)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
+| `/lfe-security-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/security_findings.md` |
+| `/lfe-perf-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/perf_findings.md` |
+| `/lfe-complexity-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/complexity_findings.md` |
+| `/lfe-dep-audit` *(opt-in sub-skill)* | `builder_done.md`, manifest files | `.plans/checks/dep_findings.md` |
+| `/lfe-mutation-verify` *(opt-in sub-skill)* | `builder_done.md`, impl + test files | `.plans/checks/mutation_findings.md` |
+| `/lfe-inspector` | `tdd_report.md` + `.plans/checks/*.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
+| `/lfe-diagnose` *(conditional, 1st failure only)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
 | `/lfe-hygiene` *(every 5 sessions)* | Full repo | `.plans/hygiene_report.md` |
 | `/lfe-archivist` | `inspection_report.md` | Updated docs, CHANGELOG, pipeline_status.md |
+| `/lfe-learn` *(on-demand)* | Brain teaching instruction | Update to a `.docs/` atomic doc + `CHANGELOG.md` entry |
 
 
 Coordination files are archived/deleted ONLY by the Archivist when the mission is complete (or by the Hygiene sub-pipeline for `hygiene_report.md`). If a session crashes, the files remain for recovery.
@@ -97,7 +105,7 @@ Project-specific overrides go under `## Brain Persona Overrides` in this file. F
 
 The Archivist appends session token costs to `.docs/quality/token-budget.md` at end-of-mission. The agent should self-report rough per-phase token costs (e.g., from chat-metadata estimates) so the framework can detect drift over time. Phases that exceed +50% over their rolling average get flagged into the next session's `pipeline_status.md`.
 
-## 9. Available Skills (16)
+## 9. Available Skills (23)
 | Skill | Phase | Purpose |
 |---|---|---|
 | `/lfe-boot` | 0 | Session bootstrap and recovery |
@@ -106,12 +114,19 @@ The Archivist appends session token costs to `.docs/quality/token-budget.md` at 
 | `/lfe-to-prd` | 1.2 | PRD synthesis from grill output |
 | `/lfe-to-issues` | 1.3 | Vertical slice breakdown |
 | `/lfe-architect` | 1.4 | Implementation plan for current slice |
+| `/lfe-plan-critique` | 1.5 | Pre-build 4-lens plan critique (AC, test feasibility, domain, structural) |
 | `/lfe-builder` | 2.1 | Code implementation |
 | `/lfe-tdd` | 2.2 | Red-green-refactor quality pass |
 | `/lfe-zoom-out` | 3.1 | System context for unfamiliar code |
-| `/lfe-inspector` | 3.2 | Verification against domain truth |
-| `/lfe-diagnose` | 3.3 | Bug diagnosis loop (conditional) |
+| `/lfe-inspector` | 3.2 | Verification against domain truth (with Cycle Guard + sub-skill dispatch) |
+| `/lfe-security-check` | 3.2.a | Inspector sub-skill — OWASP Top-10 prompt analysis |
+| `/lfe-perf-check` | 3.2.b | Inspector sub-skill — performance anti-pattern analysis |
+| `/lfe-complexity-check` | 3.2.c | Inspector sub-skill — cyclomatic/cognitive complexity |
+| `/lfe-dep-audit` | 3.2.d | Inspector sub-skill — dependency manifest review + Brain-run audit instruction |
+| `/lfe-mutation-verify` | 3.2.e | Inspector sub-skill — prompt-based mutation reasoning for test quality |
+| `/lfe-diagnose` | 3.3 | Bug diagnosis loop (conditional, 1st failure only) |
 | `/lfe-archivist` | 4.1 | Documentation sync and cleanup |
+| `/lfe-learn` | Any | Dynamic Library update on Brain teaching moments (Archivist sub-skill) |
 | `/lfe-hygiene` | 5.1 | Structural audit |
 | `/lfe-improve-architecture` | 5.2 | Deep module extraction |
 | `/lfe-extract-domain` | Any | Domain knowledge rescue |

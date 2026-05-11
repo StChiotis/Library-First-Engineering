@@ -17,7 +17,7 @@ Read `pipeline_status.md`. Extract and hold:
 - **Session Count** (For hygiene scheduling)
 
 ### Step 2 — Check for Interrupted Session or State Anomaly
-Scan `.plans/` for coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `hygiene_report.md`). Resume mapping per `LOOP_ARCHITECTURE.md` §4 — the last present file determines the next skill.
+Scan `.plans/` for coordination files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `active_plan.md`, `plan_critique.md`, `builder_done.md`, `tdd_report.md`, `.plans/checks/*`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `hygiene_report.md`). Resume mapping per `LOOP_ARCHITECTURE.md` §4 — the last present file determines the next skill.
 
 - **Scenario A: Normal Interrupted Session**
   If files exist in `.plans/` and the entrance card state indicates the mission is in progress:

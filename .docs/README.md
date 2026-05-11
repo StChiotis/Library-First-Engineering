@@ -22,7 +22,7 @@
 | System Prompt | [`.agents/adapters/system_prompt.txt`](../.agents/adapters/system_prompt.txt) | Raw LLM adapter (copy-paste for ChatGPT, Claude, etc.). |
 | Change History | [`.docs/archive/`](./archive/) (see [Shelf Index](./archive/README.md)) | Cold-tier archives for retention-managed files: `changelog-history.md`, `architecture-decisions-history.md`, `protocol-debt-history.md`, `known-issues-history.md`, `token-budget-history.md`. Populated by the Hygiene sweep per the Retention Policy in [`GOVERNANCE.md`](./protocol/GOVERNANCE.md). |
 | Floor map | **this file** | Navigation index. |
-| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 16 LFE persona skills (sub-pipeline architecture). |
+| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 23 LFE persona skills (sub-pipeline architecture + 5 specialist Inspector sub-skills + `lfe-plan-critique` + `lfe-learn`). |
 | Domain Language | [`CONTEXT.md`](../CONTEXT.md) (root) | Canonical glossary — all agents must use these terms. |
 | Framework Roadmap | [GitHub Issues](https://github.com/StChiotis/Library-First-Engineering/issues) | Planned improvements for the LFE framework (tracked as Issues). |
 | Project Roadmap | [`.docs/strategy/roadmap.md`](./strategy/roadmap.md) | What is the planned evolution of the product? |
@@ -42,9 +42,11 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 | `01_grill_summary.md` | `/lfe-grill-with-docs` | `/lfe-to-prd` |
 | `02_prd.md` | `/lfe-to-prd` | `/lfe-to-issues` |
 | `03_slices.md` | `/lfe-to-issues` | `/lfe-architect` |
-| `active_plan.md` | `/lfe-architect` | `/lfe-builder`, `/lfe-tdd` |
+| `active_plan.md` | `/lfe-architect` | `/lfe-plan-critique`, `/lfe-builder`, `/lfe-tdd` |
+| `plan_critique.md` | `/lfe-plan-critique` | Brain / `/lfe-builder` (auto-gate) |
 | `builder_done.md` | `/lfe-builder` | `/lfe-tdd` (resume marker) |
 | `tdd_report.md` | `/lfe-tdd` | `/lfe-inspector` |
+| `.plans/checks/*.md` | Inspector sub-skills (security/perf/complexity/dep/mutation) | `/lfe-inspector` (aggregates into `critique.md`) |
 | `inspection_report.md` | `/lfe-inspector` | `/lfe-archivist` |
 | `diagnosis_report.md` | `/lfe-diagnose` (conditional) | `/lfe-builder` (next iteration) |
 | `hygiene_report.md` | `/lfe-hygiene` (every 5 sessions) | `/lfe-improve-architecture` |
@@ -106,6 +108,7 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 | [`PROTOCOL_DEBT.md`](./quality/PROTOCOL_DEBT.md) | What LFE-FORCE protocol bypasses need to be resolved? |
 | [`token-budget.md`](./quality/token-budget.md) | What did each session cost? Used for drift detection. |
 | [`validation-baselines.md`](./quality/validation-baselines.md) | What outputs/snapshots is the Inspector verifying against? |
+| [`inspector-config.md`](./quality/inspector-config.md) | Which Inspector specialist sub-skills are enabled for this project? |
 | [`README.md`](./quality/README.md) | **Shelf Index**: Local navigation for the quality layer. |
 
 ---

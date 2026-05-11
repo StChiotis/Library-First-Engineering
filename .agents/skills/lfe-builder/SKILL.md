@@ -23,15 +23,16 @@ Execute the approved plan in `.plans/active_plan.md` into production-ready code.
 5. **File-Based Input**: Read `active_plan.md` as the source of truth, not conversation context.
 
 ## Workflow
-1. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`. **If `.plans/diagnosis_report.md` exists**, check its `slice:` field against `active_plan.md`'s `slice:` field:
+1. **Check plan-critique gate**: Before reading anything else, verify `.plans/plan_critique.md` exists with `verdict: PASS` (or `verdict: WARN` with explicit Brain confirmation in the body). If `verdict: BLOCK` or the file is absent, halt — the Architect must complete `/lfe-plan-critique` first. Do not write to `src/` until the gate is open.
+2. **Review**: Read `.plans/active_plan.md` and `engineering-standards.md`. **If `.plans/diagnosis_report.md` exists**, check its `slice:` field against `active_plan.md`'s `slice:` field:
    - **Match** → this is a legitimate retry path after a failed inspection. `/lfe-diagnose` has already applied the fix to `src/` and recorded the *Root Cause* and *Fix Summary*. Read those sections so you understand the post-diagnosis state, but **do not re-implement the slice**. Skip Steps 2–3 (Implement/Refactor) and proceed directly to Step 4 (Mark Done) with a fresh `builder_done.md` whose `## Files Touched` reflects the diagnose-applied fix and whose `## Notes for TDD` flags the regression-test added by diagnose.
    - **Mismatch** → the diagnosis report is stale (e.g., from a previous slice whose cleanup didn't complete). Ignore it; do not skip implementation. Proceed normally from Step 2. (Hygiene will flag the stale file as orphaned on its next sweep.)
-2. **Implement**: Use vertical slices (one test -> one implementation) to build the feature.
-3. **Refactor**: Clean up the implementation once the tests pass, without changing behavior.
-4. **Mark Done**: Before handing off to TDD, write `.plans/builder_done.md` so the implementation phase has a physical checkpoint for crash recovery (a session that dies between coding and TDD must not re-implement). Schema below.
-5. **TDD Pass**: Run `/lfe-tdd` for the red-green-refactor quality pass.
-6. **Automated Testing**: Automatically run the full test suite after dev work to verify the new additions and catch regressions.
-7. **Handoff**: Once code is written, `builder_done.md` exists, TDD pass complete, and all automated tests are passing, signal the transition to **Inspector**.
+3. **Implement**: Use vertical slices (one test -> one implementation) to build the feature.
+4. **Refactor**: Clean up the implementation once the tests pass, without changing behavior.
+5. **Mark Done**: Before handing off to TDD, write `.plans/builder_done.md` so the implementation phase has a physical checkpoint for crash recovery (a session that dies between coding and TDD must not re-implement). Schema below.
+6. **TDD Pass**: Run `/lfe-tdd` for the red-green-refactor quality pass.
+7. **Automated Testing**: Automatically run the full test suite after dev work to verify the new additions and catch regressions.
+8. **Handoff**: Once code is written, `builder_done.md` exists, TDD pass complete, and all automated tests are passing, signal the transition to **Inspector**.
 
 ## Coordination File Output
 

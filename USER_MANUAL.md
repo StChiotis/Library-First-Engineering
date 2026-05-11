@@ -45,15 +45,21 @@ If you are doing a Major Change, the AI will cycle through four distinct "Person
    - 🛑 **HUMAN ACTION REQUIRED:** The AI will stop and ask you: *"Do you approve these slices?"* Read them. If they look good, say "Yes."
 4. **The Plan (`/lfe-architect`):** The AI drafts a strict, file-by-file blueprint for the first slice.
    - 🛑 **HUMAN ACTION REQUIRED:** The AI will stop again. *"Do you approve this implementation plan?"* Read it carefully. If it is correct, say "Yes, proceed to Builder."
+5. **The Pre-Build Critique (`/lfe-plan-critique`):** Before any code is written, the Architect runs a 4-lens review of the approved plan — checking that every acceptance criterion is testable, the test strategy is feasible, the plan respects domain boundaries, and there is no architectural drift. The output is `.plans/plan_critique.md` with a verdict:
+   - **PASS** — proceed to Builder automatically.
+   - **WARN** — findings are advisory; the AI surfaces them and asks you to confirm before continuing.
+   - **BLOCK** — the plan loops back to step 4 for revision. *Max 2 revisions per slice* — if it still fails, the AI asks you to choose: revert to the PRD, accept WARN, or abort the mission.
 
 #### 🔨 Phase 2: The Builder (Coding)
 1. **Implementation (`/lfe-builder`):** The Builder persona takes over and writes the actual code in `src/` based *only* on the approved plan.
 2. **Testing (`/lfe-tdd`):** The Builder writes unit tests and ensures the code passes.
 
 #### 🕵️ Phase 3: The Inspector (Verification)
-1. **Verification (`/lfe-inspector`):** A new persona takes over. It acts as an independent auditor, checking the Builder's code against your core domain rules. 
-2. **The 4-Eyes Principle (The Critique):** Before approving the code, the Inspector is forced to write a `.plans/critique.md` file. It must act as a "Devil's Advocate" to actively hunt for edge cases, performance regressions, or undocumented debt. If it finds a bug, it sends it back to the Builder.
-3. **Handoff:** If it passes the 4-Eyes check, it asks for your final blessing. 
+1. **Verification (`/lfe-inspector`):** A new persona takes over. It acts as an independent auditor, checking the Builder's code against your core domain rules.
+2. **Cycle Guard:** Before inspecting, the AI checks whether this slice has already failed once. If yes, instead of looping forever, it stops on the second failure and asks you to triage: (A) accept as known debt, (B) escalate `LFE-FORCE`, or (C) re-plan the slice from scratch.
+3. **Specialist Sub-Skills (opt-in):** If you have enabled them in `.docs/quality/inspector-config.md`, the Inspector also dispatches specialist passes — security (OWASP Top-10), performance, complexity, dependency audit, and mutation reasoning. Each writes findings to `.plans/checks/`, then the Inspector aggregates everything into `critique.md`.
+4. **The 4-Eyes Principle (The Critique):** Before approving the code, the Inspector is forced to write a `.plans/critique.md` file. It must act as a "Devil's Advocate" to actively hunt for edge cases, performance regressions, or undocumented debt. If it finds a bug (and this is the **first** failure), it sends it back to the Builder via `/lfe-diagnose`.
+5. **Handoff:** If it passes the 4-Eyes check, it asks for your final blessing.
    - 🛑 **HUMAN ACTION REQUIRED:** Verify the app works visually/functionally. Say "Approved, proceed to Archivist."
 
 #### 📚 Phase 4: The Archivist (Cleanup)
@@ -69,6 +75,14 @@ You don't need a 4-step pipeline to change a button color.
 Use this for **Minor Fixes** (typos, UI tweaks, simple bugs touching < 3 files). 
 - **How:** Boot the session, declare a "Minor Fix", and tell the AI: *"Run `/lfe-scout` to fix the padding on the login button."*
 - **Constraint:** The Scout is physically forbidden from renaming files, changing architecture, or adding dependencies. 
+
+### Teaching the System (`/lfe-learn`)
+When you want the AI to **remember a rule across sessions**, use one of these explicit teaching patterns and the AI will trigger `/lfe-learn`:
+- `"remember: all DB writes use the repository pattern"`
+- `"from now on: API endpoints must validate at the boundary"`
+- `"amend: 'order cancellation' → 'cancellation request'"`
+
+`/lfe-learn` classifies the lesson, picks the right `.docs/` file, proposes a diff, and (after your confirmation) writes it and logs to `CHANGELOG.md`. It is non-blocking — the pipeline picks up where it left off.
 
 ### The Break-Glass Override (`LFE-FORCE`)
 Use this for **Production Emergencies** (e.g., the server is down, you need a patch *right now*).
