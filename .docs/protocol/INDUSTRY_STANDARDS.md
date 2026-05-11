@@ -23,9 +23,11 @@ Ensure that both humans and AI agents follow the LFE assembly line when submitti
 - **Reference Standard**: Issue and PR Templates.
 - **Implementation**: Add `.github/PULL_REQUEST_TEMPLATE.md` with checklists confirming that:
   - An `.plans/active_plan.md` was followed.
+  - `.plans/plan_critique.md` reached `verdict: PASS` (or `WARN` with a non-null `brain_confirmation`) before any `src/` edits.
+  - Inspector phase produced a passing or explicitly-triaged `inspection_report.md`.
   - Unit tests have been written and run successfully.
   - The Archivist has updated `CHANGELOG.md` and relevant ADRs.
-- **LFE Benefit**: Forces contributors (and AI agents auto-generating PR descriptions) to explicitly acknowledge LFE compliance.
+- **LFE Benefit**: Forces contributors (and AI agents auto-generating PR descriptions) to explicitly acknowledge LFE compliance — including the pre-build critique gate.
 
 ## 3. Zero-Trust Benchmark via CODEOWNERS
 

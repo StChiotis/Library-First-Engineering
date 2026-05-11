@@ -21,9 +21,10 @@
 2. **Logic Sovereignty**: Core logic is sacred.
 3. **No Cowboy Coding**: All changes require a `.plans/active_plan.md`.
 4. **Persona Discipline**: Tool-locking is active.
-5. **Human Approval**: Two gates — slice approval + plan approval.
+5. **Human Approval**: Two structural gates — slice approval + plan approval. Plus the `/lfe-plan-critique` auto-gate (PASS proceeds; WARN requires file-recorded `brain_confirmation`; BLOCK loops back, max 2 revisions).
 6. **File-Based Coordination**: Skills read/write `.plans/` files, not conversation.
 7. **Hygiene Scheduling**: Architecture sweep every 5 sessions.
+8. **Skill Invocation**: Skills are agent-dispatched. Brain types only `/lfe-boot`, `/lfe-whats-next`, `/lfe-scout`, `/lfe-extract-domain`, or `LFE-FORCE` (see `LLM_AGENT_GUIDE.md` §8.8).
 
 ---
 
