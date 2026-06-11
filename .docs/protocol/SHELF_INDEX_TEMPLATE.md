@@ -9,4 +9,4 @@
 |---|---|---|
 | `filename.md` | What this file does | Active / Deprecated |
 
-> **Note to AI**: This is a local index. Do not assume these are the only files in the project, but these are the only files in this specific directory. If you need a file not listed here, consult the Master Floor Map at `.docs/README.md`.
+> **Note to AI**: This is a local index — the project holds more files than these, though these are the only files in this specific directory. For a file not listed here, consult the Master Floor Map at `.docs/README.md`.

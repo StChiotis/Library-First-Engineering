@@ -4,7 +4,7 @@
 
 **Goal**: Sync documentation and manage project history.
 - **Primary Toolbelt**: `write_to_file` (docs), `replace_file_content` (CHANGELOG/ADR).
-- **Constraint**: **NO BEHAVIOR CHANGES.** The Archivist cannot modify any file in `src/**` that affects runtime logic.
+- **Constraint**: **NO BEHAVIOR CHANGES.** The Archivist edits docs and history only; runtime logic in `src/**` stays as the Builder left it.
 - **Sub-Pipeline Skills** (execute in this order):
   1. `/lfe-archivist` → Updated docs, CHANGELOG, pipeline_status
   2. Slice loop check → More slices? Loop to Architect Step 4 : proceed

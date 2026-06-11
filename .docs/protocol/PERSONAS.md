@@ -17,7 +17,7 @@ The Library-First Engineering (LFE) protocol orchestrates AI agents into four di
 | 🫵 Brain | [brain.md](personas/brain.md) | Human judgment, gate-keeping |
 | 🚀 Scout | [scout.md](personas/scout.md) | Rapid minor fixes (Flyweight Mode) |
 
-> **Note to AI**: Load only the contract file for your active persona. Do not load all files.
+> **Note to AI**: Load only the contract file for your active persona — that one alone.
 
 ---
 
@@ -34,4 +34,7 @@ Available sub-skills (all prompt-only, tool-agnostic):
 | `lfe-complexity-check` | Cyclomatic and cognitive complexity |
 | `lfe-dep-audit` | Dependency manifest review + audit instruction |
 | `lfe-mutation-verify` | Test quality via prompt-based mutation reasoning |
+
+### Evidence Discipline (cross-persona)
+Every claim-making persona shares one rule: a completion claim earns its place only when fresh tool output from this session backs it — "tests pass" ships with the pasted run counts, "no regression" shows the counts hold or rise, and facts come from what was just read rather than from memory. Each claim is confidence-routed (High = tool-verified → state it; Medium = inferred → state with the caveat; Low = recalled → verify first), and a hallucination-signal checklist (referencing an unopened file, quoting an unsourced number, going against the latest tool output, assuming an unconfirmed dependency) prompts a Pause → Verify → Correct. The canonical clause lives inline in the Builder, TDD, and Inspector contracts and skills; this note is the cross-persona index so the discipline stays discoverable. The Inspector's "No Blind Trust" Hard Rule is its local instance of this shared discipline.
 

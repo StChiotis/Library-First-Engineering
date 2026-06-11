@@ -5,6 +5,8 @@
 
 Track ongoing bugs, "smells," and architectural debt here.
 
+> **Retention policy:** all `open` entries kept; `resolved` / `won't-fix` kept one hygiene cycle then archived — see [`RETENTION_RUNBOOK.md`](RETENTION_RUNBOOK.md).
+
 ## 🐞 Bugs
 <!-- Example:
 - [Race Condition in Login] Token sometimes expires before the redirect completes.
@@ -16,6 +18,16 @@ Track ongoing bugs, "smells," and architectural debt here.
 - [Database Coupling] The UserService directly accesses the DB driver instead of using the repository pattern. Needs refactoring.
 -->
 - [Your Debt 1]
+
+## ✅ Resolved Issues
+*None yet — entries move here when closed, then roll to the archive one hygiene cycle later.*
+
+## 🔧 Refactor Candidates
+<!-- Surfaced by /lfe-hygiene and /lfe-improve-architecture; promote one to a mission when it earns the discipline tax. -->
+- [None currently]
+
+## 💡 Candidate Missions (enhancements — surfaced, not yet scheduled)
+- [None currently]
 
 ---
 

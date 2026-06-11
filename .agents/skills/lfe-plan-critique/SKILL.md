@@ -1,22 +1,22 @@
 ---
 name: lfe-plan-critique
-description: Run a 4-lens pre-build critique of the approved active plan before the Builder starts. Acts as the Architect persona, read-only on src/. Writes .plans/plan_critique.md. Use immediately after Brain approves active_plan.md.
+description: Run a 5-lens pre-build critique of the approved active plan before the Builder starts. Acts as the Architect persona, read-only on src/. Writes .plans/plan_critique.md. Use immediately after Brain approves active_plan.md.
 ---
 
-# LFE Plan Critique — Pre-Build 4-Eyes Review
+# LFE Plan Critique — Pre-Build 5-Lens Review
 
 ## Position in Pipeline
 - **Phase**: 1.5 (between Architect plan approval and Builder start)
-- **Persona**: Architect (read-only; zero src/ access)
+- **Persona**: Architect (read-only — no src/ write access)
 - **Trigger**: Automatically after Brain approves `active_plan.md` — before `/lfe-builder` is invoked
 - **Next Step**: `/lfe-builder` (on PASS) or `/lfe-architect` revision loop (on BLOCK)
 
 ## Mission
-Stress-test the approved plan from four angles before a single line of code is written. Catch ambiguous acceptance criteria, untestable requirements, domain boundary violations, and structural impact before they become bugs in `src/`.
+Stress-test the approved plan from five angles before a single line of code is written. Catch ambiguous acceptance criteria, untestable requirements, domain boundary violations, structural impact, and cross-edit incoherence before they become bugs in `src/`.
 
 ## Hard Rules
-1. **Zero Code Writes**: This skill operates on `.plans/` and `.docs/` only. Never touch `src/`.
-2. **4-Lens Sequential**: Run all four lenses in order. Do not skip a lens because an earlier one passed cleanly.
+1. **Zero Code Writes**: This skill operates on `.plans/` and `.docs/` only — `src/` stays untouched.
+2. **5-Lens Sequential**: Run all five lenses in order, every time — even when an earlier lens passed cleanly.
 3. **Single Output File**: All findings aggregate into one `plan_critique.md` — no per-lens files.
 4. **Verdict is Decisive**: A single BLOCK finding stops the Builder. WARN requires an explicit, file-recorded Brain confirmation before Builder starts (see Step 7 — `brain_confirmation` frontmatter field).
 5. **Domain Library Is Truth**: All domain boundary and architectural judgments must cite a specific `.docs/` file and line, not general knowledge.
@@ -30,9 +30,9 @@ Before loading any other context, check whether `.plans/plan_critique.md` alread
 1. **File does not exist** → this is **Revision 1**. Continue to Step 1.
 2. **File exists** — read its frontmatter:
    - **`verdict: PASS` or `verdict: WARN` with `brain_confirmation` set** → the gate is already open; this skill should not have been invoked. Halt and instruct the Brain to proceed to `/lfe-builder`.
-   - **`verdict: WARN` with `brain_confirmation: null`** → Brain has not yet confirmed; re-presenting the existing WARN is correct. Skip to Step 7 (Branch on Verdict). Do NOT re-run lenses.
+   - **`verdict: WARN` with `brain_confirmation: null`** → Brain has not yet confirmed; re-presenting the existing WARN is correct. Skip to Step 7 (Branch on Verdict) — re-present rather than re-running the lenses.
    - **`verdict: BLOCK` and `revision: 1`** → the Architect has revised `active_plan.md` and is re-running. This is **Revision 2**. Continue to Step 1.
-   - **`verdict: BLOCK` and `revision: 2`** → the 2-revision limit is exhausted. **Halt immediately.** Do NOT re-run lenses. Present the Brain with three triage options (per `LOOP_ARCHITECTURE.md` Scenario 1.4):
+   - **`verdict: BLOCK` and `revision: 2`** → the 2-revision limit is exhausted. **Halt immediately** — present the Brain with three triage options instead of re-running the lenses (per `LOOP_ARCHITECTURE.md` Scenario 1.4):
      - **A — Revert to PRD**: loop back to `/lfe-to-issues` from `02_prd.md`.
      - **B — Accept WARN and proceed**: Brain explicitly downgrades the BLOCK to a WARN and authorises Builder. If chosen, update `plan_critique.md` frontmatter: `verdict: WARN`, `brain_confirmation: <ISO-8601>`. Set `Active Persona: Builder`.
      - **C — Abort mission**: wipe `.plans/` execution files; mission cancelled.
@@ -81,6 +81,14 @@ Assess the plan's effect on existing architecture:
 
 Flag any structural drift from established architecture. Cite `.docs/architecture/` if present.
 
+### Step 5.5: Lens 5 — Coherence Simulation
+Mentally execute the plan's edits and check that the *surrounding, preserved* text still reads correctly afterward. This lens catches the cross-edit incoherence the other four miss — text that referred to something an edit removes or changes elsewhere. Two scans:
+
+- **Word-level:** scan the preserved text around each edit for orphan-prone words — *unchanged, now, still, previously, no longer, was always* — and for each occurrence ask: does it still make sense after the edit, or does it now dangle (e.g. "the doc *still* references the old row" when the edit deletes that row; "*unchanged*" next to something the plan changes)? Most occurrences are fine, but each must be checked, not skipped. A genuine dangling reference is a **WARN**.
+- **Section-level:** when an edit replaces a subsection, re-read the parent section's intro/framing paragraph — does it still accurately characterize all subsections (e.g. an intro saying "these are optional" when the edit made one mandatory; "four" when the edit made it five)? A framing/content mismatch is a **WARN**.
+
+This lens answers the failure class where an edit's blast radius leaves stale references behind. Dogfood it on the plan's own diff.
+
 ### Step 6: Write `plan_critique.md`
 
 ```yaml
@@ -114,6 +122,9 @@ Body structure:
 ## Lens 4 — Structural Impact
 - <Finding or "No architectural drift detected.">
 
+## Lens 5 — Coherence Simulation
+- <Finding (dangling reference / framing mismatch) or "Edits leave surrounding text coherent; no orphaned references.">
+
 ## Recommended Actions
 - <Specific change to active_plan.md needed before Builder starts, or "None — proceed.">
 ```
@@ -127,7 +138,7 @@ Body structure:
 
 ## Checklist
 - [ ] Step 0 counter check executed before any lens work?
-- [ ] All four lenses applied sequentially?
+- [ ] All five lenses applied sequentially?
 - [ ] Every BLOCK finding cites a specific `.docs/` file?
 - [ ] `plan_critique.md` written with correct frontmatter (`verdict`, `revision`, `brain_confirmation`)?
 - [ ] WARN path: `brain_confirmation` left `null` on initial write; updated to ISO-8601 only after Brain explicitly confirms?

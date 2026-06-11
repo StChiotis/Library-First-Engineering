@@ -17,10 +17,10 @@
 | Entrance card | [`pipeline_status.md`](../pipeline_status.md) | Current session state, active mission, coordination file tracker, session count. |
 | User Manual | [`USER_MANUAL.md`](../USER_MANUAL.md) | The human guide: how to drive the framework day-to-day. |
 | Agent Guide | [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md) | Core instructions for any AI entering this repo (skill catalog, coordination table). |
-| Adapters | [`.cursorrules`](../.cursorrules), [`.windsurfrules`](../.windsurfrules), [`.clinerules`](../.clinerules), [`.antigravityrules`](../.antigravityrules) | IDE-specific pointer stubs that reference the canonical [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md). Do not edit to change agent behavior — edit the canonical file instead. |
+| Adapters | [`.cursorrules`](../.cursorrules), [`.windsurfrules`](../.windsurfrules), [`.clinerules`](../.clinerules), [`.antigravityrules`](../.antigravityrules) | IDE-specific pointer stubs that reference the canonical [`LLM_AGENT_GUIDE.md`](../LLM_AGENT_GUIDE.md) — to change agent behavior, edit the canonical file (the stubs only point). Claude Code additionally gets native `/lfe-*` dispatch via pointer stubs in `.claude/commands/` — also pointer-only; the canonical skills live in `.agents/skills/`. |
 | Copilot | [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) | GitHub Copilot adapter. |
 | System Prompt | [`.agents/adapters/system_prompt.txt`](../.agents/adapters/system_prompt.txt) | Raw LLM adapter (copy-paste for ChatGPT, Claude, etc.). |
-| Change History | [`.docs/archive/`](./archive/) (see [Shelf Index](./archive/README.md)) | Cold-tier archives for retention-managed files: `changelog-history.md`, `architecture-decisions-history.md`, `protocol-debt-history.md`, `known-issues-history.md`, `token-budget-history.md`. Populated by the Hygiene sweep per the Retention Policy in [`GOVERNANCE.md`](./protocol/GOVERNANCE.md). |
+| Change History | [`.docs/archive/`](./archive/) (see [Shelf Index](./archive/README.md)) | Cold-tier archives for retention-managed files: `changelog-history.md`, `architecture-decisions-history.md`, `protocol-debt-history.md`, `known-issues-history.md`. Populated by the Hygiene sweep per the Retention Policy in [`GOVERNANCE.md`](./protocol/GOVERNANCE.md). |
 | Floor map | **this file** | Navigation index. |
 | Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 22 LFE persona skills (sub-pipeline architecture + 5 specialist Inspector sub-skills + `lfe-plan-critique`). |
 | Domain Language | [`CONTEXT.md`](../CONTEXT.md) (root) | Canonical glossary — all agents must use these terms. |
@@ -73,8 +73,9 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 
 | File | Answers the question… |
 |---|---|
-| [`architecture-decisions.md`](./architecture/architecture-decisions.md) | What architectural decisions govern this codebase? (ADR Index) |
+| [`architecture-decisions.md`](./architecture/architecture-decisions.md) | **Your product's** architecture decisions (ADR 1+). Empty on a fresh clone. |
 | [`engineering-standards.md`](./architecture/engineering-standards.md) | What are the coding and design conventions? |
+| [`README.md`](./architecture/README.md) | **Shelf Index**: Local navigation for the architecture layer. |
 
 ---
 
@@ -106,9 +107,9 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 | [`CHANGELOG.md`](./quality/CHANGELOG.md) | What changed recently? (7-milestone rolling window) |
 | [`known-issues.md`](./quality/known-issues.md) | What bugs or technical debt currently exist? |
 | [`PROTOCOL_DEBT.md`](./quality/PROTOCOL_DEBT.md) | What LFE-FORCE protocol bypasses need to be resolved? |
-| [`token-budget.md`](./quality/token-budget.md) | What did each session cost? Used for drift detection. |
 | [`validation-baselines.md`](./quality/validation-baselines.md) | What outputs/snapshots is the Inspector verifying against? |
-| [`inspector-config.md`](./quality/inspector-config.md) | Which Inspector specialist sub-skills are enabled for this project? |
+| [`inspector-config.md`](./quality/inspector-config.md) | Which Inspector specialist sub-skills are enabled for this project? (incl. the Security Floor Rules) |
+| [`RETENTION_RUNBOOK.md`](./quality/RETENTION_RUNBOOK.md) | How do I run a Hygiene retention sweep? (operational supplement) |
 | [`README.md`](./quality/README.md) | **Shelf Index**: Local navigation for the quality layer. |
 
 ---
@@ -121,4 +122,4 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 
 ---
 
-*Maintained by the Archivist role.*
+*Maintained by the Archivist role. Update this file whenever a new doc is created or a file is moved or archived; the retention sweep (every 5 sessions) walks the cold tier.*

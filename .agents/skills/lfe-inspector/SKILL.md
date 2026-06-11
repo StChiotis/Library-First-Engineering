@@ -20,10 +20,10 @@ Verify that the implementation matches the domain truth and numerical baselines.
 ## Hard Rules
 1. **Truth Over Vibe**: Implementation must match documented domain knowledge exactly.
 2. **Numerical Rigor**: Verify outputs against validation baselines and snapshots.
-3. **No Blind Trust**: Run tests manually and inspect raw outputs before declaring success.
+3. **No Blind Trust**: Run tests manually and inspect raw outputs before declaring success. This is the Inspector's instance of the shared **Evidence Discipline** (see the section at the end of this skill) — a verification claim earns its place only from the fresh output you ran this session.
 4. **File-Based Input** (with explicit fallback):
    - **Primary**: read `.plans/tdd_report.md`. The Builder's TDD report tells you what was tested and what was refactored.
-   - **Fallback (LFE-FORCE recovery)**: if `.plans/tdd_report.md` does NOT exist AND `.docs/quality/PROTOCOL_DEBT.md` has at least one unresolved entry, read the latest unresolved Protocol Debt entry instead and verify the hotfix described there directly against `src/`. Set `source: .docs/quality/PROTOCOL_DEBT.md` in the inspection report frontmatter — exact full path, because Archivist Step 3.6's matcher keys off this string verbatim. This path is the ONLY way to clear Protocol Debt — the framework MUST never deadlock here.
+   - **Fallback (LFE-FORCE recovery)**: if `.plans/tdd_report.md` does NOT exist AND `.docs/quality/PROTOCOL_DEBT.md` has at least one unresolved entry, read the latest unresolved Protocol Debt entry instead and verify the hotfix described there directly against `src/`. Set `source: .docs/quality/PROTOCOL_DEBT.md` in the inspection report frontmatter — exact full path, because Archivist Step 3.6's matcher keys off this string verbatim. This path is the ONLY way to clear Protocol Debt — the framework MUST stay recoverable here (no deadlock).
    - **Hard fail**: if neither input exists, halt and ask the human whether to escalate to `/lfe-extract-domain` (true black box) rather than fabricate a verification.
 
 ## Cycle Guard
@@ -45,12 +45,12 @@ After running verification (Workflow steps 1–4):
 
 - **Verification PASSES** → proceed normally regardless of cycle number.
 - **Verification FAILS on Cycle 1** → trigger `/lfe-diagnose` as usual.
-- **Verification FAILS on Cycle 2** → **halt**. Do NOT re-invoke `/lfe-diagnose`. Write `.plans/inspection_report.md` with `status: escalated` and present the Brain with three triage options:
+- **Verification FAILS on Cycle 2** → **halt** — write `.plans/inspection_report.md` with `status: escalated` instead of re-invoking `/lfe-diagnose`, and present the Brain with three triage options:
   - **Option A — Accept and ship as known debt**: proceed to Archivist; log the open issue to `.docs/quality/known-issues.md` and a new `PROTOCOL_DEBT.md` entry.
   - **Option B — Escalate LFE-FORCE**: Brain invokes `LFE-FORCE` to apply a targeted patch; old debt entry stays open.
   - **Option C — Re-plan from scratch**: wipe execution files; loop back to Architect to re-design the slice from `03_slices.md`.
 
-  The pipeline must not proceed until Brain selects an option. Record the chosen triage option in the body of the escalated `inspection_report.md`.
+  The pipeline waits for the Brain to select an option before proceeding. Record the chosen triage option in the body of the escalated `inspection_report.md`.
 
 ---
 
@@ -68,17 +68,17 @@ After running verification (Workflow steps 1–4):
 4. **Verify TDD Report (or Protocol Debt entry)**: Read `.plans/tdd_report.md` and confirm test coverage matches the plan's requirements. If that file is absent because the work arrived via `LFE-FORCE`, follow Hard Rule #4's fallback: read the latest unresolved entry in `.docs/quality/PROTOCOL_DEBT.md` and verify the hotfix directly. Mark the verification's `source:` field accordingly.
 5. **Instrument** (mission path only): If verification fails AND `source: .plans/tdd_report.md`, consult the **Cycle Guard** (above) before invoking diagnose:
    - **Cycle 1 failure** → use `/lfe-diagnose` to build a repro loop and identify root cause.
-   - **Cycle 2 failure** → **halt**. Write `status: escalated` and present Brain triage menu. Do NOT invoke `/lfe-diagnose`.
-   - **LFE-FORCE recovery path** (`source: PROTOCOL_DEBT.md`) → Do NOT trigger `/lfe-diagnose` regardless of cycle. See Step 7b.
+   - **Cycle 2 failure** → **halt**. Write `status: escalated` and present Brain triage menu; leave `/lfe-diagnose` uninvoked.
+   - **LFE-FORCE recovery path** (`source: PROTOCOL_DEBT.md`) → skip `/lfe-diagnose` regardless of cycle. See Step 7b.
 6. **Sub-Skill Dispatch** (mission path — for LFE-FORCE recovery branch see Step 7b):
-   a. **Ensure dispatch directory exists**: `.plans/checks/` is owned by the Inspector. Create it if missing (idempotent — safe to call when already present). Sub-skills do not create their own parent directory; they trust the Inspector has prepared it.
+   a. **Ensure dispatch directory exists**: `.plans/checks/` is owned by the Inspector. Create it if missing (idempotent — safe to call when already present). Sub-skills rely on the Inspector having prepared their parent directory rather than creating it themselves.
    b. **Load config**: Read `.docs/quality/inspector-config.md` to determine which sub-skills are enabled.
    c. **Read per-mission overrides**: Check `active_plan.md` for an `## Inspector Overrides` section (typed schema — see `lfe-architect/SKILL.md` body template). Any override takes precedence over the config table.
    d. **Dispatch in fixed order**: `lfe-security-check` → `lfe-perf-check` → `lfe-complexity-check` → `lfe-dep-audit` → `lfe-mutation-verify`. For each enabled sub-skill, apply the **resume rule** before invoking:
       - **Skip** the sub-skill if `.plans/checks/<sub-skill-name>_findings.md` exists AND its YAML frontmatter parses with `status: complete`. This is the **only** valid skip signal — file presence alone is not sufficient (a crash mid-write leaves the file present but with no `status: complete` field).
       - **Invoke** otherwise (file absent, frontmatter unparseable, or `status` is any value other than `complete`). The sub-skill overwrites its findings file with a complete one.
    e. **Aggregate**: After dispatch completes, read every `.plans/checks/*_findings.md` whose frontmatter has `status: complete`. Build a labelled summary block per sub-skill for inclusion in `critique.md` (Step 6b).
-   f. **Re-aggregation on crash recovery**: If `critique.md` is missing OR has incomplete sub-skill sections, but all enabled sub-skills' findings files already have `status: complete`, do NOT re-run sub-skills — re-aggregate only. The sub-skill outputs are reusable across the same slice; only `critique.md` needs to be rebuilt.
+   f. **Re-aggregation on crash recovery**: If `critique.md` is missing OR has incomplete sub-skill sections, but all enabled sub-skills' findings files already have `status: complete`, re-aggregate only, rather than re-running the sub-skills. The sub-skill outputs are reusable across the same slice; only `critique.md` needs to be rebuilt.
    g. **No sub-skills enabled**: skip this step entirely. `critique.md` will contain only the 4-Eyes Devil's Advocate body, with no labelled sub-skill sections.
 
 6b. **Reflect (4-Eyes Principle)**: Before writing the final report, write a `.plans/critique.md` acting as a "Devil's Advocate" against the implementation (or, on the LFE-FORCE path, against the hotfix). Look for edge cases, performance regressions, or undocumented technical debt. Frontmatter follows the contract in [`COORDINATION_FILES.md`](../../../.docs/protocol/COORDINATION_FILES.md):
@@ -162,11 +162,11 @@ slice: <copied from active_plan.md; omit on LFE-FORCE recovery path (no plan)>
 
    **After dispatch (verdict branch)**:
    - **PASS** → run Step 6b (4-Eyes critique) including aggregated sub-skill findings, then write `inspection_report.md` (status: passed) including the `## Debt Entry Verified` block. Hand off to Archivist; the Archivist's Protocol Debt Resolution step (Archivist Workflow Step 3.6) will mark the matching entry resolved and the next boot will unblock the pipeline. Note: a sub-skill `Critical` finding on PASS verification does NOT block resolution — it is appended to `.docs/quality/known-issues.md` by the Archivist as a known follow-up so the debt can still clear, but the issue is visible.
-   - **FAIL** → run Step 6b for the critique anyway (the findings inform the triage choice), then write `inspection_report.md` (status: failed) including the `## Debt Entry Verified` block. Do NOT trigger `/lfe-diagnose`. Halt and present the human with three triage options:
+   - **FAIL** → run Step 6b for the critique anyway (the findings inform the triage choice), then write `inspection_report.md` (status: failed) including the `## Debt Entry Verified` block. Skip `/lfe-diagnose`; halt and present the human with three triage options:
      1. **Issue another `LFE-FORCE` patch** (creates a new debt entry; the old one stays open).
      2. **Roll back the hotfix** (revert `src/` to pre-patch state; the original debt entry is closed as `rolled-back`).
      3. **Convert to full pipeline** (run `/lfe-grill-with-docs` to architect a retroactive plan, then build/test/verify normally).
-   The pipeline stays blocked until the human chooses. The Archivist must NOT mark the debt entry resolved on a failed verification.
+   The pipeline stays blocked until the human chooses. The Archivist leaves the debt entry unresolved on a failed verification.
 
 8. **Handoff**: Once verification passes, ask for human finalization. Upon approval, mark the `inspect ✅` checkbox in `pipeline_status.md`'s Coordination Files row, signal transition to **Archivist**, and set `Active Persona: Archivist`.
 
@@ -177,3 +177,25 @@ slice: <copied from active_plan.md; omit on LFE-FORCE recovery path (no plan)>
 - [ ] Regression tests added for fixes?
 - [ ] Human has manually confirmed behavior?
 - [ ] Inspection report written to `.plans/inspection_report.md`?
+
+## Evidence Discipline
+
+A completion claim earns its place only when fresh tool output from this session backs it.
+- "Tests pass" means *paste the run's pass/fail counts* from the run you just executed.
+- "No regression" means *paste the counts and show they hold or rise* — a dropped count is a regression to report, rather than a number to round away.
+- State facts about files, APIs, and dependencies from what you just read this session, rather than from memory.
+- Treat hedge words — "should work", "probably", "I think it passes" — as a signal to stop and run the verifying step, then report the real result.
+
+**Confidence routing (per claim).**
+
+| Confidence | Basis | Action |
+|---|---|---|
+| High | Tool-verified this session | State it plainly. |
+| Medium | Inferred from context | State it with the caveat that it is inferred. |
+| Low | Recalled from training or memory | Verify first (read or run), then state. |
+
+**Hallucination-signal checklist.** Pause → Verify → Correct the moment you catch yourself:
+- referencing a file or symbol you have yet to open this session;
+- quoting a number (count, version, size) without a source you just saw;
+- stating something that runs against the latest tool output;
+- importing or assuming a dependency you have yet to confirm exists.

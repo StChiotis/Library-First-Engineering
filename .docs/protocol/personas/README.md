@@ -16,4 +16,4 @@ The entry point and persona index is [`../PERSONAS.md`](../PERSONAS.md).
 | `brain.md` | 🫵 The Brain | Human judgment, gate-keeping |
 | `scout.md` | 🚀 The Scout | Rapid minor fixes (Flyweight Mode) |
 
-> **Note to AI**: Read only the persona file matching your active role. Do not load all files.
+> **Note to AI**: Read only the persona file matching your active role — that one alone.

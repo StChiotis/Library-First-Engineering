@@ -7,7 +7,6 @@ This file tracks every instance where the LFE Protocol was bypassed using the `L
 
 | Date | Mission | Reason for LFE-FORCE | Resolution Status |
 | :--- | :--- | :--- | :--- |
-| _(No entries yet)_ | — | — | — |
 
 ---
 

@@ -1,6 +1,6 @@
 # LFE Industry Standards (Optional Enhancements)
 
-The core LFE framework relies on local AI personas (Builder, Inspector) to maintain discipline. However, as projects scale or when working in team environments, enforcing these rules solely through LLM system prompts may not be enough.
+The core LFE framework relies on local AI personas (Builder, Inspector) to maintain discipline. However, as projects scale or when working in team environments, enforcing these rules solely through LLM system prompts can fall short.
 
 This document lists **industry-standard enhancements** that you can implement in your repository to enforce the LFE protocol automatically. 
 
@@ -54,7 +54,8 @@ AI agents can occasionally hallucinate or copy-paste sensitive credentials (API 
 
 ## 6. MCP-Ready Tool Gateways (Physical Tool-Locking)
 
-The default LFE protocol relies on "prompt discipline." However, as AI agents become more autonomous, they may occasionally disobey prompt instructions.
-- **Reference Standard**: Model Context Protocol (MCP).
-- **Implementation**: LFE ships with a forward-looking manifest located at `.agents/permissions.json`. You can map an MCP server, a custom agent wrapper, or a CI/CD GitHub Action directly to this file. It instructs the environment to physically disable certain tools per persona (e.g., revoking `write_to_file` access to `src/` whenever the Architect is active).
-- **LFE Benefit**: Upgrades LFE from an "Honor System" to "Cryptographically Locked" enforcement without requiring you to restructure the repository.
+The default LFE protocol relies on "prompt discipline." As AI agents become more autonomous, they may occasionally disobey prompt instructions. The manifest at `.agents/permissions.json` exists as the **enforcement contract** for whenever physical tool-locking is available to you — it declares, per persona, which paths and tools are in bounds.
+
+- **What the agnostic core ships: the contract only.** Runtime tool-locking is inherently platform-specific — every IDE/LLM exposes a different interception surface (MCP gateways, tool-hooks, agent wrappers), so a portable framework cannot configure it for every platform. That mechanization is exactly what **platform-specific distributions of LFE** exist for: a distribution wires this same manifest into its platform's native enforcement, so adopters on that platform get tool-locking out of the box.
+- **The platform-neutral layer you can always adopt — CI/CD**: a GitHub Action or equivalent reads the same manifest and rejects PRs whose diffs violate persona constraints (e.g., a PR authored under the Architect persona that touches `src/`). This works identically for any LLM or IDE, which makes it the recommended team-scale enforcement for the agnostic core.
+- **LFE Benefit**: one `.agents/permissions.json` contract, three consumption levels — prompt discipline today, CI/CD enforcement at team scale, and full runtime tool-locking when you adopt a platform distribution. No repository restructuring at any level.

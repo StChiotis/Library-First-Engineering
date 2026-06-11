@@ -1,6 +1,6 @@
 # ADR Format
 
-ADRs live as numbered sections inside the single canonical file `.docs/architecture/architecture-decisions.md`. Each ADR is a `## ADR N: Title` heading followed by its content. There is no per-file numbering and no separate ADR directory — one file holds them all, with a top-of-file index table.
+ADRs live as numbered sections inside the single canonical file `.docs/architecture/architecture-decisions.md`. Each ADR is a `## ADR N: Title` heading followed by its content. There is no per-file numbering and no separate ADR directory — one file holds them all, with a top-of-file index table. The log starts empty; your first decision is **ADR 1**.
 
 The Architect appends new ADRs to that file; the Archivist updates the index table.
 
@@ -26,7 +26,7 @@ Only include these when they add genuine value. Most ADRs won't need them.
 
 ## Numbering
 
-Scan `.docs/architecture/architecture-decisions.md` for the highest existing `## ADR N:` heading and increment by one. Then add a row to the index table at the top of the file.
+Scan `.docs/architecture/architecture-decisions.md` for the highest existing `## ADR N:` heading and increment by one (starting at 1 when the log is empty). Then add a row to the index table at the top of the file.
 
 ## When to offer an ADR
 

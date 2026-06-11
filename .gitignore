@@ -1,32 +1,46 @@
-# LFE Boilerplate — Git Ignore
+# LFE Template — Git Ignore
 
-# --- OS & IDE ---
+# === OS ===
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# === IDE / Editor ===
 .vscode/
 .idea/
 *.swp
-*.log
+*.swo
 
-# --- Environments & Secrets ---
+# === Dependencies ===
+node_modules/
+
+# === Environment & Secrets ===
 .env
 .env.local
+.env.production
 .env.*.local
 
-# --- Dependencies ---
-node_modules/
+# === Build output ===
 dist/
 build/
 out/
+.vite/
 
-# --- LFE Runtime ---
-# We keep these in the repo as templates for the user.
-# .plans/active_plan.md
-# pipeline_status.md
+# === Logs ===
+*.log
+npm-debug.log*
 
-# --- Local AI History ---
+# === Python ===
+__pycache__/
+.venv/
+
+# === Local AI history ===
 .gemini/
-brain/
-logs/
-temp/
-.claude
+
+# === LFE Runtime ===
+# `.plans/` itself is committed (with .gitkeep) so the coordination directory
+# exists on clone, but the per-mission coordination files inside it are
+# transient — they exist only during an active mission and are cleared by the
+# Archivist at mission close. They are never committed.
+.plans/*
+!.plans/.gitkeep

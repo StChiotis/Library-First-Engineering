@@ -92,7 +92,7 @@ Every skill writes its output to a physical file. The next skill reads that file
 ├── 02_prd.md                 ← Output of lfe-to-prd (reads 01)
 ├── 03_slices.md              ← Output of lfe-to-issues (reads 02)
 ├── active_plan.md            ← Output of lfe-architect for current slice (reads 03)
-├── plan_critique.md          ← Output of lfe-plan-critique (4-lens pre-build review)
+├── plan_critique.md          ← Output of lfe-plan-critique (5-lens pre-build review)
 ├── builder_done.md           ← Output of lfe-builder (crash-recovery checkpoint)
 ├── tdd_report.md             ← Output of lfe-tdd (reads active_plan + builder_done)
 ├── checks/                   ← Inspector sub-skill outputs (security/perf/complexity/dep/mutation)
@@ -126,7 +126,7 @@ Before any work begins, `lfe-boot` orients and asks:
 Use for: Typos, UI tweaks, minor content fixes, or non-architectural adjustments.
 - **Activation**: The human **MUST** explicitly trigger the toolbelt via `/lfe-scout`.
 - **Enforcement**: If the human requests a fix before running the skill, the agent must refuse and request the skill activation.
-- **Limit**: Cannot Add/Delete/Rename files or change project structure.
+- **Limit**: Scout edits existing files only — adding, deleting, or renaming files, or changing project structure, routes back to the full pipeline.
 - **Report**: A "Maintenance Report" must be generated upon completion.
 
 ### 🔴 Choice B: Full Pipeline (Rigorous)

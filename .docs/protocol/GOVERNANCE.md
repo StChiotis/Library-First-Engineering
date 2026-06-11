@@ -8,7 +8,7 @@
  Every LFE project must identify its "Source of Truth"—the directory or module containing core business logic, mathematical formulas, or sensitive domain rules.
  
  1. **Isolation**: Core logic should ideally be isolated from I/O, UI, and external side effects.
- 2. **Explicit Logic**: No AI agent is allowed to "improvise" or "hallucinate" logic. All logic must be derived from the `.docs/domain/` documentation.
+ 2. **Explicit Logic**: Every AI agent derives all logic from the `.docs/domain/` documentation, stating the documented rule rather than improvising or hallucinating one.
  3. **Verification**: Any change to core logic requires high test coverage and manual review by a human domain expert.
 
 ## 📚 The Library-First Rule
@@ -26,7 +26,7 @@
 ## 📁 Coordination File Governance
 **`.plans/` is the transaction log. It is sacred.**
 - Every sub-pipeline step writes its output to a numbered file in `.plans/`.
-- The next step reads that file as its sole input — never the conversation.
+- The next step reads that file as its sole input — the file stands in for the conversation.
 - Coordination files are created by their respective skills and deleted ONLY by the Archivist when the mission is complete.
 - **No agent may delete coordination files prematurely.** If files are found orphaned, the Hygiene audit will flag them.
 - `pipeline_status.md` tracks which coordination files exist and which steps are complete.
@@ -41,6 +41,12 @@ To prevent "Spaghetti Decay" and context window bloat:
 
 ---
 
+## 🗣️ Instruction-Voice Convention
+
+Agent-facing instruction text — skills, protocol and persona contracts, adapters, the agent guide — is written in **positive/directive voice**: state what to do, subordinating what to avoid (a prohibition leaves the desired behavior unspecified, and a model can fixate on the negated token). Load-bearing negation (a genuine hard limit, a contract-critical prohibition) keeps its stark form deliberately, case by case. New framework text is reviewed against this convention.
+
+---
+
 ## 📦 Retention Policy
 
 Sessions are the unit of time across LFE — not calendar months. Each retention-managed file has a **hot tier** (active, current) and a **cold tier** (archive). The Hygiene sweep (every 5 sessions) walks this table and moves aged-out entries from hot to cold.
@@ -49,7 +55,6 @@ Sessions are the unit of time across LFE — not calendar months. Each retention
 |---|---|---|---|
 | `.docs/quality/CHANGELOG.md` | 7 most recent milestones *(existing rule)* | `.docs/archive/changelog-history.md` | When 8th milestone ships |
 | `.docs/architecture/architecture-decisions.md` | All `accepted` / `proposed` ADRs + last 15 sessions of `superseded` / `deprecated` | `.docs/archive/architecture-decisions-history.md` | At hygiene sweep (every 5 sessions) |
-| `.docs/quality/token-budget.md` *(created in Sprint 3)* | 15 most recent sessions | `.docs/archive/token-budget-history.md` | At hygiene sweep |
 | `.docs/quality/PROTOCOL_DEBT.md` | All `open` entries; `resolved` kept 1 hygiene cycle then archived | `.docs/archive/protocol-debt-history.md` | At hygiene sweep |
 | `.docs/quality/known-issues.md` | All `open`; `resolved` / `won't-fix` kept 1 hygiene cycle then archived | `.docs/archive/known-issues-history.md` | At hygiene sweep |
 | `.plans/` *(coordination)* | Until mission complete; archivist clears at end-of-mission | N/A | At end-of-mission |
@@ -76,17 +81,17 @@ To prevent infinite loops on irreducible failures, two cycle limits are protocol
 1. **Pre-build critique cycles** — Max **2 plan revisions** per slice on `BLOCK` verdicts from `/lfe-plan-critique`. The counter is **file-based**: stored in the `revision:` typed frontmatter field of `.plans/plan_critique.md` (schema in [`COORDINATION_FILES.md`](COORDINATION_FILES.md)). Step 0 of `/lfe-plan-critique` reads this field on every invocation — on a 2nd BLOCK (`revision: 2`), the skill halts and presents the Brain with three triage options (revert to PRD / accept WARN with file-recorded `brain_confirmation` / abort mission) instead of running lenses again. A crash between attempts does not reset the counter. See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 1.4.
 2. **Post-build inspection cycles** — Max **2 consecutive failed inspections** per slice. On the 2nd failure, the Inspector does NOT re-trigger `/lfe-diagnose`; it halts and presents three triage options (accept as known debt / escalate LFE-FORCE / re-plan from scratch). See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 2.2.
 
-The rationale: a structural problem cannot be fixed by repeated tweaks at the same level. The cycle limit forces escalation to a higher level (Brain triage, plan re-design, or accepted debt) instead of loop spinning that consumes tokens without converging.
+The rationale: a structural problem resists fixing by repeated tweaks at the same level. The cycle limit forces escalation to a higher level (Brain triage, plan re-design, or accepted debt) instead of loop spinning that consumes tokens without converging.
 
 ---
 
 ## 🔁 Idempotency Principle
 
-Skills that mutate persistent state (`CHANGELOG.md`, session count, `PROTOCOL_DEBT.md`, archive files) must be **safely re-runnable from any partial state**. A crash mid-skill must not cause the next session's re-run to double-apply the mutation.
+Skills that mutate persistent state (`CHANGELOG.md`, session count, `PROTOCOL_DEBT.md`, archive files) must be **safely re-runnable from any partial state**. A crash mid-skill leaves the re-run safe to apply the mutation exactly once.
 
 The guard goes in the skill that mutates, **when the bug it prevents is being fixed** — not preemptively across every skill. Example guards: check the topmost CHANGELOG milestone before prepending; refuse to increment a session count whose marker is already set; check `Resolution Status` before marking a debt entry resolved. The marker can be a frontmatter field, a magic-comment in the file being mutated, or a sentinel file in `.plans/`. Every project chooses what fits.
 
-This principle exists so the framework can recover from crashes without manual cleanup. It is not an invitation to add idempotency ceremony to skills that don't mutate persistent state.
+This principle exists so the framework can recover from crashes without manual cleanup. It is not an invitation to add idempotency ceremony to skills that leave persistent state untouched.
 
 ---
 

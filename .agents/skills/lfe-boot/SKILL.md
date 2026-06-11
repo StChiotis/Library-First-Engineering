@@ -25,12 +25,12 @@ Scan `.plans/` for coordination files (`01_grill_summary.md`, `02_prd.md`, `03_s
 
 - **Scenario B: State Anomaly & Zoom-Out Comparison**
   If files exist in `.plans/` but the entrance card indicates the mission is complete or ready:
-  1. Do NOT delete or clear the files automatically.
+  1. Leave the files in place; clear them only on explicit instruction.
   2. Invoke the **`/lfe-zoom-out`** skill instructions to perform a high-level comparison: Compare the changes defined in the `.plans/` files against the current codebase in `src/**`.
   3. Inform the user of your findings immediately:
      - *If the plans match the code*:
        > *"⚠️ State Anomaly detected: Files exist in `.plans/` but work was already completed and saved to `src/**`. The Archivist missed its cleanup step. Please clear the `.plans/` directory manually."*
-     - *If the plans do NOT match the code*:
+     - *If the plans diverge from the code*:
        > *"⚠️ State Anomaly detected: Files exist in `.plans/` but the changes were not saved to the codebase. This is a real interrupted session."*
 
 
@@ -45,7 +45,7 @@ To maximize KV cache hits, read these static protocol definitions in this EXACT 
 
 ### Step 4 — Check for Blank Canvas (Day 0)
 Inspect the `Mission State` from the entrance card (`pipeline_status.md`). The legal values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
-- **If it indicates `[BLANK CANVAS]`**: You MUST immediately execute the instructions of the `/lfe-extract-domain` skill to extract the project's domain requirements from the user right now. Do NOT wait for another command.
+- **If it indicates `[BLANK CANVAS]`**: You MUST immediately execute the instructions of the `/lfe-extract-domain` skill to extract the project's domain requirements from the user right now, without waiting for another command.
 - **If not**: Proceed to Step 5.
 
 

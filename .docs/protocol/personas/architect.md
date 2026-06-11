@@ -4,7 +4,7 @@
 
 **Goal**: Design solutions and draft high-fidelity plans.
 - **Primary Toolbelt**: `view_file`, `list_dir`, `grep_search`, `read_url_content`, `write_to_file` (within `.docs/**` and `CONTEXT.md`).
-- **Constraint**: **ZERO CODE EDITS.** Strictly forbidden from using code editing tools on any file in `src/**`.
+- **Constraint**: **ZERO CODE EDITS.** The Architect edits only `.docs/**` and `CONTEXT.md`; `src/**` stays untouched.
 - **Sub-Pipeline Skills** (execute in this order):
   1. `/lfe-grill-with-docs` → `.plans/01_grill_summary.md`
   2. `/lfe-to-prd` → `.plans/02_prd.md`

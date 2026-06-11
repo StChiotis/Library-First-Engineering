@@ -94,7 +94,7 @@ No reliance on chat context. The graph below mirrors `.docs/protocol/ASSEMBLY_LI
 
 Personas are **tool-locked**: the Architect cannot edit code, the Builder cannot rewrite plans, the Inspector cannot edit production code, the Archivist cannot change behavior. A crashed session, a new contributor, or a different agent can resume exactly where the last one stopped.
 
-**Pre-build critique gate (machine-checkable)** — Between plan approval and Builder start, `/lfe-plan-critique` runs a 4-lens review of the approved plan (Acceptance Criteria scrutiny, Test Feasibility, Domain Alignment, Structural Impact) and writes typed frontmatter to `plan_critique.md`: `verdict` (PASS / WARN / BLOCK), `revision` counter, `brain_confirmation` timestamp. The Builder's Step 1 gate parses these fields and refuses to write `src/` unless the gate is open — *no conversational approval, no body-text markers*. The 2-revision limit survives crashes because the counter lives in the file, not in chat memory. Plan-critique findings also feed Inspector Step 1.5 (priority verification targets), so the artifact is load-bearing through the pipeline.
+**Pre-build critique gate (machine-checkable)** — Between plan approval and Builder start, `/lfe-plan-critique` runs a 5-lens review of the approved plan (Acceptance Criteria scrutiny, Test Feasibility, Domain Alignment, Structural Impact, Coherence Simulation) and writes typed frontmatter to `plan_critique.md`: `verdict` (PASS / WARN / BLOCK), `revision` counter, `brain_confirmation` timestamp. The Builder's Step 1 gate parses these fields and refuses to write `src/` unless the gate is open — *no conversational approval, no body-text markers*. The 2-revision limit survives crashes because the counter lives in the file, not in chat memory. Plan-critique findings also feed Inspector Step 1.5 (priority verification targets), so the artifact is load-bearing through the pipeline.
 
 **Inspector specialist sub-skills** — Optional, opt-in via `.docs/quality/inspector-config.md`. Pure prompt-only sub-skills the Inspector dispatches during verification: `lfe-security-check` (OWASP Top-10), `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`. Each writes a typed findings file (`status: complete` + `kind: sub-skill` frontmatter); the Inspector aggregates them into `critique.md`. The resume rule is **`status: complete` only** — a partial mid-write doesn't get silently accepted on the next session. Per-mission overrides live in a typed `## Inspector Overrides` YAML block inside `active_plan.md`.
 
@@ -175,7 +175,7 @@ For projects with multiple bounded contexts (e.g., separate Billing and Inventor
 | **Lean context window** | **Audit-trail by default** | **Spaghetti-proof architecture** |
 | **Five commands to learn** | **Machine-checkable gates** | **Bounded failure loops** |
 
-Want to see actual session costs? See [`token-budget.md`](.docs/quality/token-budget.md) — every mission's rough token count, tracked over time, with automatic drift detection.
+Token efficiency in LFE is architectural — lean per-persona context, file-based memory, no re-explaining the project every session — rather than a tracked metric.
 
 ---
 
@@ -237,6 +237,17 @@ LFE is fully operational from session one with zero install. Optional enhancemen
 
 > [!NOTE]
 > CI/CD and platform governance are **always optional**. LFE never mandates a specific toolchain. Adopt each tier only when it solves a real pain — see [`.docs/protocol/INDUSTRY_STANDARDS.md`](.docs/protocol/INDUSTRY_STANDARDS.md) for implementation references.
+
+---
+
+## Working with Claude? Use the distribution.
+
+[![Claude-LFE — Making AI reliable, session after session](.assets/claude-lfe-intro.png)](https://medium.com/towards-artificial-intelligence/the-bottleneck-in-agentic-software-isnt-capability-it-s-trust-claude-lfe-8665c0ff5fbd)
+*<sub>Click the slide for the full story — the launch essay on Medium.</sub>*
+
+**[Claude-LFE](https://github.com/StChiotis/Claude-LFE)** is the ready-to-clone **Claude Code** distribution of this framework — the same protocol you just read, plus the layer the agnostic core deliberately leaves to platforms: **runtime enforcement** (a warn-first gate family that makes drift loud, expensive, and logged) and **measured reliability** (its quality checks are *graded, not trusted* — a planted-defect eval harness with hash-pinned prompts, behind 1,100+ structural tests).
+
+The bottleneck in agentic software isn't capability — it's **trust**: *verify the artifact, not the agent.* The core gives you the discipline; the distribution makes it mechanically enforced and measured, not asserted. Launch essay: [The Bottleneck in Agentic Software Isn't Capability. It's Trust](https://medium.com/towards-artificial-intelligence/the-bottleneck-in-agentic-software-isnt-capability-it-s-trust-claude-lfe-8665c0ff5fbd) · [intro deck](https://stchiotis.github.io/Claude-LFE.intro/).
 
 ---
 

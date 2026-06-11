@@ -54,7 +54,7 @@ The 2-revision limit is enforced via the `revision:` frontmatter field in `plan_
 1. **Trigger**: `/lfe-plan-critique` Step 0 detects no prior `plan_critique.md` → writes the file with `revision: 1`, `verdict: BLOCK`.
 2. **Revision**: Architect presents findings to Brain and revises `active_plan.md` to address the block.
 3. **Re-Critique**: `/lfe-plan-critique` re-runs. Step 0 reads the existing file (`revision: 1`, `verdict: BLOCK`) → this is Revision 2. Lenses re-run; new file written with `revision: 2`.
-4. **Second BLOCK** (`revision: 2`, `verdict: BLOCK`) → **Halt at Step 0 on any subsequent invocation.** Do NOT re-run lenses. Present Brain with triage:
+4. **Second BLOCK** (`revision: 2`, `verdict: BLOCK`) → **Halt at Step 0 on any subsequent invocation.** Present Brain with triage instead of re-running the lenses:
    - **A — Revert to PRD**: loop back to `/lfe-to-issues` to re-slice from `02_prd.md`.
    - **B — Accept WARN and proceed**: Brain explicitly downgrades the BLOCK to a WARN. `/lfe-plan-critique` updates the file in place: `verdict: WARN`, `brain_confirmation: <ISO-8601>`. The Builder's Step 1 gate now opens.
    - **C — Abort mission**: wipe `.plans/` execution files; mission cancelled.
@@ -97,12 +97,12 @@ The 2-revision limit is enforced via the `revision:` frontmatter field in `plan_
 4. **The Block**: Next session starts. `/lfe-boot` detects unresolved Protocol Debt and locks the pipeline.
 5. **Verify (with hotfix sub-skill audit)**: Inspector runs with the **Protocol Debt fallback** (see [`lfe-inspector/SKILL.md`](../../.agents/skills/lfe-inspector/SKILL.md) Hard Rule #4 and Step 7b): reads the latest unresolved `PROTOCOL_DEBT.md` entry, verifies the hotfix against `src/`, and runs the **LFE-FORCE sub-skill subset** (always: `lfe-security-check` + `lfe-complexity-check`; conditional: `lfe-dep-audit` on manifest changes, `lfe-perf-check` on hot-path edits; skipped: `lfe-mutation-verify`). All findings aggregate into `critique.md`. Writes `inspection_report.md` with `source: .docs/quality/PROTOCOL_DEBT.md` and the entry's `Date` + `Mission` in the body's `## Debt Entry Verified` section.
 6. **Branch on outcome**:
-   - **PASS** → Archivist runs **Step 3.6 (Protocol Debt Resolution)**: (a) appends any `Critical` sub-skill findings to `.docs/quality/known-issues.md` for traceability, then (b) locates the matching debt entry by `Date` + `Mission` and updates its `Resolution Status` to `resolved (session N)`. Cleanup proceeds. Next boot's Step 5 finds no unresolved debt → pipeline unlocks. ✅ *(Critical findings do NOT block PASS — the debt clears, but the issues are surfaced as known follow-ups.)*
+   - **PASS** → Archivist runs **Step 3.6 (Protocol Debt Resolution)**: (a) appends any `Critical` sub-skill findings to `.docs/quality/known-issues.md` for traceability, then (b) locates the matching debt entry by `Date` + `Mission` and updates its `Resolution Status` to `resolved (session N)`. Cleanup proceeds. Next boot's Step 5 finds no unresolved debt → pipeline unlocks. ✅ *(Critical findings leave PASS intact — the debt clears, and the issues surface as known follow-ups.)*
    - **FAIL** → Inspector does NOT trigger `/lfe-diagnose` (no `active_plan.md` exists for the standard fix loop). Inspector writes `status: failed`, halts, and presents three triage options to the human:
      1. Issue another `LFE-FORCE` patch (creates a new debt entry; the old one stays open).
      2. Roll back the hotfix (revert `src/`; original entry closes as `rolled-back`).
      3. Convert to full pipeline (run `/lfe-grill-with-docs` to architect a retroactive plan, then build/test/verify normally).
-   Pipeline remains blocked until the human chooses. The Archivist must NOT mark the entry resolved and does NOT append sub-skill findings to known-issues (they remain visible only in the failed `inspection_report.md` for the human to use during triage).
+   Pipeline remains blocked until the human chooses. The Archivist leaves the entry unresolved and withholds the sub-skill findings from known-issues — they stay visible only in the failed `inspection_report.md` for the human to use during triage.
 
 ---
 
@@ -122,7 +122,7 @@ The 2-revision limit is enforced via the `revision:` frontmatter field in `plan_
 | **After Coding** | `active_plan`, `builder_done` exist | Resumes at `/lfe-tdd`. |
 | **After TDD** | `tdd_report` exists | Resumes at `/lfe-inspector` (Cycle Guard runs first). |
 | **During Sub-Skill Dispatch** | Some `.plans/checks/*.md` files exist; `critique.md` absent | Resumes at `/lfe-inspector` Step 6. Per-file resume rule: a sub-skill is skipped **only** when its findings file exists AND its frontmatter parses with `status: complete` — file presence alone is not sufficient. Sub-skills whose findings file is missing or has any other `status` are re-invoked. Then proceeds to aggregation. |
-| **After Sub-Skill Dispatch (aggregation crash)** | All enabled sub-skills' findings files have `status: complete`; `critique.md` missing or partial | Resumes at `/lfe-inspector` Step 6.f — re-aggregate only. Do NOT re-run sub-skills (their outputs are reusable). |
+| **After Sub-Skill Dispatch (aggregation crash)** | All enabled sub-skills' findings files have `status: complete`; `critique.md` missing or partial | Resumes at `/lfe-inspector` Step 6.f — re-aggregate only, reusing the existing sub-skill outputs. |
 | **During Inspect (1st failure already recorded)** | `inspection_report.md` exists with `status: failed`, `critique` exists | Resumes at `/lfe-diagnose` (Inspector has already failed once). |
 | **During Inspect (2nd failure)** | `inspection_report.md` shows `status: escalated` with triage menu | Resumes by re-presenting Brain triage menu (Accept Debt / LFE-FORCE / Re-plan). |
 | **During Diagnose**| `diagnosis_report` exists | Resumes at Builder to fix the bug. |

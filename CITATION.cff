@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: "Library-First Engineering (LFE)"
+message: "If you use Library-First Engineering or build on it, please cite it."
+type: software
+authors:
+  - given-names: Stylianos
+    family-names: Chiotis
+repository-code: "https://github.com/StChiotis/Library-First-Engineering"
+abstract: >-
+  A file-driven, persona-based framework for building production software
+  with AI agents — language-agnostic, IDE-agnostic, LLM-agnostic. LFE keeps
+  agentic AI reliable across sessions by keeping the human on the wheel,
+  treating documentation as the source of truth, and coordinating every
+  pipeline step through physical files instead of conversation memory.
+keywords:
+  - library-first-engineering
+  - agentic-ai
+  - ai-reliability
+  - llm
+  - software-engineering-process
+license: MIT

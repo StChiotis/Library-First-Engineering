@@ -3,23 +3,23 @@
 | Category | Status / Value |
 | :--- | :--- |
 | **Integrity Score** | 🟢 [Integrity: 100%] |
-| **Mission State** | [BLANK CANVAS] |
-| **Active Persona** | Architect |
-| **Active Mission** | Day 0 — Discovery and Domain Initialization |
-| **Pipeline Phase** | Ready |
-| **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  plan_critique ⬜  build ⬜  tdd ⬜  critique ⬜  inspect ⬜ |
-| **Session Count** | 1 |
-| **Last Architecture Sweep** | Never (due in 4 sessions) |
+| **Mission State** | [BLANK CANVAS] — fresh LFE template; no product domain loaded yet. Run `/lfe-boot`; on a blank canvas it routes straight to `/lfe-extract-domain` to capture your product's domain (Day 0). |
+| **Active Persona** | — _(none — awaiting Day-0)_ |
+| **Active Mission** | (none — run `/lfe-boot` → `/lfe-extract-domain` to define your first mission) |
+| **Pipeline Phase** | (none — Day 0) |
+| **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  plan_critique ⬜  build ⬜  tdd ⬜  critique ⬜  inspect ⬜  *(clean)* |
+| **Session Count** | 0 |
+| **Last Architecture Sweep** | none yet (fresh template) |
 
 ---
 
 ## 🎯 Current Mission
-> *"Initialize a new project domain on a Blank Canvas template. Run /lfe-extract-domain to begin Day 0 discovery."*
+> *"**Welcome to your new LFE project.** This is a blank-canvas template: the Library-First Engineering framework — the personas, the Architect → Builder → Inspector → Archivist assembly line, and the full skill set — is fully wired, but no product domain is loaded yet. To begin, run `/lfe-boot`; on a blank canvas it routes straight to `/lfe-extract-domain`, which interviews you about your product and seeds the domain library (`CONTEXT.md`, `.docs/domain/`). From there the assembly line drives every change: plan in `.plans/`, build, verify, archive. New here? Read [USER_MANUAL.md](USER_MANUAL.md) for day-to-day usage; [LLM_AGENT_GUIDE.md](LLM_AGENT_GUIDE.md) is the agent protocol and the file-based coordination layer."*
 
 ### 📋 Active Constraints
 1. **Docs-First**: `.docs/` is the Source of Truth.
 2. **Logic Sovereignty**: Core logic is sacred.
-3. **No Cowboy Coding**: All changes require a `.plans/active_plan.md`.
+3. **No Cowboy Coding**: All Major Changes require `.plans/active_plan.md`.
 4. **Persona Discipline**: Tool-locking is active.
 5. **Human Approval**: Two structural gates — slice approval + plan approval. Plus the `/lfe-plan-critique` auto-gate (PASS proceeds; WARN requires file-recorded `brain_confirmation`; BLOCK loops back, max 2 revisions).
 6. **File-Based Coordination**: Skills read/write `.plans/` files, not conversation.
@@ -29,8 +29,9 @@
 ---
 
 ## 🧭 Navigation
-- **Floor Map**: [.docs/README.md](file:///.docs/README.md)
-- **Protocol**: [.docs/protocol/](file:///.docs/protocol/)
-- **Domain Glossary**: [CONTEXT.md](file:///CONTEXT.md)
-- **Glossary Extension**: [.docs/domain/glossary.md](file:///.docs/domain/glossary.md)
+- **Floor Map**: [.docs/README.md](.docs/README.md)
+- **Protocol**: [.docs/protocol/](.docs/protocol/)
+- **User Manual**: [USER_MANUAL.md](USER_MANUAL.md)
+- **Domain Glossary**: [CONTEXT.md](CONTEXT.md) *(template until Day-0 populates it)*
+- **Glossary Extension**: [.docs/domain/glossary.md](.docs/domain/glossary.md)
 - **What's Next**: Run `/lfe-whats-next` for instant orientation

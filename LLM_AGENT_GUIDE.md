@@ -99,9 +99,9 @@ The human reviewer is a first-class persona — 🫵 **The Brain — You**. The 
 
 Project-specific overrides go under `## Brain Persona Overrides` in this file. Framework respects explicit overrides only — never implicit ones.
 
-## 8.7 Token Budget Self-Reporting
+## 8.7 Self-Measurement
 
-The Archivist appends session token costs to `.docs/quality/token-budget.md` at end-of-mission. The agent should self-report rough per-phase token costs (e.g., from chat-metadata estimates) so the framework can detect drift over time. Phases that exceed +50% over their rolling average get flagged into the next session's `pipeline_status.md`.
+The agnostic core keeps **no self-measurement log**. An earlier per-session token-cost tracker was retired: it recorded agent self-estimates — not measurements — and so promised drift detection it could not honestly deliver. Adopters who want real cost telemetry should source it from their platform's billing/usage surfaces; platform distributions of LFE may add measured quality signals on top of the protocol.
 
 ## 8.8 Skill Invocation Authority (CRITICAL)
 
@@ -131,7 +131,7 @@ Skills are **dispatched by the framework**, not by the Brain. Each persona's sub
 | `/lfe-to-prd` | 1.2 | PRD synthesis from grill output |
 | `/lfe-to-issues` | 1.3 | Vertical slice breakdown |
 | `/lfe-architect` | 1.4 | Implementation plan for current slice |
-| `/lfe-plan-critique` | 1.5 | Pre-build 4-lens plan critique (AC, test feasibility, domain, structural) |
+| `/lfe-plan-critique` | 1.5 | Pre-build 5-lens plan critique (AC, test feasibility, domain, structural, coherence) |
 | `/lfe-builder` | 2.1 | Code implementation |
 | `/lfe-tdd` | 2.2 | Red-green-refactor quality pass |
 | `/lfe-zoom-out` | 3.1 | System context for unfamiliar code |
@@ -147,3 +147,12 @@ Skills are **dispatched by the framework**, not by the Brain. Each persona's sub
 | `/lfe-improve-architecture` | 5.2 | Deep module extraction |
 | `/lfe-extract-domain` | Any | Domain knowledge rescue |
 | `/lfe-whats-next` | Any | Pipeline navigation |
+
+## 10. Project-Specific Bindings
+
+> Populated per-project after the Day-0 domain extraction. Run `/lfe-extract-domain` to produce `CONTEXT.md` and `.docs/domain/domain-knowledge.md`, then record your project's bindings here.
+
+- **Source of Truth:** see `CONTEXT.md` (repo root) and `.docs/domain/domain-knowledge.md`.
+- **Logic Sovereignty:** define the canonical computation boundary (the Main Engine) for this project.
+- **Domain / Boundary separation:** define the interface contract between domain logic and infrastructure.
+- **Mental model (optional):** add a project-specific orientation analogy here if it helps agents ramp up faster.

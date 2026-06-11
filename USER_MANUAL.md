@@ -34,7 +34,7 @@ The Skill Glossary at the bottom of this manual is a **reference for what the AI
 If you have just cloned the LFE template, your repository is a "Blank Canvas." The AI doesn't know what you are building yet.
 
 1. **Open your AI chat:**
-   - **In an IDE** (Cursor, Windsurf, Cline, Antigravity, Claude Code, GitHub Copilot): the adapter file in the repo root is auto-loaded — proceed directly.
+   - **In an IDE** (Cursor, Windsurf, Cline, Antigravity, Claude Code, GitHub Copilot): the adapter file in the repo root is auto-loaded — proceed directly. *(In Claude Code, the `/lfe-*` skills also dispatch natively as commands.)*
    - **In a raw LLM** (ChatGPT, Claude.ai, etc.): paste the content of [`.agents/adapters/system_prompt.txt`](.agents/adapters/system_prompt.txt) as your first message to bootstrap LFE compliance for the session.
 2. **Type the command:** `/lfe-boot`
 3. **The AI will detect the Blank Canvas** and immediately trigger the `/lfe-extract-domain` skill. 
@@ -67,7 +67,7 @@ If you are doing a Major Change, the AI will cycle through four distinct "Person
    - 🛑 **HUMAN ACTION REQUIRED:** The AI will stop and ask you: *"Do you approve these slices?"* Read them. If they look good, say "Yes."
 4. **The Plan (`/lfe-architect`):** The AI drafts a strict, file-by-file blueprint for the first slice.
    - 🛑 **HUMAN ACTION REQUIRED:** The AI will stop again. *"Do you approve this implementation plan?"* Read it carefully. If it is correct, say "Yes, proceed to Builder."
-5. **The Pre-Build Critique (`/lfe-plan-critique`):** Before any code is written, the Architect runs a 4-lens review of the approved plan — checking that every acceptance criterion is testable, the test strategy is feasible, the plan respects domain boundaries, and there is no architectural drift. The output is `.plans/plan_critique.md` with a verdict:
+5. **The Pre-Build Critique (`/lfe-plan-critique`):** Before any code is written, the Architect runs a 5-lens review of the approved plan — checking that every acceptance criterion is testable, the test strategy is feasible, the plan respects domain boundaries, there is no architectural drift, and the edits leave the surrounding text coherent (no dangling references). The output is `.plans/plan_critique.md` with a verdict:
    - **PASS** — proceed to Builder automatically.
    - **WARN** — findings are advisory; the AI surfaces them and asks you to confirm before continuing. When you confirm, the AI writes a timestamp into the file's frontmatter (`brain_confirmation`) — that's the file-based signal the Builder reads, not your conversational "yes". If the session crashes between you saying "yes" and the file write, you'll be asked again — by design, because the file is the truth.
    - **BLOCK** — the plan loops back to step 4 for revision. *Max 2 revisions per slice* — the counter lives in the file's frontmatter (`revision`), so the limit survives crashes. If it still fails on the 2nd attempt, the AI asks you to choose: revert to the PRD, accept WARN, or abort the mission.
@@ -169,6 +169,18 @@ This is a **reference for what the AI does on your behalf** during the Assembly 
 | `/lfe-archivist` | Syncs documentation, updates `CHANGELOG.md`, and cleans up `.plans/`. |
 | `/lfe-hygiene` | Scheduled every 5 sessions. Audits the repo for missing indexes or bloated files. |
 | `/lfe-improve-architecture` | Looks for "deepening" opportunities to refactor messy code into clean abstractions. |
+
+---
+
+## Evidence Discipline (Trust, Verified)
+
+LFE personas back their "done" with proof rather than optimism. The rule — shared across the Builder, the TDD pass, and the Inspector — is simple: **a completion claim is only as good as the fresh tool output that backs it.**
+
+- **Show the receipt.** "Tests pass" means the agent pastes the actual pass/fail counts from the run it just did; "no regression" means it shows the counts held or rose. A claim from memory does not count.
+- **Route by confidence.** High (a tool just verified it) → state it plainly. Medium (inferred) → state it *with* the caveat that it's inferred. Low (recalled from training) → verify first, then state.
+- **Catch hallucinations early.** A short checklist makes the agent pause and verify the moment it notices a tell: referencing a file it never opened this session, quoting a number with no source, contradicting the latest tool output, or assuming a dependency exists.
+
+**Why it matters:** this is the framework's "No Blind Trust" principle — once the Inspector's alone — generalized to every persona that makes a claim, so confident-but-unverified "it works" surfaces less often and you spend less time hand-checking. It is pure agent-instruction guidance (no new tooling); the clause is written inline in each carrying contract and skill.
 
 ---
 

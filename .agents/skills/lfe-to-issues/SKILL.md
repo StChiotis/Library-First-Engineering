@@ -15,7 +15,7 @@ description: Break the PRD into independently-demoable vertical slice issues. Us
 ## Process
 
 ### 1. Read input
-Read `.plans/02_prd.md`. Do NOT rely on conversation context — the file is the source of truth.
+Read `.plans/02_prd.md` as the source of truth — it carries this step's inputs, not the conversation.
 
 ### 2. Draft vertical slices
 Break the PRD into **tracer bullet** slices. Each slice is a thin vertical cut through ALL integration layers end-to-end, NOT a horizontal slice of one layer.
@@ -76,5 +76,8 @@ approved_by_human: true
 - **Acceptance criteria**:
   - [ ] Criterion 1
 ```
+
+### AC-writing discipline
+Write each acceptance criterion as a falsifiable, prose statement of the observable end-state — not as a literal search/regex string (reproducing a pattern in an AC re-triggers that pattern's own check). For slices that **create, edit, or archive structured documentation**, draft the ACs with the doc-edit AC-design patterns the Architect's Plan-Composition Discipline enumerates — section-name conformance, cross-reference semantic-inversion anchoring, byte-identity sidecar fixtures, section-boundary extraction caveats, cross-file scope symmetry, edit-mechanism ACs, and archive-move ACs — so the downstream `active_plan.md` inherits them rather than rediscovering them at Inspector time.
 
 Update `pipeline_status.md` coordination tracker to mark step 03 as ✅.
