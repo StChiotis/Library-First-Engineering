@@ -38,6 +38,7 @@ To prevent "Spaghetti Decay" and context window bloat:
 3. **Implicit Confidence**: No file should exist in the repository that is not indexed or referenced in the Library System.
 4. **Architecture Sweeps**: Scheduled every 5 sessions via session count in `pipeline_status.md`. Triggers `/lfe-hygiene` → `/lfe-improve-architecture`.
 5. **Atomic Docs**: Any documentation file exceeding ~6,000 characters (~1,500 tokens) must be split into smaller atomic files to preserve context window economics. *(Exemption: Root-level orchestration files like `README.md` and `LLM_AGENT_GUIDE.md` are exempt from this rule to preserve cohesive onboarding).*
+6. **Portable Paths**: Keep dev-local personal paths out of committed narrative such as the `pipeline_status.md` entrance card — refer to the repository root as `<project-root>` rather than a machine-specific home directory, so the record stays portable across clones.
 
 ---
 
@@ -76,10 +77,11 @@ The Brain Persona is bound by the contract in [PERSONAS.md](PERSONAS.md), includ
 
 ## 🔄 Correction Cycle Limits
 
-To prevent infinite loops on irreducible failures, two cycle limits are protocol-enforced:
+To prevent infinite loops on irreducible failures, three cycle limits are protocol-enforced:
 
 1. **Pre-build critique cycles** — Max **2 plan revisions** per slice on `BLOCK` verdicts from `/lfe-plan-critique`. The counter is **file-based**: stored in the `revision:` typed frontmatter field of `.plans/plan_critique.md` (schema in [`COORDINATION_FILES.md`](COORDINATION_FILES.md)). Step 0 of `/lfe-plan-critique` reads this field on every invocation — on a 2nd BLOCK (`revision: 2`), the skill halts and presents the Brain with three triage options (revert to PRD / accept WARN with file-recorded `brain_confirmation` / abort mission) instead of running lenses again. A crash between attempts does not reset the counter. See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 1.4.
 2. **Post-build inspection cycles** — Max **2 consecutive failed inspections** per slice. On the 2nd failure, the Inspector does NOT re-trigger `/lfe-diagnose`; it halts and presents three triage options (accept as known debt / escalate LFE-FORCE / re-plan from scratch). See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 2.2.
+3. **Finalization-rework rounds** — Max **5 rework rounds** per slice when the Brain rejects at the Inspector's finalization gate. The counter is **file-based**: the `rework_round:` typed field of `.plans/rework_directive.md` (schema in [`COORDINATION_FILES.md`](COORDINATION_FILES.md)), advanced only when the Brain's rejection text changes (its `directive_hash`) — so distinct defects count while a crash-resumed re-run of the same rejection holds steady. This axis is **orthogonal** to limit 2: a rework round writes neither `status: failed` nor a `diagnosis_report.md`, so the inspection Cycle Guard advances on mechanical failures alone. Distinct rework rounds re-traverse Builder → `/lfe-tdd` → Inspector without false-escalating, while a *mechanical* re-failure during a round still escalates via limit 2. On the 6th rejection the Inspector halts to a safe Brain triage menu (accept as a known issue / re-plan the slice / start a fresh mission). Worst case per slice: up to 5 rework rounds, each able to run the limit-2 mechanical sub-loop. See [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 2.4.
 
 The rationale: a structural problem resists fixing by repeated tweaks at the same level. The cycle limit forces escalation to a higher level (Brain triage, plan re-design, or accepted debt) instead of loop spinning that consumes tokens without converging.
 
@@ -108,3 +110,19 @@ In rare cases of legitimate "Production Down" emergencies, the human may bypass 
 ## 🛡️ Protocol Enforcement
 Agents are instructed to reject any user request that violates these governance rules unless the `LFE-FORCE` override is invoked. The agent must respond with:
 > *"I cannot perform this action. It violates LFE Logic Sovereignty. Please run `/lfe-architect` to plan this change formally, or use `LFE-FORCE` if this is a documented emergency."*
+
+---
+
+## 🚦 Discipline Gates (Drift Resistance)
+
+LFE relies on agent discipline rather than a runtime sandbox: the rules below are obligations the agent self-enforces and the human spot-checks. They put the protocol in the path of the actions most prone to silent drift. Each is a positive obligation; a platform distribution of LFE may additionally mechanize any of them as runtime hooks or tool-gateways (see [`INDUSTRY_STANDARDS.md`](INDUSTRY_STANDARDS.md) §6).
+
+- **C1 — Terminal git posture.** Run no mutating git verb (`commit`, `reset`, `rebase`, `cherry-pick`, `revert`, `tag`, `push`) without an active mission. `merge`, push to `main`, force-push, and a legal-anchor tag additionally need explicit human confirmation — the human types `MERGE-OK`.
+- **C2a — Boot precondition.** Take no substantive `Write`/`Edit` before `/lfe-boot` has run this session; orientation precedes mutation.
+- **C2b — Scout boundary.** Invoke `/lfe-scout` only at a clean session boundary — never with an in-flight mission or a live coordination trail in `.plans/`.
+- **C3 — Persona transition.** Change the Active-Persona value only as a dispatched skill step (an Architect→Builder handoff, the Inspector's finalization flip), never as a free-hand edit to `pipeline_status.md`.
+- **C4 — No-mission guard.** Make no substantive change at an idle / `[MISSION COMPLETE]` slate with no coordination trail — route the work through `/lfe-boot` (full mission) or `/lfe-scout` (minor fix) first.
+- **Mission-aware Authorized Scope.** An in-flight mission may widen a persona's write lane through an `Authorized Scope` row on the entrance card (see [`LLM_AGENT_GUIDE.md`](../../LLM_AGENT_GUIDE.md) §10); the Archivist resets it to `(none)` at mission close. An Authorized Scope never grants a non-Builder persona write access to `src/**` — `LFE-FORCE` stays the only path to patch `src/` outside the Builder.
+- **Visual floor (unconditional).** A visual change never closes on a green technical pass alone. The Inspector must obtain and record a human visual sign-off (`visual_confirmed` + `visual_signoff` in `inspection_report.md`) before flipping to the Archivist. This is the one gate stated as an absolute floor rather than a speed-bump — a UI slice that skips it ships unseen.
+
+**The honest ceiling.** With no runtime sandbox, nothing mechanically stops an agent with shell access from bypassing a prose rule — these are speed-bumps and loudness, not containment. The framework's defense is that drift is made *visible and deliberate*: every bypass is surfaced openly and routed through `/lfe-scout` or `LFE-FORCE` so the human sees it. A platform distribution may harden any of these into runtime hooks; the agnostic core keeps them as disciplines.

@@ -10,6 +10,7 @@
 | **Coordination Files** | 01 ⬜  02 ⬜  03 ⬜  plan ⬜  plan_critique ⬜  build ⬜  tdd ⬜  critique ⬜  inspect ⬜  *(clean)* |
 | **Session Count** | 0 |
 | **Last Architecture Sweep** | none yet (fresh template) |
+| **Authorized Scope** | (none) — widened only while a mission is in-flight; reset to (none) at close (see `LLM_AGENT_GUIDE.md` §10) |
 
 ---
 

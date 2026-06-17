@@ -13,7 +13,7 @@ description: Synthesise the grill session output into a structured Product Requi
 
 ## Process
 
-1. **Read input**: Read `.plans/01_grill_summary.md`. Do NOT rely on conversation context — the file is the source of truth.
+1. **Read input**: Read `.plans/01_grill_summary.md` as the source of truth — it carries this step's inputs, not the conversation.
 
 2. **Explore the repo** to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
 
@@ -50,7 +50,7 @@ The solution to the problem, from the user's perspective.
 - Schema changes
 - API contracts
 
-Do NOT include specific file paths or code snippets — they may become outdated.
+Describe modules and interfaces generically; omit specific file paths or code snippets, which may become outdated.
 
 ## Testing Decisions
 - Which modules will be tested

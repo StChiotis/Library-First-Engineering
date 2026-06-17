@@ -16,10 +16,10 @@ Systematically examine the implementation diff for security vulnerabilities usin
 
 ## Hard Rules
 0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` AND `.plans/tdd_report.md` for the current slice, halt immediately and reply: *"`/lfe-security-check` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
-1. **Prompt-Only Analysis**: All findings come from LLM reasoning over the diff. Do not attempt to execute code or call external APIs.
+1. **Prompt-Only Analysis**: All findings come from LLM reasoning over the diff — reason only, with no code execution or external API calls.
 2. **Cite Evidence**: Every finding must quote the specific code line or pattern that triggers the concern.
 3. **Severity Triage**: Rate each finding as Critical / High / Medium / Low. Only Critical blocks Builder re-run; others are advisory.
-4. **Scope to Diff**: Analyse only the files changed in `builder_done.md`. Do not re-audit unchanged code.
+4. **Scope to Diff**: Analyse only the files changed in `builder_done.md`; skip unchanged code.
 
 ## Inputs
 1. `.plans/builder_done.md` — list of changed files

@@ -17,7 +17,7 @@ Detect performance anti-patterns introduced by the current implementation throug
 ## Hard Rules
 0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` for the current slice, halt immediately and reply: *"`/lfe-perf-check` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
 1. **Prompt-Only**: No profiling tools, no benchmarks, no execution. Reasoning over code only.
-2. **Diff-Scoped**: Analyse only files listed in `builder_done.md`. Do not re-audit unchanged code.
+2. **Diff-Scoped**: Analyse only files listed in `builder_done.md`; skip unchanged code.
 3. **Severity**: Critical (provably unbounded, certain production impact) / High (likely hot-path) / Medium (probable overhead) / Low (style concern).
 4. **Cite Line**: Every finding quotes the specific pattern from the code.
 
@@ -90,4 +90,4 @@ Body:
 If no findings: write `No performance anti-patterns identified in the analysed diff.`
 
 ## Handoff
-Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Performance` section. Do not write to `critique.md` directly.
+Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Performance` section. Write only this findings file; leave `critique.md` to the Inspector.

@@ -59,3 +59,17 @@ The default LFE protocol relies on "prompt discipline." As AI agents become more
 - **What the agnostic core ships: the contract only.** Runtime tool-locking is inherently platform-specific — every IDE/LLM exposes a different interception surface (MCP gateways, tool-hooks, agent wrappers), so a portable framework cannot configure it for every platform. That mechanization is exactly what **platform-specific distributions of LFE** exist for: a distribution wires this same manifest into its platform's native enforcement, so adopters on that platform get tool-locking out of the box.
 - **The platform-neutral layer you can always adopt — CI/CD**: a GitHub Action or equivalent reads the same manifest and rejects PRs whose diffs violate persona constraints (e.g., a PR authored under the Architect persona that touches `src/`). This works identically for any LLM or IDE, which makes it the recommended team-scale enforcement for the agnostic core.
 - **LFE Benefit**: one `.agents/permissions.json` contract, three consumption levels — prompt discipline today, CI/CD enforcement at team scale, and full runtime tool-locking when you adopt a platform distribution. No repository restructuring at any level.
+
+### 6.1 Enforcement-Gate Family (concept)
+
+The path-lock above is one member of a broader **enforcement-gate family** — the rules that close the structural gaps a momentum-optimizing agent can otherwise walk through (it can drift off-pipeline without breaking a single rule, because the rules sat outside the path of what it did). The agnostic core ships these as **agent obligations** — the Discipline Gates in [`GOVERNANCE.md`](GOVERNANCE.md); a platform distribution wires them into its native runtime so they hold mechanically. The family:
+
+- **C1 — terminal git posture**: mutating git in two tiers — ordinary mutating git needs an active mission; `merge` / push-to-`main` / force-push / legal-anchor-tag additionally need a typed `MERGE-OK` confirmation.
+- **C2a — boot precondition**: no substantive Write/Edit until `/lfe-boot` ran this session.
+- **C2b — scout boundary**: `/lfe-scout` only at a clean session boundary, refused mid-mission.
+- **C3 — persona transition**: the Active-Persona value changes only via an official skill-dispatched step, never a free-hand edit.
+- **C4 — no-mission**: no substantive change at a completed/idle slate with no coordination trail.
+- **mission-aware path-lock**: an in-flight mission's `Authorized Scope` entrance-card row extends the authorized write scope (never to `src/**` for a non-Builder persona).
+- **visual floor**: the Inspector→Archivist close of a *visual slice* is withheld until `inspection_report.md` carries `visual_confirmed` + `visual_signoff`. This is the family's one **unconditional** member — the visual sign-off is the close condition, not a speed-bump.
+
+**Doctrine — speed-bumps + loudness, not containment.** In the agnostic core nothing mechanically stops an agent with shell access from bypassing a prose rule; the family's value is making the cooperative path easiest and any drift loud and deliberate, so the human spots it. A platform distribution may promote any gate to a hard runtime block — the visual floor being the one that denies regardless. Claude-LFE is the reference distribution that mechanizes this family in its runtime.

@@ -15,10 +15,12 @@
   - `/lfe-complexity-check` → Cyclomatic/cognitive complexity
   - `/lfe-dep-audit` → Dependency manifest review + Brain-run audit instruction
   - `/lfe-mutation-verify` → Test quality via prompt-based mutation reasoning
+  - `/lfe-visual-check` → Renders the changed UI surface for a human visual sign-off (auto-armed by the Visual Floor on a UI-file touch; artifact-free)
   Each writes to `.plans/checks/<sub-skill>_findings.md`; Inspector aggregates into `critique.md`.
 - **Cycle Guard**: On the **2nd consecutive failed inspection** for the same slice, Inspector halts and presents the Brain with three triage options (Accept as debt / Escalate LFE-FORCE / Re-plan from scratch). Inspector does NOT re-invoke `/lfe-diagnose` on the 2nd failure. See [`LOOP_ARCHITECTURE.md`](../LOOP_ARCHITECTURE.md) Scenario 2.2.
 - **Output**: Inspection report + test results + aggregated sub-skill findings in `critique.md`.
-- **Handover**: Triggers the Archivist once verification passes.
+- **Finalization Gate (unified — three outcomes)** (`/lfe-inspector` Step 8): a passing verification is a *technical* pass — the Inspector's own authority; the *visual* verdict is the Brain's. The Brain finalizes: **(a) APPROVE + visual confirmation present** (a non-visual slice, or a visual slice whose `inspection_report.md` carries `visual_confirmed` + `visual_signoff`) → hands off to the Archivist; **(b) APPROVE but visual confirmation absent on a visual slice** → the Inspector presents the `visual_findings.md` instruction, records `visual_confirmed` + `visual_signoff` (transcribed from the Brain's approval), then hands off — the visual sign-off is the close condition, a protocol floor the Inspector satisfies before the transition; **(c) REJECT** (a defect the technical pass did not catch, typically visual) → re-enters the Builder via a rework round (Step 8b writes `.plans/rework_directive.md` with `rework_round` + `directive_hash`, resets the per-slice checkboxes, flips the persona to Builder). Max 5 rework rounds (GOVERNANCE Correction Cycle Limit 3), orthogonal to the Cycle Guard. See [`LOOP_ARCHITECTURE.md`](../LOOP_ARCHITECTURE.md) Scenarios 2.4 + 2.5.
+- **Handover**: On finalization APPROVE, triggers the Archivist.
 
 ## Evidence Discipline
 

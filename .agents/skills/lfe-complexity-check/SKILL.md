@@ -16,7 +16,7 @@ Reason over changed code to identify complexity indicators that reduce maintaina
 
 ## Hard Rules
 0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` for the current slice, halt immediately and reply: *"`/lfe-complexity-check` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
-1. **Prompt-Only**: Reason over the diff. Do not run linters or complexity calculators.
+1. **Prompt-Only**: Reason over the diff only — no linters or complexity calculators.
 2. **Diff-Scoped**: Analyse only files listed in `builder_done.md`.
 3. **Severity**: High (will actively confuse the next AI session) / Medium (increases risk) / Low (style concern).
 4. **Context Matters**: A 25-line function that is purely a switch statement is less concerning than a 15-line function with 4 levels of nesting and side effects.
@@ -86,4 +86,4 @@ Body:
 If no findings: write `No complexity concerns identified in the analysed diff.`
 
 ## Handoff
-Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Complexity` section. Do not write to `critique.md` directly.
+Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Complexity` section. Write only this findings file; leave `critique.md` to the Inspector.

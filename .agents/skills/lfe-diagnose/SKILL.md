@@ -13,7 +13,7 @@ description: Disciplined bug-diagnosis loop. Reproduce → Hypothesise → Fix. 
 - **Output**: Fix applied → returns to Builder sub-pipeline for re-verification
 
 ## Hard Rules
-1. **First-failure only**: Diagnose may only run on the **first** failed inspection of a slice. The Inspector's Cycle Guard (`lfe-inspector/SKILL.md` Cycle Guard step) is responsible for blocking re-entry on the second failure. If you discover that `.plans/inspection_report.md` already records a `status: failed` for the same `slice:`, halt immediately — do not produce a fresh `diagnosis_report.md`. Bounce back to Inspector for Brain triage (see `LOOP_ARCHITECTURE.md` Scenario 2.2). This is a defensive belt-and-braces check; the Cycle Guard should have prevented this entry.
+1. **First-failure only**: Diagnose may only run on the **first** failed inspection of a slice. The Inspector's Cycle Guard (`lfe-inspector/SKILL.md` Cycle Guard step) is responsible for blocking re-entry on the second failure. If you discover that `.plans/inspection_report.md` already records a `status: failed` for the same `slice:`, halt immediately, leave the existing report as-is, and bounce back to Inspector for Brain triage (see `LOOP_ARCHITECTURE.md` Scenario 2.2). This is a defensive belt-and-braces check; the Cycle Guard should have prevented this entry.
 2. **Minimal fix only**: Solve the diagnosed problem, nothing more. No opportunistic refactors.
 
 ## Process

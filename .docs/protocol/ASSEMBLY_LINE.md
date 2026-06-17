@@ -51,7 +51,14 @@ graph TD
         Inspect -- "Failed (2nd)" --> BrainTriage[🛑 Brain Triage:<br>Accept Debt / LFE-FORCE / Re-plan]
     end
 
-    Inspect -- "Passed" --> Archive
+    Inspect -- "Passed (technical)" --> Finalize{Brain finalizes?}
+    Finalize -- "Approve" --> VisualGate{Visual slice?<br>visual sign-off present?}
+    VisualGate -- "Non-visual / sign-off present" --> Archive
+    VisualGate -- "Visual, sign-off absent" --> VisualConfirm[Obtain human visual sign-off<br>via lfe-visual-check]
+    VisualConfirm --> Archive
+    Finalize -- "Reject" --> Build
+    Finalize -- "Reject (round > 5)" --> ReworkTriage[🛑 Brain Triage:<br>Accept issue / Re-plan / Fresh mission]
+    ReworkTriage --> End
     BrainTriage --> End
 
     subgraph archivist [Phase 4: Archivist Sub-Pipeline]
@@ -95,15 +102,17 @@ Every skill writes its output to a physical file. The next skill reads that file
 ├── plan_critique.md          ← Output of lfe-plan-critique (5-lens pre-build review)
 ├── builder_done.md           ← Output of lfe-builder (crash-recovery checkpoint)
 ├── tdd_report.md             ← Output of lfe-tdd (reads active_plan + builder_done)
-├── checks/                   ← Inspector sub-skill outputs (security/perf/complexity/dep/mutation)
+├── checks/                   ← Inspector sub-skill outputs (security/perf/complexity/dep/mutation/visual)
 │   ├── security_findings.md
 │   ├── perf_findings.md
 │   ├── complexity_findings.md
 │   ├── dep_findings.md
-│   └── mutation_findings.md
+│   ├── mutation_findings.md
+│   └── visual_findings.md
 ├── critique.md               ← Output of lfe-inspector (Devil's Advocate + sub-skill aggregation)
 ├── inspection_report.md      ← Output of lfe-inspector (status: passed | failed | escalated)
 ├── diagnosis_report.md       ← Output of lfe-diagnose (conditional, on 1st inspector fail only)
+├── rework_directive.md       ← Output of lfe-inspector Step 8b (conditional, on Brain finalization reject)
 └── hygiene_report.md         ← Output of lfe-hygiene (every 5 sessions)
 ```
 
@@ -161,8 +170,10 @@ Each step reads the previous step's coordination file.
 | 1.5 | `/lfe-inspector` Step 1.5 — Consult Plan-Critique | `plan_critique.md` | (no file) — Architect's WARN findings become **priority verification targets** for Steps 2–4; skipped on LFE-FORCE recovery |
 | 2 | `/lfe-inspector` — Cycle Guard + Sub-Skill Dispatch | `tdd_report.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* + `.docs/quality/inspector-config.md` + `active_plan.md` (parses `## Inspector Overrides`) | `.plans/critique.md` then `.plans/inspection_report.md` |
 | 2.a–e | Optional sub-skills *(opt-in via inspector-config.md; LFE-FORCE path uses a fixed subset — see below)*: `/lfe-security-check`, `/lfe-perf-check`, `/lfe-complexity-check`, `/lfe-dep-audit`, `/lfe-mutation-verify` | `builder_done.md` + changed files | `.plans/checks/<sub-skill>_findings.md` (aggregated into `critique.md`) |
+| 2.f | `/lfe-visual-check` *(opt-in; **auto-armed by the Visual Floor** on any visual-file touch — see `inspector-config.md`)* | `builder_done.md` + the optional `## UI Surface` field in `active_plan.md` | `.plans/checks/visual_findings.md` (aggregated into `critique.md`; the basis for the human visual sign-off at the finalization gate) |
 | 3 | `/lfe-diagnose` (only on 1st failure of slice) | Failing behavior | `.plans/diagnosis_report.md` → back to Builder |
 | —  | **2nd failure on same slice** → halt | — | `inspection_report.md` `status: escalated` + Brain triage menu (see `LOOP_ARCHITECTURE.md` Scenario 2.2) |
+| 8 | `/lfe-inspector` **Finalization Gate** (unified — three outcomes) | `inspection_report.md` (`status: passed`) + `.plans/checks/visual_findings.md` on a visual slice | (a) APPROVE + visual confirmation present → Archivist; (b) APPROVE but visual confirmation absent on a visual slice → obtain `visual_confirmed` + `visual_signoff` then Archivist (the visual sign-off is the close condition — see GOVERNANCE Discipline Gates); (c) REJECT → `.plans/rework_directive.md` + flip to Builder (rework re-entry, max 5 rounds; GOVERNANCE Limit 3; see `LOOP_ARCHITECTURE.md` Scenario 2.4) |
 
 **LFE-FORCE recovery path** (Inspector Step 7b — when `source: .docs/quality/PROTOCOL_DEBT.md`): Sub-Skill Dispatch runs a **fixed subset** rather than reading `inspector-config.md`: always `lfe-security-check` + `lfe-complexity-check`; conditionally `lfe-dep-audit` (if hotfix touched a dependency manifest) and `lfe-perf-check` (if the debt entry flags a hot-path edit); skipped `lfe-mutation-verify`. Critical findings on PASS verification are captured to `.docs/quality/known-issues.md` by the Archivist before the debt entry resolves — the debt still clears, but the risks remain visible. See `LOOP_ARCHITECTURE.md` Scenario 3.3.
 

@@ -78,6 +78,6 @@ approved_by_human: true
 ```
 
 ### AC-writing discipline
-Write each acceptance criterion as a falsifiable, prose statement of the observable end-state — not as a literal search/regex string (reproducing a pattern in an AC re-triggers that pattern's own check). For slices that **create, edit, or archive structured documentation**, draft the ACs with the doc-edit AC-design patterns the Architect's Plan-Composition Discipline enumerates — section-name conformance, cross-reference semantic-inversion anchoring, byte-identity sidecar fixtures, section-boundary extraction caveats, cross-file scope symmetry, edit-mechanism ACs, and archive-move ACs — so the downstream `active_plan.md` inherits them rather than rediscovering them at Inspector time.
+Write each acceptance criterion as a falsifiable, prose statement of the observable end-state — not as a literal search/regex string (reproducing a pattern in an AC re-triggers that pattern's own check). For slices that **create, edit, or archive structured documentation**, draft the ACs with the doc-edit AC-design patterns the Architect's Plan-Composition Discipline enumerates — section-name conformance, cross-reference semantic-inversion anchoring, byte-identity sidecar fixtures, section-boundary extraction caveats (numeric-prefix collision + non-numeric headings), cross-file scope symmetry, edit-mechanism ACs, and archive-move ACs — so the downstream `active_plan.md` inherits them rather than rediscovering them at Inspector time.
 
 Update `pipeline_status.md` coordination tracker to mark step 03 as ✅.

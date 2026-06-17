@@ -14,7 +14,7 @@ Convert intent into a rigorous plan in `.plans/active_plan.md`. You are the gate
 2. `/lfe-to-prd` → reads 01, writes `.plans/02_prd.md`
 3. `/lfe-to-issues` → reads 02, writes `.plans/03_slices.md` → 🛑 Human approves slices
 4. Draft `active_plan.md` for current slice (reads 03) → 🛑 Human approves plan
-5. `/lfe-plan-critique` → reads `active_plan.md`, runs 5-lens review, writes `.plans/plan_critique.md` → 🛡 Auto-gate (PASS / WARN / BLOCK)
+5. `/lfe-plan-critique` → reads `active_plan.md`, runs a mechanical pre-pass + 5-lens review, writes `.plans/plan_critique.md` → 🛡 Auto-gate (PASS / WARN / BLOCK)
 
 ## Hard Rules
 1. **Zero Code Edits**: edit only `.docs/**` and `CONTEXT.md`; leave `src/**` untouched.
@@ -60,7 +60,7 @@ Body sections:
      Keys are sub-skill names; values are `true` (force enable) or `false` (force disable). Missing keys fall through to the config-table default. Unknown keys produce a warning to the Brain.
 
 ### Plan-Composition Discipline (avoid self-inflicted Inspector-time failures)
-When composing acceptance criteria and verification commands in `active_plan.md`, follow these conventions. The `/lfe-plan-critique` lenses check for violations — writing them correctly the first time avoids the WARN entirely:
+When composing acceptance criteria and verification commands in `active_plan.md`, follow these conventions. The `/lfe-plan-critique` mechanical pre-pass and lenses check for violations — writing them correctly the first time avoids the WARN entirely:
 
 - **Line-count ACs — use a widened tolerance band, never an exact or narrow count.** Content renders single- vs multi-line across tools, so an exact assertion false-positives on a correct substrate. The goal is to catch gross truncation, not to pin a precise count (e.g. accept a 20–40 band rather than exactly 30).
 - **Existence checks — test the path itself; never iterate a directory's children and test derived paths.** Iterating children silently tests the wrong paths and can report a false negative on a correct substrate (observed example, PowerShell: piping a directory listing into per-child existence tests where a single direct path test was meant). Reserve iteration for genuinely per-file work.

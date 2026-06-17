@@ -20,7 +20,7 @@ Verify that the implementation matches the domain truth and numerical baselines.
 ## Hard Rules
 1. **Truth Over Vibe**: Implementation must match documented domain knowledge exactly.
 2. **Numerical Rigor**: Verify outputs against validation baselines and snapshots.
-3. **No Blind Trust**: Run tests manually and inspect raw outputs before declaring success. This is the Inspector's instance of the shared **Evidence Discipline** (see the section at the end of this skill) — a verification claim earns its place only from the fresh output you ran this session.
+3. **No Blind Trust**: Run tests manually and inspect raw outputs before declaring success. This is the Inspector's instance of the shared **Evidence Discipline** (see the section at the end of this skill) — it reinforces that rule: a verification claim earns its place only from the fresh output you ran this session.
 4. **File-Based Input** (with explicit fallback):
    - **Primary**: read `.plans/tdd_report.md`. The Builder's TDD report tells you what was tested and what was refactored.
    - **Fallback (LFE-FORCE recovery)**: if `.plans/tdd_report.md` does NOT exist AND `.docs/quality/PROTOCOL_DEBT.md` has at least one unresolved entry, read the latest unresolved Protocol Debt entry instead and verify the hotfix described there directly against `src/`. Set `source: .docs/quality/PROTOCOL_DEBT.md` in the inspection report frontmatter — exact full path, because Archivist Step 3.6's matcher keys off this string verbatim. This path is the ONLY way to clear Protocol Debt — the framework MUST stay recoverable here (no deadlock).
@@ -38,6 +38,7 @@ At the start of every Inspector run, determine the **cycle number** for the curr
    - **No prior `inspection_report.md` for this slice** → this is **Cycle 1**.
    - **Prior `inspection_report.md` with `status: failed` AND prior `diagnosis_report.md` for the same slice** → this is **Cycle 2**.
    - **Prior `inspection_report.md` with `status: escalated`** → the previous run already halted at Cycle 2; pipeline should be paused awaiting Brain triage. Halt and re-present the menu.
+   - **Prior `inspection_report.md` with `status: passed` (with or without a `.plans/rework_directive.md`)** → this is a finalization-rework round, not a mechanical failure. Treat it as **Cycle 1** for the diagnose ledger; the rework count lives separately in `rework_directive.md` (`rework_round`), leaving the Cycle-2 wall to mechanical failures alone. A genuine mechanical re-failure this round still writes `status: failed` and takes the normal Cycle-1 → diagnose path, so the two axes compose cleanly.
 
 ### Decision at the failure point
 
@@ -74,7 +75,7 @@ After running verification (Workflow steps 1–4):
    a. **Ensure dispatch directory exists**: `.plans/checks/` is owned by the Inspector. Create it if missing (idempotent — safe to call when already present). Sub-skills rely on the Inspector having prepared their parent directory rather than creating it themselves.
    b. **Load config**: Read `.docs/quality/inspector-config.md` to determine which sub-skills are enabled.
    c. **Read per-mission overrides**: Check `active_plan.md` for an `## Inspector Overrides` section (typed schema — see `lfe-architect/SKILL.md` body template). Any override takes precedence over the config table.
-   d. **Dispatch in fixed order**: `lfe-security-check` → `lfe-perf-check` → `lfe-complexity-check` → `lfe-dep-audit` → `lfe-mutation-verify`. For each enabled sub-skill, apply the **resume rule** before invoking:
+   d. **Dispatch in fixed order**: `lfe-security-check` → `lfe-perf-check` → `lfe-complexity-check` → `lfe-dep-audit` → `lfe-mutation-verify` → `lfe-visual-check`. **Floors are config-independent minimums**, evaluated when computing the final enabled set: `lfe-security-check` arms on the Security Floor classes, and `lfe-visual-check` arms on the **Visual Floor** — whenever a changed file in `builder_done.md` matches one of the visual file classes listed in `inspector-config.md`. An override leaves a floored sub-skill armed. For each enabled sub-skill, apply the **resume rule** before invoking:
       - **Skip** the sub-skill if `.plans/checks/<sub-skill-name>_findings.md` exists AND its YAML frontmatter parses with `status: complete`. This is the **only** valid skip signal — file presence alone is not sufficient (a crash mid-write leaves the file present but with no `status: complete` field).
       - **Invoke** otherwise (file absent, frontmatter unparseable, or `status` is any value other than `complete`). The sub-skill overwrites its findings file with a complete one.
    e. **Aggregate**: After dispatch completes, read every `.plans/checks/*_findings.md` whose frontmatter has `status: complete`. Build a labelled summary block per sub-skill for inclusion in `critique.md` (Step 6b).
@@ -111,6 +112,9 @@ Body: free-form Devil's Advocate analysis. If sub-skills ran (Step 6), append th
 
 ## Mutation Coverage
 <content of .plans/checks/mutation_findings.md, or "Sub-skill not enabled.">
+
+## Visual
+<content of .plans/checks/visual_findings.md, or "Sub-skill not armed.">
 ```
 
 Mark the `critique ✅` checkbox in `pipeline_status.md`.
@@ -124,8 +128,12 @@ status: passed | failed | escalated
 timestamp: <ISO-8601>
 source: .plans/tdd_report.md   # or .docs/quality/PROTOCOL_DEBT.md on LFE-FORCE recovery
 slice: <copied from active_plan.md; omit on LFE-FORCE recovery path (no plan)>
+visual_confirmed: <ISO-8601 | null>   # OPTIONAL — set at Step 8(b) on a visual slice (the human's visual sign-off)
+visual_signoff: <token | null>        # OPTIONAL — agent-transcribed from the Brain's approval (brain_confirmation trust model)
 ---
 ```
+
+The `visual_confirmed` / `visual_signoff` fields are optional typed frontmatter that ride below `source:` (the same pattern as the `rework_round` field on `rework_directive.md`). They are absent on a non-visual slice and set at Step 8(b) on a visual one.
 
 ```markdown
 ## Verification Results
@@ -168,14 +176,28 @@ slice: <copied from active_plan.md; omit on LFE-FORCE recovery path (no plan)>
      3. **Convert to full pipeline** (run `/lfe-grill-with-docs` to architect a retroactive plan, then build/test/verify normally).
    The pipeline stays blocked until the human chooses. The Archivist leaves the debt entry unresolved on a failed verification.
 
-8. **Handoff**: Once verification passes, ask for human finalization. Upon approval, mark the `inspect ✅` checkbox in `pipeline_status.md`'s Coordination Files row, signal transition to **Archivist**, and set `Active Persona: Archivist`.
+8. **Finalization Gate (unified — three outcomes)**: Verification passing is a *technical* pass — the Inspector's own authority over logic, baselines, and test coverage. `inspection_report.md` already carries `status: passed` (Step 7) and the `inspect ✅` checkbox is set. The *visual* verdict belongs to the Brain alone. First determine whether this is a **visual slice** — any changed file in `builder_done.md` matches one of the visual file classes in `inspector-config.md` (the Visual Floor will already have armed `lfe-visual-check`, so `.plans/checks/visual_findings.md` is present). Then ask the Brain to finalize and branch:
+   - **(a) APPROVE with visual confirmation present** — a non-visual slice, or a visual slice whose `inspection_report.md` already carries `visual_confirmed` + `visual_signoff` → the slice is done. If a `.plans/rework_directive.md` exists for this slice (a prior rework round has now converged), delete it. Set `Active Persona: Archivist` and hand off.
+   - **(b) APPROVE but visual confirmation absent on a visual slice** → obtain it first. Present the `## Human-Action Instruction` from `.plans/checks/visual_findings.md`; on the Brain's visual approval, **rewrite** `inspection_report.md` recording `visual_confirmed: <ISO-8601>` and `visual_signoff: <token transcribed verbatim from the Brain's approval>`. Then proceed exactly as (a). This is a **protocol floor** (see GOVERNANCE Discipline Gates): the Inspector must not hand a visual slice to the Archivist until both fields are recorded — the visual sign-off is the close condition, so the close stays honest.
+   - **(c) REJECT** — the Brain finds a defect the technical pass did not catch (most often a visual one) → go to **Step 8b** (the human-rejection rework re-entry).
+
+8b. **Rework Re-Entry** (Brain rejected at finalization):
+   1. Capture the Brain's defect description verbatim. Derive a short `directive_hash` from that text.
+   2. Read `.plans/rework_directive.md` if it exists → its `rework_round` (call it `N0`) and `directive_hash`. Absent → `N0 = 0`.
+   3. **Idempotency:** if the file exists AND its `directive_hash` matches the one just derived, this is a re-run of the same rejection — keep `N = N0`. Otherwise `N = N0 + 1`. (The increment keys on the on-disk directive-hash transition, not on a chat utterance, so a crash-resume of the same rejection stays exactly-once.)
+   4. **Cap:** the finalization-rework limit is **5 rounds** (file-based in `rework_round`; see GOVERNANCE Correction Cycle Limits; project-overridable). When `N` exceeds 5, **halt** and present the Brain a safe triage menu — **A** accept as a known issue (log it to `.docs/quality/known-issues.md`, then proceed to Archivist), **B** re-plan the slice via the Architect (wipe execution files, loop back to `03_slices.md`), **C** start a fresh mission. The cap path stays within the pipeline (it offers no in-place patch).
+   5. Write `.plans/rework_directive.md` — frontmatter `phase: inspector`, `step: rework`, `status: complete`, `timestamp`, `source: .plans/inspection_report.md`, `slice: <copied from active_plan.md>`, plus the typed fields `rework_round: N` and `directive_hash: <hash>` — with a `## Rework Directive` body: what is wrong, expected vs. observed, and (for a UI defect) which surface. This sentinel is the Builder's re-entry brief and the crash-recovery anchor: a present sentinel resumes the pipeline at the Builder.
+   6. Delete any `.plans/diagnosis_report.md` for this slice, so the Builder's rework branch is unambiguous (the rework re-entry re-implements; it does not reuse a stale diagnose fix).
+   7. Reset the per-slice coordination checkboxes (`build / tdd / critique / inspect`) to ⬜ in `pipeline_status.md` — the code is about to change, so the prior technical pass goes stale. (Checkboxes only advance ⬜→✅ during a run, so this reset is explicit, mirroring Partial Cleanup.)
+   8. Set `Active Persona: Builder`, and re-enter Phase 2 at the Builder.
+   **Guardrail:** the one legitimate path to fix a rejected defect is this persona flip back to the Builder. Editing `src/**` while the Active Persona is Inspector or Archivist is a path-lock violation — it would ship the fix unverified.
 
 ## Checklist
 - [ ] Matches domain documentation?
 - [ ] Matches validation baselines?
 - [ ] TDD report reviewed and confirmed?
 - [ ] Regression tests added for fixes?
-- [ ] Human has manually confirmed behavior?
+- [ ] Finalization gate resolved — Brain approved (→ Archivist) or rejected (→ Step 8b rework re-entry to Builder)?
 - [ ] Inspection report written to `.plans/inspection_report.md`?
 
 ## Evidence Discipline

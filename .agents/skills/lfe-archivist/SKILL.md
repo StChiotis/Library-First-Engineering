@@ -24,7 +24,7 @@ Keep the project's documentation and history perfectly in sync with the codebase
 4. **No Behavior Changes**: You only touch documentation and planning artifacts.
 5. **File-Based Input**: Read `.plans/inspection_report.md` as input. The Inspector's report tells you what passed.
 6. **Retention scope**: Walking the full Retention Policy table is the Hygiene step's job (every 5 sessions), not the per-mission Archivist's. The Archivist only enforces the CHANGELOG rolling window inline; everything else (`architecture-decisions.md`, `PROTOCOL_DEBT.md`, `known-issues.md`) is swept by `/lfe-hygiene`.
-7. **Prose-not-literal doc-writing discipline**: When you write or update documentation (CHANGELOG entries, ADRs, known-issues entries, Floor Map rows) that *describes* a search-pattern-based AC or check, describe the pattern in words rather than reproducing the literal search/regex string — reproducing a pattern in a doc re-triggers that pattern's own check the next time it runs. This mirrors the Architect's Plan-Composition Discipline.
+7. **Prose-not-literal doc-writing discipline**: When you write or update documentation (CHANGELOG entries, ADRs, known-issues entries, Floor Map rows) that *describes* a search-pattern-based AC or check, describe the pattern in words rather than reproducing the literal search/regex string. Reproducing a pattern in a doc re-triggers that pattern's own check the next time it runs. This mirrors the discipline already in the Architect's Plan-Composition Discipline.
 
 ## Workflow
 1. **Read Report**: Read `.plans/inspection_report.md` to understand what was built and verified. **Status branch:**
@@ -32,7 +32,7 @@ Keep the project's documentation and history perfectly in sync with the codebase
    - `status: escalated` (Cycle Guard halt — Brain selected a triage option in the body):
      - If Brain chose **Option A (Accept as debt)**: append the open issue to `.docs/quality/known-issues.md` and create a `PROTOCOL_DEBT.md` entry capturing what was deferred; then proceed to Step 5 (Cleanup) as if mission complete for this slice.
      - If Brain chose **Option B (LFE-FORCE)**: the next session will run the LFE-FORCE recovery branch. Skip cleanup — halt and let `lfe-boot` Step 5 handle the new debt entry on the next boot.
-     - If Brain chose **Option C (Re-plan)**: wipe execution files (`plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `.plans/checks/`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`), keep planning files (`01`/`02`/`03`), set `Active Persona: Architect`, and loop back to slice re-planning.
+     - If Brain chose **Option C (Re-plan)**: wipe execution files (`plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `.plans/checks/`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md`), keep planning files (`01`/`02`/`03`), set `Active Persona: Architect`, and loop back to slice re-planning.
    - `status: failed` is not expected to reach Archivist on the mission path — Inspector either re-loops via diagnose (Cycle 1) or escalates (Cycle 2). If it does, halt and ask Brain for guidance.
 2. **Sync Docs**: You MUST explicitly apply updates depending on the changes made:
    - **New domain terms or canonical definitions**: You MUST append them to `CONTEXT.md` and `.docs/domain/glossary.md`.
@@ -53,12 +53,12 @@ Keep the project's documentation and history perfectly in sync with the codebase
 5. **Clean Up** — choose one tier. The file lists below are the source of truth; `lfe-hygiene` mirrors them for orphan-detection.
 
    **5a. Partial Cleanup** (more slices remain — keep planning, drop execution):
-   - Delete: `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, and the entire `.plans/checks/` directory if present.
+   - Delete: `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md`, and the entire `.plans/checks/` directory if present.
    - Keep: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
    - Update `pipeline_status.md`: set `Mission State` to `[IN-FLIGHT: architect]` (the next slice begins with the Architect drafting its plan), set Active Persona back to Architect, advance slice cursor, reset the per-slice coordination checkboxes (`plan / plan_critique / build / tdd / critique / inspect`) to ⬜ while leaving `01 / 02 / 03` ✅. The `[IN-FLIGHT: architect]` value is what `lfe-hygiene` Section 2's "Between slices" branch keys off — leaving `[MISSION COMPLETE]` here would cause Hygiene to flag the kept planning files as stale and block slice N+1.
 
    **5b. Full Cleanup** (mission complete — drop everything):
-   - Delete every file in `.plans/`: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, plus the entire `.plans/checks/` directory if present.
+   - Delete every file in `.plans/`: `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md`, plus the entire `.plans/checks/` directory if present.
    - `hygiene_report.md` is owned by the Hygiene sub-pipeline — leave it for `/lfe-improve-architecture` to consume and clear; a per-mission Archivist run does not delete it.
    - Update `pipeline_status.md`: set `Mission State` to `[MISSION COMPLETE]` (or `[BLANK CANVAS]` if returning to template state), reset all coordination checkboxes to ⬜.
 6. **Update Pipeline Status (cross-cutting fields)**: Beyond the checkbox/persona resets handled by Step 5a/5b, set the cross-cutting entrance-card fields for the next session — Mission, Session Count, Last ADR, and `Mission State`. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.

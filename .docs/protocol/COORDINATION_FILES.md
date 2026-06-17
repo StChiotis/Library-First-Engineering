@@ -19,7 +19,7 @@ source: <input path, or "n/a">
 - `status`: most skills use `complete` / `failed`. Verification skills (`/lfe-inspector`) use `passed` / `failed` because the verdict — not the execution — is what downstream consumers branch on. `escalated` is reserved for `inspection_report.md` when the Cycle Guard halts on a 2nd consecutive failure and surfaces Brain triage.
 - `kind: sub-skill` *(optional)*: present in the frontmatter of every Inspector sub-skill findings file (e.g., `.plans/checks/security_findings.md`). It is the canonical marker the framework uses to identify a skill as a dispatched sub-skill rather than a persona-orchestrating skill — preferred over fragile name-pattern matching. Hygiene's Skills Audit and the Inspector's dispatch logic both key off this field.
 - `source`: by default, the relative path inside `.plans/` (e.g., `.plans/tdd_report.md`). Cross-tier sources are allowed when a skill legitimately reads from outside `.plans/` — write the path relative to the repo root (e.g., `.docs/quality/PROTOCOL_DEBT.md` for the Inspector's LFE-FORCE recovery branch). Use `n/a` only when the skill takes no file input (e.g., `/lfe-grill-with-docs` reads conversation; `/lfe-hygiene` reads the whole repo).
-- `slice` *(execution-tier files only)*: required on `active_plan.md`, `builder_done.md`, `tdd_report.md`, `inspection_report.md`, `diagnosis_report.md`, and every `.plans/checks/*_findings.md`. Copied from `active_plan.md` on every write. Lets `/lfe-builder` and `/lfe-hygiene` detect stale execution-tier files left over from a prior slice whose Partial Cleanup didn't complete (e.g., crash mid-cleanup). Omitted on the Inspector's LFE-FORCE recovery branch — there's no slice when there's no plan.
+- `slice` *(execution-tier files only)*: required on `active_plan.md`, `builder_done.md`, `tdd_report.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md`, and every `.plans/checks/*_findings.md`. Copied from `active_plan.md` on every write. Lets `/lfe-builder` and `/lfe-hygiene` detect stale execution-tier files left over from a prior slice whose Partial Cleanup didn't complete (e.g., crash mid-cleanup). Omitted on the Inspector's LFE-FORCE recovery branch — there's no slice when there's no plan.
 
 Skills MAY add typed fields below `source:`. Documented typed fields:
 
@@ -29,6 +29,10 @@ Skills MAY add typed fields below `source:`. Documented typed fields:
 | `plan_critique.md` | `verdict: PASS \| WARN \| BLOCK` | Builder gate signal. |
 | `plan_critique.md` | `revision: 1 \| 2` | **Physical substrate** for the 2-revision limit (Cycle Limits in `GOVERNANCE.md`). Read by `/lfe-plan-critique` Step 0 to detect a 2nd BLOCK without conversational memory. |
 | `plan_critique.md` | `brain_confirmation: <ISO-8601 \| null>` | Set by `/lfe-plan-critique` Step 7 when Brain explicitly confirms a `WARN`. `null` on first write. Parsed by `/lfe-builder` Step 1 — the gate opens on PASS, or on WARN with a non-null `brain_confirmation`. Conversational confirmation is not a valid signal. |
+| `rework_directive.md` | `rework_round: <N>` | **Physical substrate** for the 5-round finalization-rework limit (Correction Cycle Limits in `GOVERNANCE.md`), orthogonal to the Cycle Guard's diagnose-cycle ledger. Read by `/lfe-inspector` Step 8b to increment across a crash without conversational memory. |
+| `rework_directive.md` | `directive_hash: <hash>` | Short hash of the Brain's rejection text. Makes the `rework_round` increment exactly-once: a re-run of the same rejection (matching hash) holds the counter; a new distinct defect (new hash) advances it. |
+| `inspection_report.md` | `visual_confirmed: <ISO-8601 \| null>` | Human visual sign-off **timestamp** on a visual slice. Set by `/lfe-inspector` Step 8(b) on the Brain's visual approval; `null`/absent on a non-visual slice. The Inspector must not hand a visual slice to the Archivist until this and `visual_signoff` are present (the visual floor — see GOVERNANCE Discipline Gates / [`LOOP_ARCHITECTURE.md`](LOOP_ARCHITECTURE.md) Scenario 2.5). |
+| `inspection_report.md` | `visual_signoff: <token \| null>` | Agent-transcribed sign-off **token** (the same trust model as `brain_confirmation` — a transcription convention, not a non-forgeable mechanism). Paired with `visual_confirmed`; both are required to close a visual slice. |
 
 ## Coordination File Registry
 
@@ -42,16 +46,17 @@ Skills MAY add typed fields below `source:`. Documented typed fields:
 | `builder_done.md` | 2 | `/lfe-builder` | `/lfe-tdd` (resume marker) |
 | `tdd_report.md` | 2 | `/lfe-tdd` | `/lfe-inspector` |
 | `critique.md` | 3 | `/lfe-inspector` (4-Eyes pass + sub-skill aggregation) | `/lfe-inspector` (self) |
-| `.plans/checks/*.md` | 3 | Inspector sub-skills (`lfe-security-check`, `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`) | `/lfe-inspector` (aggregates into `critique.md`) |
+| `.plans/checks/*.md` | 3 | Inspector sub-skills (`lfe-security-check`, `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`, `lfe-visual-check`) | `/lfe-inspector` (aggregates into `critique.md`) |
 | `inspection_report.md` | 3 | `/lfe-inspector` | `/lfe-archivist` |
 | `diagnosis_report.md` | 3 | `/lfe-diagnose` | `/lfe-builder` (next iteration) |
+| `rework_directive.md` | 3 | `/lfe-inspector` (finalization reject, Step 8b) | `/lfe-builder` (rework re-entry) |
 | `hygiene_report.md` | 5 | `/lfe-hygiene` | `/lfe-improve-architecture` |
 
 ## Cleanup tiers
 
 The Archivist enforces two cleanup tiers, defined in `lfe-archivist/SKILL.md`:
 
-- **Partial Cleanup** (between slices): delete execution files — `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, and all files in `.plans/checks/`. **Keep** planning files — `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
+- **Partial Cleanup** (between slices): delete execution files — `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md`, and all files in `.plans/checks/`. **Keep** planning files — `01_grill_summary.md`, `02_prd.md`, `03_slices.md`.
 - **Full Cleanup** (mission complete): delete every file in `.plans/` including `.plans/checks/`.
 
 `hygiene_report.md` belongs to the Hygiene sub-pipeline. Its primary reader is the **human** (audit findings to review and triage). `/lfe-improve-architecture` may reference it for priority context but does not formally consume it — that skill walks the codebase fresh. The report is deleted by `/lfe-improve-architecture`'s final step at the end of the hygiene cycle, not by per-mission Archivist runs.

@@ -1,6 +1,6 @@
 # Language
 
-Shared vocabulary for architectural suggestions. Use these terms exactly — don't substitute "component," "service," "API," or "boundary."
+Shared vocabulary for architectural suggestions. Use these terms exactly; keep "component," "service," "API," and "boundary" out.
 
 ## Terms
 

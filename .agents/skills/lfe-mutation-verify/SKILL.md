@@ -94,7 +94,7 @@ Body:
 - <specific assertion to add for each escaped mutation>
 ```
 
-If no implementation functions changed, or all mutations are covered: write summary with zero escapes.
+If no implementation functions changed, or all mutations are covered: write a summary recording no escaped mutations.
 
 ## Handoff
-Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Mutation Coverage` section. Do not write to `critique.md` directly.
+Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Mutation Coverage` section. Write only this findings file; leave `critique.md` to the Inspector.

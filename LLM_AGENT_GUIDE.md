@@ -70,6 +70,7 @@ If no CONTEXT-MAP.md exists, your project is single-context. Use root `CONTEXT.m
 | `/lfe-complexity-check` *(opt-in sub-skill)* | `builder_done.md`, changed files | `.plans/checks/complexity_findings.md` |
 | `/lfe-dep-audit` *(opt-in sub-skill)* | `builder_done.md`, manifest files | `.plans/checks/dep_findings.md` |
 | `/lfe-mutation-verify` *(opt-in sub-skill)* | `builder_done.md`, impl + test files | `.plans/checks/mutation_findings.md` |
+| `/lfe-visual-check` *(opt-in sub-skill; auto-armed by the Visual Floor on a UI-file touch)* | `builder_done.md`, changed UI files, `active_plan.md` `## UI Surface` | `.plans/checks/visual_findings.md` |
 | `/lfe-inspector` | `tdd_report.md` + `.plans/checks/*.md` *(or `PROTOCOL_DEBT.md` after LFE-FORCE)* | `.plans/critique.md` then `.plans/inspection_report.md` |
 | `/lfe-diagnose` *(conditional, 1st failure only)* | Failing behavior + `tdd_report.md` | `.plans/diagnosis_report.md` |
 | `/lfe-hygiene` *(every 5 sessions)* | Full repo | `.plans/hygiene_report.md` |
@@ -101,7 +102,7 @@ Project-specific overrides go under `## Brain Persona Overrides` in this file. F
 
 ## 8.7 Self-Measurement
 
-The agnostic core keeps **no self-measurement log**. An earlier per-session token-cost tracker was retired: it recorded agent self-estimates — not measurements — and so promised drift detection it could not honestly deliver. Adopters who want real cost telemetry should source it from their platform's billing/usage surfaces; platform distributions of LFE may add measured quality signals on top of the protocol.
+The agnostic core keeps **no self-measurement log**. An earlier per-session token-cost tracker was retired: it recorded agent self-estimates — not measurements — and so promised drift detection it could not honestly deliver. Adopters who want real cost telemetry should source it from their platform's billing/usage surfaces; platform distributions of LFE may add measured quality signals on top of the protocol. For example, the **Claude-LFE** distribution ships a skill-accuracy harness that grades each reasoning skill (security / perf / complexity / mutation + plan-critique) against a fixture corpus with a deterministic grader and renders a catch-rate / false-positive scorecard — measured reliability that lives at the distribution layer, not in the agnostic core.
 
 ## 8.8 Skill Invocation Authority (CRITICAL)
 
@@ -116,13 +117,17 @@ Skills are **dispatched by the framework**, not by the Brain. Each persona's sub
 | `/lfe-extract-domain` | Restart Day 0 discovery |
 | `LFE-FORCE` | Emergency break-glass keyword (not a slash command) |
 
-**Agent-only skills** (the framework dispatches these from within the assembly line): every other skill in §9 below — Architect sub-pipeline (`/lfe-grill-with-docs`, `/lfe-to-prd`, `/lfe-to-issues`, `/lfe-architect`, `/lfe-plan-critique`), Builder sub-pipeline (`/lfe-builder`, `/lfe-tdd`), Inspector sub-pipeline (`/lfe-zoom-out`, `/lfe-inspector`, `/lfe-diagnose`), all Inspector specialist sub-skills (`/lfe-security-check`, `/lfe-perf-check`, `/lfe-complexity-check`, `/lfe-dep-audit`, `/lfe-mutation-verify`), Archivist (`/lfe-archivist`), Hygiene (`/lfe-hygiene`, `/lfe-improve-architecture`).
+**Agent-only skills** (the framework dispatches these from within the assembly line): every other skill in §9 below — Architect sub-pipeline (`/lfe-grill-with-docs`, `/lfe-to-prd`, `/lfe-to-issues`, `/lfe-architect`, `/lfe-plan-critique`), Builder sub-pipeline (`/lfe-builder`, `/lfe-tdd`), Inspector sub-pipeline (`/lfe-zoom-out`, `/lfe-inspector`, `/lfe-diagnose`), all Inspector specialist sub-skills (`/lfe-security-check`, `/lfe-perf-check`, `/lfe-complexity-check`, `/lfe-dep-audit`, `/lfe-mutation-verify`, `/lfe-visual-check`), Archivist (`/lfe-archivist`), Hygiene (`/lfe-hygiene`, `/lfe-improve-architecture`).
 
 **Refusal protocol**: if the Brain types an agent-only skill out of sequence — `/lfe-builder` with no approved plan, an Inspector sub-skill outside dispatch context, `/lfe-archivist` with no `inspection_report.md` — refuse and route them through the assembly line. Respond with: *"This skill is dispatched by the framework, not invoked manually. Tell me what you want to accomplish and I'll run the correct sub-pipeline."*
 
 **Why this rule exists**: the assembly line's guarantees (crash recovery, no-drift, file-based handoff) depend on every skill reading a coordination file the previous step wrote in the correct order. A skill invoked out of sequence reads stale or absent inputs, produces orphaned artifacts in `.plans/`, and breaks the next `/lfe-boot`'s ability to resume. Manual invocation of internal skills is the single biggest way users accidentally corrupt LFE's state.
 
-## 9. Available Skills (22)
+## 8.9 Drift-Resistance Disciplines
+
+The framework relies on **agent discipline**, not a runtime sandbox. A family of self-enforced gates keeps off-pipeline drift visible and deliberate — git posture, boot precondition, scout boundary, persona transition, no-mission, mission-aware Authorized Scope, and the visual floor. The agent self-enforces each and surfaces every bypass openly, routing it through `/lfe-scout` (minor fix) or `LFE-FORCE` (emergency). The full set, with the honest-ceiling doctrine (speed-bumps + loudness, not containment), is the **Discipline Gates** section of [`GOVERNANCE.md`](.docs/protocol/GOVERNANCE.md); a platform distribution may mechanize them as runtime hooks (see [`INDUSTRY_STANDARDS.md`](.docs/protocol/INDUSTRY_STANDARDS.md) §6).
+
+## 9. Available Skills (23)
 | Skill | Phase | Purpose |
 |---|---|---|
 | `/lfe-boot` | 0 | Session bootstrap and recovery |
@@ -141,6 +146,7 @@ Skills are **dispatched by the framework**, not by the Brain. Each persona's sub
 | `/lfe-complexity-check` | 3.2.c | Inspector sub-skill — cyclomatic/cognitive complexity |
 | `/lfe-dep-audit` | 3.2.d | Inspector sub-skill — dependency manifest review + Brain-run audit instruction |
 | `/lfe-mutation-verify` | 3.2.e | Inspector sub-skill — prompt-based mutation reasoning for test quality |
+| `/lfe-visual-check` | 3.2.f | Inspector sub-skill — render the changed UI surface for a human visual sign-off (auto-armed by the Visual Floor) |
 | `/lfe-diagnose` | 3.3 | Bug diagnosis loop (conditional, 1st failure only) |
 | `/lfe-archivist` | 4.1 | Documentation sync and cleanup |
 | `/lfe-hygiene` | 5.1 | Structural audit |
@@ -156,3 +162,7 @@ Skills are **dispatched by the framework**, not by the Brain. Each persona's sub
 - **Logic Sovereignty:** define the canonical computation boundary (the Main Engine) for this project.
 - **Domain / Boundary separation:** define the interface contract between domain logic and infrastructure.
 - **Mental model (optional):** add a project-specific orientation analogy here if it helps agents ramp up faster.
+
+### Enforcement bindings
+
+- **Authorized Scope (mission-aware write lane).** While a mission is IN-FLIGHT, the `pipeline_status.md` entrance card may carry an `Authorized Scope` row naming extra path globs a persona may write outside its normal lane (e.g. a sanctioned second repository). The Archivist resets it to `(none)` at mission close. An `Authorized Scope` never grants a non-Builder persona write access to `src/**` — `LFE-FORCE` remains the only path to patch `src/` outside the Builder. Honest ceiling: the entrance card is agent-editable, so this is a self-authorization convention, not containment — see the Discipline Gates in [`GOVERNANCE.md`](.docs/protocol/GOVERNANCE.md).

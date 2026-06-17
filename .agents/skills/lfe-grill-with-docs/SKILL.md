@@ -38,10 +38,10 @@ Before declaring any term, check whether `.docs/domain/CONTEXT-MAP.md` exists. I
 
 ### Update CONTEXT.md and Domain Rules Inline
 When a new domain term or math/business rule is resolved, you MUST update the project's development documents IMMEDIATELY:
-- **Canonical Terms**: Append directly to `CONTEXT.md` (root) and `.docs/domain/glossary.md` right there. Don't batch — capture as they happen. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
+- **Canonical Terms**: Append directly to `CONTEXT.md` (root) and `.docs/domain/glossary.md` right there. Capture each as it happens rather than batching. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
 - **Logic, Rules, & Calculations**: Update `.docs/domain/domain-knowledge.md`.
 
-Don't couple `CONTEXT.md` to implementation details. Only include terms meaningful to domain experts.
+Keep `CONTEXT.md` free of implementation details; include only terms meaningful to domain experts.
 
 ### Offer ADRs Sparingly
 Create an Architectural Decision Record in `.docs/architecture/architecture-decisions.md` ONLY when all three are true:

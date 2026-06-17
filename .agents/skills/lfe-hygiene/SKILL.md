@@ -25,12 +25,12 @@ Ensure the repository remains LFE-compliant. Detect drift between the Library an
 ### 2. Coordination Layer Audit
 The cleanup tiers in `lfe-archivist/SKILL.md` Step 5a/5b are the source of truth for which files should be present at each lifecycle moment. This audit checks for drift from those rules.
 
-- **Mission complete** (`Mission State == [MISSION COMPLETE]` or `[BLANK CANVAS]`): no execution OR planning files should remain. If any of `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md` still exist, or if `.plans/checks/` contains any files → flag as "Stale Coordination Files".
-- **Between slices** (`Mission State == [IN-FLIGHT: <phase>]` and Active Persona is Architect): planning files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`) MAY exist; execution files (`plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `.plans/checks/`) MUST NOT — flag any present as "Partial Cleanup Skipped".
+- **Mission complete** (`Mission State == [MISSION COMPLETE]` or `[BLANK CANVAS]`): no execution OR planning files should remain. If any of `01_grill_summary.md`, `02_prd.md`, `03_slices.md`, `plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md` still exist, or if `.plans/checks/` contains any files → flag as "Stale Coordination Files".
+- **Between slices** (`Mission State == [IN-FLIGHT: <phase>]` and Active Persona is Architect): planning files (`01_grill_summary.md`, `02_prd.md`, `03_slices.md`) MAY exist; execution files (`plan_critique.md`, `active_plan.md`, `builder_done.md`, `tdd_report.md`, `critique.md`, `inspection_report.md`, `diagnosis_report.md`, `rework_directive.md`, `.plans/checks/`) MUST be absent — flag any present as "Partial Cleanup Skipped".
 - **Mid-mission**: `active_plan.md` exists but Active Persona is NOT Architect, plan-critique, or Builder → flag as "Orphaned Plan".
 - **Plan critique checkpoint**: `plan_critique.md` should exist only between Plan Approval and Builder start. If `plan_critique.md` exists AND `builder_done.md` exists → the critique file should have been cleaned up by Partial Cleanup; flag as "Stale Plan Critique".
 - **Hygiene cycle**: `hygiene_report.md` is owned by the Hygiene sub-pipeline; flag only if it persists outside an active hygiene cycle.
-- Verify the `Coordination Files` row in `pipeline_status.md` matches the **mainline** files in `.plans/` (the nine checkboxes are `01 02 03 plan plan_critique build tdd critique inspect`). Conditional artifacts (`diagnosis_report.md`, `hygiene_report.md`, `.plans/checks/*.md`) intentionally have no checkbox — their presence on disk is not row-drift.
+- Verify the `Coordination Files` row in `pipeline_status.md` matches the **mainline** files in `.plans/` (the nine checkboxes are `01 02 03 plan plan_critique build tdd critique inspect`). Conditional artifacts (`diagnosis_report.md`, `rework_directive.md`, `hygiene_report.md`, `.plans/checks/*.md`) intentionally have no checkbox — their presence on disk is not row-drift.
 
 ### 3. State Audit
 - Verify `pipeline_status.md` reflects the current reality:
@@ -70,7 +70,7 @@ Walk the Retention Policy table in `.docs/protocol/GOVERNANCE.md`. For each row:
 
 ## Output
 
-Write `.plans/hygiene_report.md` per the contract in [COORDINATION_FILES.md](../../../.docs/protocol/COORDINATION_FILES.md). Findings must be persisted to a file — verbal-only output creates a black hole where findings are lost if the session ends, and the Architect cannot fix structural violations they never saw.
+Write `.plans/hygiene_report.md` per the contract in [COORDINATION_FILES.md](../../../.docs/protocol/COORDINATION_FILES.md). Findings must be persisted to a file — verbal-only output creates a black hole where findings are lost if the session ends, leaving the Architect unable to fix structural violations that went unseen.
 
 ```yaml
 ---

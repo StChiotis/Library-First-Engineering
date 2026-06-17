@@ -96,7 +96,7 @@ Personas are **tool-locked**: the Architect cannot edit code, the Builder cannot
 
 **Pre-build critique gate (machine-checkable)** — Between plan approval and Builder start, `/lfe-plan-critique` runs a 5-lens review of the approved plan (Acceptance Criteria scrutiny, Test Feasibility, Domain Alignment, Structural Impact, Coherence Simulation) and writes typed frontmatter to `plan_critique.md`: `verdict` (PASS / WARN / BLOCK), `revision` counter, `brain_confirmation` timestamp. The Builder's Step 1 gate parses these fields and refuses to write `src/` unless the gate is open — *no conversational approval, no body-text markers*. The 2-revision limit survives crashes because the counter lives in the file, not in chat memory. Plan-critique findings also feed Inspector Step 1.5 (priority verification targets), so the artifact is load-bearing through the pipeline.
 
-**Inspector specialist sub-skills** — Optional, opt-in via `.docs/quality/inspector-config.md`. Pure prompt-only sub-skills the Inspector dispatches during verification: `lfe-security-check` (OWASP Top-10), `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify`. Each writes a typed findings file (`status: complete` + `kind: sub-skill` frontmatter); the Inspector aggregates them into `critique.md`. The resume rule is **`status: complete` only** — a partial mid-write doesn't get silently accepted on the next session. Per-mission overrides live in a typed `## Inspector Overrides` YAML block inside `active_plan.md`.
+**Inspector specialist sub-skills** — Optional, opt-in via `.docs/quality/inspector-config.md`. Sub-skills the Inspector dispatches during verification: `lfe-security-check` (OWASP Top-10), `lfe-perf-check`, `lfe-complexity-check`, `lfe-dep-audit`, `lfe-mutation-verify` (all prompt-only), and `lfe-visual-check` (renders a changed UI surface for a human visual sign-off; auto-armed by the Visual Floor on any UI-file touch). Each writes a typed findings file (`status: complete` + `kind: sub-skill` frontmatter); the Inspector aggregates them into `critique.md`. The resume rule is **`status: complete` only** — a partial mid-write doesn't get silently accepted on the next session. Per-mission overrides live in a typed `## Inspector Overrides` YAML block inside `active_plan.md`.
 
 **LFE-FORCE hotfix audit** — Even when the assembly line is bypassed for a production emergency, the recovery session runs a fixed sub-skill subset on the hotfix (always `lfe-security-check` + `lfe-complexity-check`; conditional `lfe-dep-audit` + `lfe-perf-check`). Critical findings persist to `known-issues.md` before the debt entry resolves — the debt clears, but the risks remain visible. The most dangerous code path is the one that gets the audit; ad-hoc patches don't get a free pass.
 
@@ -266,7 +266,7 @@ LFE is honest about what it does *not* solve:
 
 LFE is actively being applied to a production project. A public case study — demonstrating the full pipeline on a live codebase — is in progress and will be published in a follow up [Article on Medium](https://medium.com/@StChiotis).
 
-Until then: all 22 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
+Until then: all 23 skills and the Blank Canvas are fully operational today. Clone the repo and run `/lfe-extract-domain` or `/lfe-boot` to start Day 0 on your own project.
 
 ---
 

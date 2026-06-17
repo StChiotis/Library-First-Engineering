@@ -2,7 +2,7 @@
 
 Good interfaces make testing natural:
 
-1. **Accept dependencies, don't create them**
+1. **Accept dependencies rather than creating them**
 
    ```typescript
    // Testable
@@ -14,7 +14,7 @@ Good interfaces make testing natural:
    }
    ```
 
-2. **Return results, don't produce side effects**
+2. **Return results rather than producing side effects**
 
    ```typescript
    // Testable

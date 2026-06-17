@@ -22,7 +22,7 @@
 | System Prompt | [`.agents/adapters/system_prompt.txt`](../.agents/adapters/system_prompt.txt) | Raw LLM adapter (copy-paste for ChatGPT, Claude, etc.). |
 | Change History | [`.docs/archive/`](./archive/) (see [Shelf Index](./archive/README.md)) | Cold-tier archives for retention-managed files: `changelog-history.md`, `architecture-decisions-history.md`, `protocol-debt-history.md`, `known-issues-history.md`. Populated by the Hygiene sweep per the Retention Policy in [`GOVERNANCE.md`](./protocol/GOVERNANCE.md). |
 | Floor map | **this file** | Navigation index. |
-| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 22 LFE persona skills (sub-pipeline architecture + 5 specialist Inspector sub-skills + `lfe-plan-critique`). |
+| Agent Core | [`.agents/skills/`](../.agents/skills/) | Home for 23 LFE persona skills (sub-pipeline architecture + 6 specialist Inspector sub-skills + `lfe-plan-critique`). |
 | Domain Language | [`CONTEXT.md`](../CONTEXT.md) (root) | Canonical glossary — all agents must use these terms. |
 | Framework Roadmap | [GitHub Issues](https://github.com/StChiotis/Library-First-Engineering/issues) | Planned improvements for the LFE framework (tracked as Issues). |
 | Project Roadmap | [`.docs/strategy/roadmap.md`](./strategy/roadmap.md) | What is the planned evolution of the product? |
@@ -46,9 +46,11 @@ The pipeline uses file-based coordination. Each skill writes output to `.plans/`
 | `plan_critique.md` | `/lfe-plan-critique` | Brain / `/lfe-builder` (auto-gate) |
 | `builder_done.md` | `/lfe-builder` | `/lfe-tdd` (resume marker) |
 | `tdd_report.md` | `/lfe-tdd` | `/lfe-inspector` |
-| `.plans/checks/*.md` | Inspector sub-skills (security/perf/complexity/dep/mutation) | `/lfe-inspector` (aggregates into `critique.md`) |
+| `.plans/checks/*.md` | Inspector sub-skills (security/perf/complexity/dep/mutation/visual) | `/lfe-inspector` (aggregates into `critique.md`) |
+| `critique.md` | `/lfe-inspector` (Devil's Advocate + sub-skill aggregation) | `/lfe-inspector` (self) |
 | `inspection_report.md` | `/lfe-inspector` | `/lfe-archivist` |
 | `diagnosis_report.md` | `/lfe-diagnose` (conditional) | `/lfe-builder` (next iteration) |
+| `rework_directive.md` | `/lfe-inspector` (finalization reject, conditional) | `/lfe-builder` (rework re-entry) |
 | `hygiene_report.md` | `/lfe-hygiene` (every 5 sessions) | `/lfe-improve-architecture` |
 
 ---

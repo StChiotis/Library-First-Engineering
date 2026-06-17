@@ -16,8 +16,8 @@ Review any dependency manifest files touched by the current diff for known-risky
 
 ## Hard Rules
 0. **Dispatch Context Required (refuse direct invocation)**: This skill is dispatched by `/lfe-inspector` Step 6 — it is not a Brain-typeable skill (per `LLM_AGENT_GUIDE.md` §8.8 Skill Invocation Authority). If invoked without `.plans/builder_done.md` for the current slice, halt immediately and reply: *"`/lfe-dep-audit` is an Inspector sub-skill dispatched by `/lfe-inspector`. It cannot be run standalone. Run `/lfe-inspector` — the dispatcher will invoke this sub-skill if it is enabled in `.docs/quality/inspector-config.md` (or via an `## Inspector Overrides` section in `active_plan.md`)."* Direct invocation produces orphaned findings files and breaks the Inspector's aggregation logic.
-1. **No Tool Execution**: Do not run `npm audit`, `pip audit`, `cargo audit`, or any CLI command. Reason over manifest contents only.
-2. **Manifest-Scoped**: Only audit dependency files that appear in `builder_done.md`. Do not re-audit unchanged manifests.
+1. **No Tool Execution**: Reason over manifest contents only; emit the audit command for the Brain to run rather than running `npm audit`/`pip audit`/`cargo audit` here.
+2. **Manifest-Scoped**: Audit only the dependency files that appear in `builder_done.md`; skip unchanged manifests.
 3. **Emit Instruction Block**: Always emit a "Brain Action Required" block for each detected manifest type — even if no static concerns are found — because dynamic vulnerability data requires runtime tools.
 4. **Severity**: High (version pinned to `*` or `latest`; known-risky major) / Medium (very old major; no upper bound) / Low (minor version drift).
 
@@ -115,4 +115,4 @@ Paste the audit output here before proceeding. Inspector will re-assess if Criti
 If no manifest files changed: write `No dependency manifest files were modified in this diff. No audit required.`
 
 ## Handoff
-Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Dependencies` section. Do not write to `critique.md` directly.
+Return control to `/lfe-inspector`. Inspector aggregates this file's content into `critique.md` under a `## Dependencies` section. Write only this findings file; leave `critique.md` to the Inspector.

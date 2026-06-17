@@ -17,7 +17,7 @@ Perform rapid, non-architectural maintenance tasks (typos, UI tweaks, simple bug
 ## 🛡️ The Protective Layer
 Before taking ANY action, perform a **Structural Integrity Check**:
 1. **Is this structural?** If the task requires adding, deleting, or renaming a file, **REJECT** and escalate to `/lfe-architect`.
-2. **Is this root-level?** If the task modifies a configuration file at the root (e.g., `.cursorrules`, `package.json`), **REJECT** and escalate.
+2. **Is this root-level?** If the task modifies a configuration file at the root (e.g., a root agent-config file, `package.json`), **REJECT** and escalate.
 3. **Is this domain-heavy?** If the task changes core logic as defined in `CONTEXT.md`, **REJECT** and escalate.
 
 ## Protocol

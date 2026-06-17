@@ -63,6 +63,25 @@ The 2-revision limit is enforced via the `revision:` frontmatter field in `plan_
 
 > *Rationale*: a plan that fails critique twice has a structural misalignment that repeated plan edits will not fix. The PRD or slice boundaries need to change.
 
+### Scenario 2.4: The Human-Rejection Rework Loop
+*The Brain rejects at the Inspector's finalization gate — a defect the technical pass could not catch, typically visual.*
+1. **Trigger**: At `/lfe-inspector` Step 8, after a technical `status: passed`, the Brain REJECTS.
+2. **Sentinel write**: Step 8b derives a `directive_hash` from the rejection text, reads and increments the file-based `rework_round` in `.plans/rework_directive.md` (increment only on a changed hash — exactly-once across a crash), and writes the sentinel with a `## Rework Directive` brief.
+3. **Hygiene + reset**: deletes any same-slice `diagnosis_report.md`, resets the `build / tdd / critique / inspect` checkboxes to ⬜, then sets Active Persona to Builder.
+4. **Re-entry**: the Builder reads the sentinel and **re-implements** the defect (precedence over a `diagnosis_report.md`), then `/lfe-tdd` → `/lfe-inspector` → finalize again. → **[Re-entrant up to 5 rounds]**
+5. **Orthogonality**: the sentinel holds `inspection_report.md` at `status: passed`, so the Cycle Guard (Scenario 2.2) treats a rework round as a fresh Cycle 1 rather than a mechanical failure. A genuine mechanical re-failure during a round still writes `status: failed` and takes the Cycle-1 → diagnose path. The two axes compose without colliding.
+6. **Cap**: on the 6th rejection (`rework_round` would exceed 5), the Inspector halts to a safe Brain triage menu — accept as a known issue / re-plan the slice / start a fresh mission. The cap path stays within the pipeline.
+
+> *Rationale*: a finalization rejection is human judgment beyond the machine's reach to mechanize (especially visual). Routing it back through the Builder keeps every fix verified, replacing the patch-in-place-at-the-final-step anti-pattern.
+
+### Scenario 2.5: The Visual Verification Gate
+*A slice touches a UI file — the Inspector renders it and the Brain's visual sign-off is the close condition.*
+1. **Arm**: At Sub-Skill Dispatch, the **Visual Floor** auto-arms `lfe-visual-check` because a changed file in `builder_done.md` matches a visual file class (the list lives in `inspector-config.md`). It renders the surface (preferred renderer → browser → manual instruction), reasons over it, and writes `.plans/checks/visual_findings.md` with a human-action instruction + sign-off token. It is artifact-free (saves no image files).
+2. **Finalize (three outcomes)**: At Step 8, on a visual slice — (a) the Brain approves and `inspection_report.md` already carries `visual_confirmed` + `visual_signoff` → Archivist; (b) the Brain approves but the sign-off is absent → the Inspector presents the instruction, records `visual_confirmed` + `visual_signoff` (transcribed from the Brain's words — the `brain_confirmation` trust model), then hands off; (c) the Brain rejects → Scenario 2.4 rework re-entry.
+3. **Hard floor**: the visual sign-off is the protocol-enforced close condition (a hard floor) — the Inspector must not hand a visual slice to the Archivist until `visual_confirmed` + `visual_signoff` are recorded. With no runtime sandbox in the agnostic core this is an agent-self-enforced discipline (see GOVERNANCE Discipline Gates); a platform distribution may mechanize it as an unconditional-deny runtime gate.
+
+> *Rationale*: a green *technical* pass has no way to see the screen. The floor makes a human visual sign-off the close condition for any UI change, so a layout or rendering defect is caught by a person rather than shipping on mechanics alone.
+
 ### Scenario 2.3: The Domain Rescue Loop (Black Box)
 *Any persona encounters undocumented, highly complex code.*
 1. **Trigger**: Builder or Inspector gets confused by legacy/undocumented code.
@@ -126,4 +145,7 @@ The 2-revision limit is enforced via the `revision:` frontmatter field in `plan_
 | **During Inspect (1st failure already recorded)** | `inspection_report.md` exists with `status: failed`, `critique` exists | Resumes at `/lfe-diagnose` (Inspector has already failed once). |
 | **During Inspect (2nd failure)** | `inspection_report.md` shows `status: escalated` with triage menu | Resumes by re-presenting Brain triage menu (Accept Debt / LFE-FORCE / Re-plan). |
 | **During Diagnose**| `diagnosis_report` exists | Resumes at Builder to fix the bug. |
+| **During Rework (sentinel written, mid-build)** | `rework_directive.md` exists (its `slice` matches `active_plan`) | Resumes at `/lfe-builder` rework re-entry — reads the `## Rework Directive`; the file-based `rework_round` survives, so the round is neither reset nor double-counted. A present `rework_directive.md` takes precedence over `tdd_report` / `inspection_report` presence in the resume decision. |
+| **Rework round re-verifying** | `rework_directive.md` + a fresh `tdd_report.md` exist | Resumes at `/lfe-inspector`; the Cycle Guard reads `status: passed` → fresh rework round (Cycle 1), not Cycle 2. |
+| **Visual slice awaiting sign-off** | `visual_findings.md` exists, `inspection_report.md` at `status: passed`, `visual_confirmed`/`visual_signoff` absent | Resumes at `/lfe-inspector` Step 8 finalization — re-present the `visual_findings.md` human-action instruction for the Brain's visual sign-off; the Inspector withholds the Archivist transition until both fields are recorded (the visual floor — Scenario 2.5). |
 | **After Archive** | `.plans/` still full (State Anomaly) | Triggers `/lfe-zoom-out` to compare plans vs code. Asks human to manually delete `.plans/`. |

@@ -12,7 +12,7 @@ description: Find deepening opportunities in the codebase — turn shallow modul
 
 ## Vocabulary
 
-Use these terms exactly — don't substitute "component," "service," "API," or "boundary." See [LANGUAGE.md](./LANGUAGE.md) for full definitions.
+Use these terms exactly; keep "component," "service," "API," and "boundary" out of architectural suggestions. See [LANGUAGE.md](./LANGUAGE.md) for full definitions.
 
 - **Module** — anything with an interface and an implementation
 - **Interface** — everything a caller must know to use the module
@@ -52,7 +52,7 @@ Numbered list of deepening opportunities. For each:
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface when friction is real enough to warrant revisiting. Mark clearly.
 
-Do NOT propose interfaces yet. Ask: "Which of these would you like to explore?"
+Hold interface proposals for now. Ask: "Which of these would you like to explore?"
 
 ### 3. Grilling loop
 Once the user picks a candidate, drop into a grilling conversation. Walk the design tree — constraints, dependencies, the shape of the deepened module.
