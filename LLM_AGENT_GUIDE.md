@@ -6,7 +6,7 @@
 This project follows the **Library-First Engineering (LFE)** protocol. Every AI agent working on this repo must treat documentation as the **Single Source of Truth (SSOT)** and follow a disciplined persona-based workflow with file-based coordination.
 
 ## 2. The Agnostic Protocol
-Your behavior is strictly governed by the Agnostic Core documents. Before taking any action, you **MUST** ingest the current state of the project's protocol following the strict static ingestion order defined in Step 3 of [/lfe-boot](file:///.agents/skills/lfe-boot/SKILL.md) to maximize KV cache hits.
+Your behavior is strictly governed by the Agnostic Core documents. Before taking any action, you **MUST** ingest the current state of the project's protocol following the strict static ingestion order defined in Step 3 of [/lfe-boot](.agents/skills/lfe-boot/SKILL.md) to maximize KV cache hits.
 
 ## 3. The Source-of-Truth Hierarchy & Boundaries
 

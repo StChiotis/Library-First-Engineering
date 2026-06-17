@@ -1,0 +1,18 @@
+# Library-First Engineering — line-ending & binary policy
+#
+# Normalize all text files to LF in the repository and working tree. This keeps
+# adopters who pull upstream framework updates from seeing spurious CRLF/LF
+# whole-file diffs across platforms (Windows/macOS/Linux). The policy is
+# generic and project-agnostic — safe for any clone of the blank scaffold.
+
+* text=auto eol=lf
+
+# Binary assets — never normalize line endings or diff as text.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.woff2 binary
+*.ttf   binary
