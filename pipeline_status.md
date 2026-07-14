@@ -1,5 +1,7 @@
 # 🏛️ LFE Mission Control (Entrance Card)
 
+> Bounded by the **entrance-card retention rule** (`GOVERNANCE.md` § Retention Policy): current state only · ≤ 12,000 chars · ≤ 3 pointers under 📜 Recent Missions · mission history lives in the CHANGELOG lane, never here.
+
 | Category | Status / Value |
 | :--- | :--- |
 | **Integrity Score** | 🟢 [Integrity: 100%] |
@@ -26,6 +28,9 @@
 6. **File-Based Coordination**: Skills read/write `.plans/` files, not conversation.
 7. **Hygiene Scheduling**: Architecture sweep every 5 sessions.
 8. **Skill Invocation**: Skills are agent-dispatched. Brain types only `/lfe-boot`, `/lfe-whats-next`, `/lfe-scout`, `/lfe-extract-domain`, or `LFE-FORCE` (see `LLM_AGENT_GUIDE.md` §8.8).
+
+## 📜 Recent Missions (max 3 — full history: [.docs/quality/CHANGELOG.md](.docs/quality/CHANGELOG.md) → [.docs/archive/changelog-history.md](.docs/archive/changelog-history.md))
+- *(none yet — at each mission close the Archivist demotes the finished mission from the cells above to one pointer line here; pointers beyond 3 roll off, staying fully recoverable in the CHANGELOG lane)*
 
 ---
 

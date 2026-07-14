@@ -25,6 +25,7 @@ Keep the project's documentation and history perfectly in sync with the codebase
 5. **File-Based Input**: Read `.plans/inspection_report.md` as input. The Inspector's report tells you what passed.
 6. **Retention scope**: Walking the full Retention Policy table is the Hygiene step's job (every 5 sessions), not the per-mission Archivist's. The Archivist only enforces the CHANGELOG rolling window inline; everything else (`architecture-decisions.md`, `PROTOCOL_DEBT.md`, `known-issues.md`) is swept by `/lfe-hygiene`.
 7. **Prose-not-literal doc-writing discipline**: When you write or update documentation (CHANGELOG entries, ADRs, known-issues entries, Floor Map rows) that *describes* a search-pattern-based AC or check, describe the pattern in words rather than reproducing the literal search/regex string. Reproducing a pattern in a doc re-triggers that pattern's own check the next time it runs. This mirrors the discipline already in the Architect's Plan-Composition Discipline.
+8. **Entrance-card budget (HARD)**: keep `pipeline_status.md` within the entrance-card retention rule (`GOVERNANCE.md` § Retention Policy) — ≤ **12,000** chars total (> **10,000** = act now); the table cells hold the **current mission only** behind a leading legal `[STATE]` token; the `Active Persona` cell carries the bare persona name; at most **3** one-line pointers under `## 📜 Recent Missions`; mission history lives in `CHANGELOG.md` (whose Step-3 write this rule depends on) — **the card carries pointers only**. Enforced by the verify-then-trim procedure in Step 6. A platform distribution may additionally mechanize this rule as a validator or hook (`GOVERNANCE.md` § Discipline Gates); the agnostic core keeps it as a discipline.
 
 ## Workflow
 1. **Read Report**: Read `.plans/inspection_report.md` to understand what was built and verified. **Status branch:**
@@ -62,6 +63,13 @@ Keep the project's documentation and history perfectly in sync with the codebase
    - `hygiene_report.md` is owned by the Hygiene sub-pipeline — leave it for `/lfe-improve-architecture` to consume and clear; a per-mission Archivist run does not delete it.
    - Update `pipeline_status.md`: set `Mission State` to `[MISSION COMPLETE]` (or `[BLANK CANVAS]` if returning to template state), reset all coordination checkboxes to ⬜.
 6. **Update Pipeline Status (cross-cutting fields)**: Beyond the checkbox/persona resets handled by Step 5a/5b, set the cross-cutting entrance-card fields for the next session — Mission, Session Count, Last ADR, and `Mission State`. The legal `Mission State` values are `[BLANK CANVAS]`, `[DOMAIN LOADED]`, `[IN-FLIGHT: <phase>]`, `[MISSION COMPLETE]`.
+
+   **Verify-then-trim (entrance-card retention rule):** run this sub-procedure at every mission close, in order:
+   1. **Verify**: confirm the closing mission's milestone exists in `CHANGELOG.md` (Step 3 wrote it). If missing, append it FIRST — **trim only history the CHANGELOG already holds** (a refusal condition, not a preference).
+   2. **Write** the new current-mission cells: leading legal `[STATE]` token in `Mission State` (one line), a bounded `Active Mission` charter, the `Pipeline Phase` cursor.
+   3. **Demote** the previous mission to ONE pointer line at the top of `## 📜 Recent Missions` (`<mission id> — title (outcome) → CHANGELOG date`).
+   4. **Drop** pointer lines beyond 3 — they stay fully recoverable in the CHANGELOG lane.
+   5. **Confirm budget**: the card is ≤ 12,000 chars (count after CRLF normalization).
 7. **Hygiene Check**: Read `Last Architecture Sweep` from `pipeline_status.md`. If 5+ sessions since last sweep, flag it. Surface the trade-off so the human can decide with context:
    - **If `03_slices.md` exists with unfinished slices** (multi-slice mission in progress):
      > *"Architecture sweep is due (5+ sessions). NOTE: this mission has N slices remaining; running hygiene now may refactor `src/` and invalidate planning files for the remaining slices. Run / defer to mission end / skip this cycle?"*
@@ -77,5 +85,6 @@ Keep the project's documentation and history perfectly in sync with the codebase
 - [ ] Coordination files archived/cleared (if mission complete)?
 - [ ] Session count incremented?
 - [ ] Architecture sweep due date checked?
+- [ ] Entrance card within budget (≤ 12,000 chars; ≤ 3 Recent Missions pointers; verify-then-trim executed)?
 - [ ] (LFE-FORCE recovery only) Protocol Debt entry marked `resolved (session N)`?
 

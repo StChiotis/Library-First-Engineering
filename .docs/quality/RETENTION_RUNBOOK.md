@@ -14,6 +14,7 @@ Every retention-managed file has a **hot tier** (active, in `.docs/quality/` or 
 | `.docs/architecture/architecture-decisions.md` | `.docs/archive/architecture-decisions-history.md` | All `Accepted`/`Proposed` ADRs + last 15 sessions of `Superseded`/`Deprecated` | At hygiene sweep |
 | `.docs/quality/PROTOCOL_DEBT.md` | `.docs/archive/protocol-debt-history.md` | All `open`; `resolved` kept 1 hygiene cycle then archived | At hygiene sweep |
 | `.docs/quality/known-issues.md` | `.docs/archive/known-issues-history.md` | All `open`; `resolved` / `won't-fix` kept 1 hygiene cycle | At hygiene sweep |
+| `pipeline_status.md` *(repo root — the entrance card)* | The CHANGELOG lane (`CHANGELOG.md` → `archive/changelog-history.md`) — no dedicated cold file | Current mission only + ≤ 3 Recent-Missions pointers · ≤ 12,000 chars (> 10,000 advisory) | **Every Archivist close** (verify-then-trim); Hygiene backstop |
 
 ## Pre-flight (before any archival action)
 
@@ -50,12 +51,21 @@ Every retention-managed file has a **hot tier** (active, in `.docs/quality/` or 
 1. Cut each aged-out entry (heading + body); add an index row in the cold sibling (Date opened / Title / Final status / Archived-in session), body below the index.
 2. Update the Cold Tier Pointer.
 
+### pipeline_status.md (entrance card — current state only)
+**Trigger:** every Archivist mission close (the verify-then-trim procedure, `lfe-archivist` SKILL Step 6) — not only sweeps; the Hygiene sweep walks the row as the backstop.
+1. Verify the closing mission's milestone exists in `CHANGELOG.md`; if missing, append it FIRST (trim only history the CHANGELOG already holds).
+2. Write the new current-mission cells (leading legal `[STATE]` token; a bounded charter; the phase cursor).
+3. Demote the prior mission to ONE pointer line at the top of `## 📜 Recent Missions`; drop pointers beyond 3 (they stay recoverable in the CHANGELOG lane).
+4. Confirm the card is ≤ 12,000 chars (count after CRLF normalization; > 10,000 = act now).
+5. Note: the entrance card is the one retention-managed file **without** a Cold Tier Pointer footer — its cold-tier routing is the `## 📜 Recent Missions` header line itself, so the Pre-flight step-1 check does not apply to it.
+
 ## What not to do
 
 - **Adopters: keep the LFE protocol surface read-only.** Project-specific retention behavior belongs in this runbook, in `pipeline_status.md`'s notes, or as explicit overrides under `## Retention Policy Overrides` in `LLM_AGENT_GUIDE.md` — never as edits to `lfe-archivist` / `lfe-hygiene` / `GOVERNANCE.md`. (Framework contributors change the protocol itself via upstream pull requests instead — see `CONTRIBUTING.md`.)
 - **Never archive an `Accepted` or `Proposed` ADR.** Only `Superseded` and `Deprecated`, and only past the 15-session window.
 - **Never delete an archived entry.** The cold tier is append-only; the index row is the audit trail.
 - **Never move an entry without updating the hot file's Cold Tier Pointer session counter.**
+- **Never trim card history the CHANGELOG lane does not already hold.** Verify-then-trim is append-first: if the closing mission's milestone is missing, write it to `CHANGELOG.md` before touching the card.
 
 ## Cross-references
 

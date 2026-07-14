@@ -37,7 +37,7 @@ To prevent "Spaghetti Decay" and context window bloat:
 2. **The Rolling Window**: Stale history in `CHANGELOG.md` or mission logs must be moved to `.docs/archive/` periodically.
 3. **Implicit Confidence**: No file should exist in the repository that is not indexed or referenced in the Library System.
 4. **Architecture Sweeps**: Scheduled every 5 sessions via session count in `pipeline_status.md`. Triggers `/lfe-hygiene` → `/lfe-improve-architecture`.
-5. **Atomic Docs**: Any documentation file exceeding ~6,000 characters (~1,500 tokens) must be split into smaller atomic files to preserve context window economics. *(Exemption: Root-level orchestration files like `README.md` and `LLM_AGENT_GUIDE.md` are exempt from this rule to preserve cohesive onboarding).*
+5. **Atomic Docs**: Any documentation file exceeding ~6,000 characters (~1,500 tokens) must be split into smaller atomic files to preserve context window economics. *(Exemption — a **closed list**: `README.md` and `LLM_AGENT_GUIDE.md` are exempt to preserve cohesive onboarding; additions require an ADR. `pipeline_status.md` is **not** exempt — it is governed by the stricter entrance-card budget in the Retention Policy table below.)*
 6. **Portable Paths**: Keep dev-local personal paths out of committed narrative such as the `pipeline_status.md` entrance card — refer to the repository root as `<project-root>` rather than a machine-specific home directory, so the record stays portable across clones.
 
 ---
@@ -58,10 +58,11 @@ Sessions are the unit of time across LFE — not calendar months. Each retention
 | `.docs/architecture/architecture-decisions.md` | All `accepted` / `proposed` ADRs + last 15 sessions of `superseded` / `deprecated` | `.docs/archive/architecture-decisions-history.md` | At hygiene sweep (every 5 sessions) |
 | `.docs/quality/PROTOCOL_DEBT.md` | All `open` entries; `resolved` kept 1 hygiene cycle then archived | `.docs/archive/protocol-debt-history.md` | At hygiene sweep |
 | `.docs/quality/known-issues.md` | All `open`; `resolved` / `won't-fix` kept 1 hygiene cycle then archived | `.docs/archive/known-issues-history.md` | At hygiene sweep |
+| `pipeline_status.md` *(Entrance card)* | Current mission only in the table cells + ≤ **3** one-line pointers under `## 📜 Recent Missions` · budget ≤ **12,000** chars hard / > **10,000** advisory (counted after CRLF normalization) | The CHANGELOG lane — `.docs/quality/CHANGELOG.md` → `.docs/archive/changelog-history.md`. The Archivist's own Step 3 writes every mission's full narrative there, so the card needs no dedicated archive file. | **Every Archivist close** — the verify-then-trim procedure (`lfe-archivist` SKILL Step 6); the Hygiene sweep walks this row every 5 sessions as the backstop |
 | `.plans/` *(coordination)* | Until mission complete; archivist clears at end-of-mission | N/A | At end-of-mission |
 
 ### Index discipline (mandatory)
-- **Every hot file ends with a Cold Tier Pointer** in this exact form:
+- **Every hot file ends with a Cold Tier Pointer** in this exact form *(one exception: the entrance card — its cold-tier routing is the `## 📜 Recent Missions` header line pointing at the CHANGELOG lane, not a footer pointer; see its row above)*:
   > `**Archive:** Older entries are in [archive/<filename>-history.md](../archive/<filename>-history.md). Last archive sweep: session N.`
 - **Every cold file starts with a Hot Tier Pointer plus an Index table.** The pointer names the active hot file and the trigger; the index table lists every archived entry with the session it was archived in.
 
